@@ -1,0 +1,528 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL") // Neon: pooled URL for runtime, direct URL for migrations
+}
+
+// ───────────────────────────── ENUMS ─────────────────────────────
+
+enum AttributeKey {
+  STR
+  AGI
+  INT
+  CHA
+  DEX
+  WIS
+}
+
+enum Currency {
+  AP // Aura Points
+  MB // Mew Bucks
+  CC // Chrono Chirals
+}
+
+enum HealthTier {
+  THRIVING // HP >= 80, x1.00
+  NEUTRAL  // HP 40-79, x0.85
+  WEAKENED // HP < 40,  x0.50
+}
+
+enum RepeatRule {
+  ONCE
+  DAILY
+  WEEKLY
+}
+
+enum QuestStatus {
+  ACTIVE
+  COMPLETED
+  EXPIRED
+}
+
+enum CriteriaType {
+  MANUAL         // player taps complete
+  SKILL_MINUTES  // auto-completes when logged minutes on skillId reach criteriaMinutes
+  KINGDOM_MINUTES
+}
+
+enum ActivityKind {
+  SKILL_LOG
+  QUEST_COMPLETE
+  CHECK_IN_BONUS // reserved, optional
+  ADJUSTMENT     // admin or rebalance corrections
+  REVERSAL
+}
+
+enum CurrencyReason {
+  QUEST_REWARD
+  LEVEL_UP
+  RANK_UP
+  ACHIEVEMENT
+  SHOP_PURCHASE
+  RECOVERY_SPEND
+  ADJUSTMENT
+}
+
+enum DefinitionStatus {
+  DEFINED
+  TBD // Alliance, Tavern, Treasury until their mechanics are designed
+}
+
+// ───────────────────────────── AUTH (Auth.js adapter) ─────────────────────────────
+
+model User {
+  id            String    @id @default(cuid())
+  name          String?
+  email         String?   @unique
+  emailVerified DateTime?
+  image         String?
+
+  timezone     String @default("UTC") // IANA name, set during onboarding
+  dayStartHour Int    @default(4)     // "today" starts at this local hour
+  settings     Json   @default("{}")  // health targets, notification prefs, UI prefs
+
+  createdAt DateTime @default(now())
+
+  accounts     Account[]
+  sessions     Session[]
+  character    Character?
+  skills       Skill[]
+  quests       Quest[]
+  questInstances QuestInstance[]
+  userKingdoms UserKingdom[]
+  events       ActivityEvent[]
+  wallets      Wallet[]
+  transactions CurrencyTransaction[]
+  healthSnaps  HealthSnapshot[]
+  checkIns     CheckIn[]
+  achievements UserAchievement[]
+  rewards      Reward[]
+  chronicle    ChronicleEntry[]
+  companion    Companion?
+}
+
+model Account {
+  id                String  @id @default(cuid())
+  userId            String
+  type              String
+  provider          String
+  providerAccountId String
+  refresh_token     String? @db.Text
+  access_token      String? @db.Text
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String? @db.Text
+  session_state     String?
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([provider, providerAccountId])
+}
+
+model Session {
+  id           String   @id @default(cuid())
+  sessionToken String   @unique
+  userId       String
+  expires      DateTime
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model VerificationToken {
+  identifier String
+  token      String   @unique
+  expires    DateTime
+
+  @@unique([identifier, token])
+}
+
+// ───────────────────────────── CHARACTER & ATTRIBUTES ─────────────────────────────
+
+model Character {
+  id     String @id @default(cuid())
+  userId String @unique
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  name      String
+  avatarKey String @default("default")
+  titleKey  String? // equipped title (AP cosmetic)
+
+  // CACHE: derived from ActivityEvent.xpAwarded
+  totalXp Int @default(0)
+  level   Int @default(1)
+
+  // CACHE: latest Vitality result (see HealthSnapshot)
+  hp               Float      @default(80)
+  healthTier       HealthTier @default(THRIVING)
+  healthComputedOn DateTime?  @db.Date
+  graceUntil       DateTime?  // new-account grace: HP held at 80
+  healthShieldUntil DateTime? // Second Wind (CC): tier treated as at least NEUTRAL
+
+  version   Int      @default(0) // optimistic concurrency, bumped on every progression write
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  attributes CharacterAttribute[]
+}
+
+model CharacterAttribute {
+  id          String       @id @default(cuid())
+  characterId String
+  key         AttributeKey
+  points      Float        @default(0) // CACHE: sum of AttributeDelta.points
+
+  character Character @relation(fields: [characterId], references: [id], onDelete: Cascade)
+
+  @@unique([characterId, key])
+}
+
+// ───────────────────────────── KINGDOMS ─────────────────────────────
+
+model Kingdom {
+  id         String           @id @default(cuid())
+  slug       String           @unique // academy, career, alliance, camp, creativity, tavern, treasury
+  name       String
+  tagline    String?
+  colorHex   String
+  iconKey    String
+  sortOrder  Int
+  definition DefinitionStatus @default(DEFINED)
+  isActive   Boolean          @default(true)
+
+  skills       Skill[]
+  quests       Quest[]
+  userKingdoms UserKingdom[]
+  events       ActivityEvent[]
+}
+
+model UserKingdom {
+  id        String @id @default(cuid())
+  userId    String
+  kingdomId String
+
+  xp Int @default(0) // CACHE: sum of ActivityEvent.xpAwarded for this Kingdom
+
+  // Stage 3: Momentum & Surges (rolling baseline, auto-detected)
+  baselineMinutesPerWeek Float     @default(0)
+  surgeMultiplier        Float?
+  surgeUntil             DateTime?
+
+  user    User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  kingdom Kingdom @relation(fields: [kingdomId], references: [id])
+
+  @@unique([userId, kingdomId])
+}
+
+// ───────────────────────────── SKILLS ─────────────────────────────
+
+model RankTier {
+  index            Int    @id // 0..18
+  name             String // "Origin I" ... "Kanye"
+  thresholdMinutes Int    // PLACEHOLDER values seeded from config
+  colorHex         String
+
+  skills Skill[]
+}
+
+model Skill {
+  id        String @id @default(cuid())
+  userId    String
+  kingdomId String // one primary Kingdom per skill
+
+  name         String
+  iconKey      String?
+  isCustom     Boolean @default(false)
+  countsAsBody Boolean @default(false) // feeds the Vitality "Body" component
+
+  // CACHE: sum of minutes from SKILL_LOG / timed QUEST_COMPLETE events (never decreases except via reversal)
+  minutesLogged Int @default(0)
+  rankIndex     Int @default(0)
+
+  lastPracticedAt DateTime?
+  rustLevel       Float     @default(0) // Stage 3. Independent of minutesLogged and rankIndex.
+
+  archivedAt DateTime?
+  createdAt  DateTime  @default(now())
+
+  user    User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  kingdom Kingdom  @relation(fields: [kingdomId], references: [id])
+  rank    RankTier @relation(fields: [rankIndex], references: [index])
+
+  attributeWeights SkillAttributeWeight[]
+  quests           Quest[]
+  events           ActivityEvent[]
+
+  @@unique([userId, name])
+  @@index([userId, kingdomId])
+}
+
+model SkillAttributeWeight {
+  id      String       @id @default(cuid())
+  skillId String
+  key     AttributeKey
+  weight  Float        // relative; normalized at compute time (e.g. DEX 0.6, INT 0.4)
+
+  skill Skill @relation(fields: [skillId], references: [id], onDelete: Cascade)
+
+  @@unique([skillId, key])
+}
+
+// ───────────────────────────── QUESTS ─────────────────────────────
+
+model Quest {
+  id          String @id @default(cuid())
+  userId      String
+  kingdomId   String
+  skillId     String? // optional link: timed completion logs minutes to this skill
+
+  title       String
+  description String?
+  tier        Int     @default(1) // PLACEHOLDER: 1..5, scales default rewards
+  repeat      RepeatRule   @default(ONCE)
+  criteriaType    CriteriaType @default(MANUAL)
+  criteriaMinutes Int?         // target for *_MINUTES criteria, or default minutes for manual timed quests
+
+  baseXp   Int @default(0)
+  apReward Int @default(0)
+  mbReward Int @default(0)
+  ccReward Int @default(0)
+
+  templateKey String?  // set for seeded starter quests
+  isArchived  Boolean  @default(false)
+  createdAt   DateTime @default(now())
+
+  user    User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  kingdom Kingdom @relation(fields: [kingdomId], references: [id])
+  skill   Skill?  @relation(fields: [skillId], references: [id], onDelete: SetNull)
+
+  attributeRewards QuestAttributeReward[]
+  instances        QuestInstance[]
+
+  @@index([userId, isArchived])
+}
+
+model QuestAttributeReward {
+  id      String       @id @default(cuid())
+  questId String
+  key     AttributeKey
+  points  Float
+
+  quest Quest @relation(fields: [questId], references: [id], onDelete: Cascade)
+
+  @@unique([questId, key])
+}
+
+// One row per quest per period, created lazily on read (no cron needed for daily/weekly resets).
+model QuestInstance {
+  id       String      @id @default(cuid())
+  questId  String
+  userId   String
+  periodKey String     // "ONCE", "2026-11-11" (daily), "2026-W46" (weekly); computed in user's timezone
+  status   QuestStatus @default(ACTIVE)
+
+  progressMinutes Int       @default(0)
+  completedAt     DateTime?
+
+  quest  Quest           @relation(fields: [questId], references: [id], onDelete: Cascade)
+  user   User            @relation(fields: [userId], references: [id], onDelete: Cascade)
+  events ActivityEvent[]
+
+  @@unique([questId, periodKey])
+  @@index([userId, status])
+}
+
+// ───────────────────────────── EVENT LEDGER (immutable) ─────────────────────────────
+
+model ActivityEvent {
+  id             String       @id @default(cuid())
+  userId         String
+  kind           ActivityKind
+  idempotencyKey String
+
+  occurredAt DateTime // when it happened in the player's life (backfill limited to 48h)
+  createdAt  DateTime @default(now()) // server time
+
+  kingdomId       String?
+  skillId         String?
+  questInstanceId String?
+  minutes         Int?
+
+  baseXp           Int        @default(0)
+  healthTier       HealthTier // locked at event time
+  healthMultiplier Float
+  comebackBonus    Boolean    @default(false)
+  xpAwarded        Int        @default(0) // baseXp x multiplier
+  ruleVersion      Int        // which rule config produced this event (enables replay/rebalance)
+  note             String?
+
+  // Undo / corrections: a reversal event points at the original
+  reversalOfId String?        @unique
+  reversalOf   ActivityEvent? @relation("Reversal", fields: [reversalOfId], references: [id])
+  reversedBy   ActivityEvent? @relation("Reversal")
+
+  user          User           @relation(fields: [userId], references: [id], onDelete: Cascade)
+  kingdom       Kingdom?       @relation(fields: [kingdomId], references: [id])
+  skill         Skill?         @relation(fields: [skillId], references: [id])
+  questInstance QuestInstance? @relation(fields: [questInstanceId], references: [id])
+
+  attributeDeltas AttributeDelta[]
+  currencyTxns    CurrencyTransaction[]
+
+  @@unique([userId, idempotencyKey])
+  @@index([userId, occurredAt])
+  @@index([userId, skillId, occurredAt])
+  @@index([userId, kingdomId, occurredAt])
+}
+
+model AttributeDelta {
+  id      String       @id @default(cuid())
+  eventId String
+  key     AttributeKey
+  points  Float // already multiplied by healthMultiplier
+
+  event ActivityEvent @relation(fields: [eventId], references: [id], onDelete: Cascade)
+
+  @@index([eventId])
+}
+
+// ───────────────────────────── CURRENCIES (ledger + cached wallet) ─────────────────────────────
+
+model Wallet {
+  id      String   @id @default(cuid())
+  userId  String
+  currency Currency
+  balance Int      @default(0) // CACHE: sum of CurrencyTransaction.amount
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, currency])
+}
+
+model CurrencyTransaction {
+  id           String         @id @default(cuid())
+  userId       String
+  currency     Currency
+  amount       Int            // signed: + earn, - spend
+  balanceAfter Int
+  reason       CurrencyReason
+  eventId      String?        // ActivityEvent that caused it
+  rewardId     String?        // Reward Shop purchase
+  meta         Json?          // e.g. { "recovery": "SECOND_WIND" }
+  createdAt    DateTime       @default(now())
+
+  user   User           @relation(fields: [userId], references: [id], onDelete: Cascade)
+  event  ActivityEvent? @relation(fields: [eventId], references: [id])
+  reward Reward?        @relation(fields: [rewardId], references: [id])
+
+  @@index([userId, currency, createdAt])
+}
+
+// Mew Bucks Reward Shop: player-defined real-life treats [PROPOSED]
+model Reward {
+  id         String   @id @default(cuid())
+  userId     String
+  name       String
+  emoji      String?
+  costMb     Int
+  isArchived Boolean  @default(false)
+  createdAt  DateTime @default(now())
+
+  user         User                  @relation(fields: [userId], references: [id], onDelete: Cascade)
+  transactions CurrencyTransaction[]
+}
+
+// ───────────────────────────── VITALITY (replaces food/water/energy logging) ─────────────────────────────
+
+model HealthSnapshot {
+  id     String   @id @default(cuid())
+  userId String
+  date   DateTime @db.Date // user-local day
+
+  hp      Float
+  tier    HealthTier
+  rhythm  Float
+  body    Float
+  balance Float
+  spirit  Float? // null when no check-ins in window
+
+  modelVersion Int
+  updatedAt    DateTime @updatedAt
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, date])
+}
+
+// Optional 2-tap daily check-in; never required, never punished when skipped
+model CheckIn {
+  id        String   @id @default(cuid())
+  userId    String
+  date      DateTime @db.Date
+  energy    Int      // 1..5
+  mood      Int      // 1..5
+  createdAt DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, date])
+}
+
+// ───────────────────────────── ACHIEVEMENTS (Stage 2) ─────────────────────────────
+
+model Achievement {
+  id          String  @id @default(cuid())
+  key         String  @unique // e.g. "seven_day_vitality", "deep_work"
+  name        String
+  description String
+  criteria    Json    // declarative rule evaluated by rules/achievements.ts
+  isSecret    Boolean @default(false)
+  apReward    Int     @default(0)
+  mbReward    Int     @default(0)
+  ccReward    Int     @default(0)
+
+  unlocked UserAchievement[]
+}
+
+model UserAchievement {
+  id            String   @id @default(cuid())
+  userId        String
+  achievementId String
+  unlockedAt    DateTime @default(now())
+
+  user        User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+  achievement Achievement @relation(fields: [achievementId], references: [id])
+
+  @@unique([userId, achievementId])
+}
+
+// ───────────────────────────── STAGE 3 ─────────────────────────────
+
+// Weekly Chronicle: template + phrase-bank output stored as structured payload
+model ChronicleEntry {
+  id        String   @id @default(cuid())
+  userId    String
+  weekStart DateTime @db.Date
+  payload   Json     // { dominantKingdom, skillChanges, healthTrend, highlights, text }
+  createdAt DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, weekStart])
+}
+
+// Companion reflects the 7-14 day rolling HP average, not a single day
+model Companion {
+  id         String   @id @default(cuid())
+  userId     String   @unique
+  species    String
+  stage      Int      @default(0)
+  rollingHp  Float    @default(80)
+  updatedAt  DateTime @updatedAt
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+}

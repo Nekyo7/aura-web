@@ -1,0 +1,145 @@
+/**
+ * AURA RPG Design Tokens & Pixel Utility Classes
+ * project-context.md Sections 1, 2, 5
+ */
+
+@theme {
+  --font-pixel: var(--font-pixel), "Silkscreen", monospace;
+  --font-sans: var(--font-sans), "Inter", sans-serif;
+
+  /* RPG Health Tiers */
+  --color-tier-thriving: #10b981;
+  --color-tier-neutral: #f59e0b;
+  --color-tier-weakened: #ef4444;
+
+  /* 7 Kingdoms */
+  --color-kingdom-academy: #3b82f6;
+  --color-kingdom-career: #f59e0b;
+  --color-kingdom-alliance: #ec4899;
+  --color-kingdom-camp: #10b981;
+  --color-kingdom-creativity: #8b5cf6;
+  --color-kingdom-tavern: #ef4444;
+  --color-kingdom-treasury: #eab308;
+
+  /* Currencies */
+  --color-currency-ap: #8b5cf6;
+  --color-currency-mb: #10b981;
+  --color-currency-cc: #06b6d4;
+
+  /* 6 Core Attributes */
+  --color-attr-str: #ef4444;
+  --color-attr-agi: #10b981;
+  --color-attr-int: #3b82f6;
+  --color-attr-cha: #ec4899;
+  --color-attr-dex: #f59e0b;
+  --color-attr-wis: #8b5cf6;
+
+  /* Surfaces & Borders */
+  --color-pixel-bg: #090d16;
+  --color-pixel-surface: #121826;
+  --color-pixel-surface-raised: #1e2638;
+  --color-pixel-surface-sunken: #0b0f19;
+  --color-pixel-border: #2a3449;
+  --color-pixel-border-highlight: #475569;
+  --color-pixel-border-dark: #030712;
+}
+
+:root {
+  --tier-thriving: #10b981;
+  --tier-neutral: #f59e0b;
+  --tier-weakened: #ef4444;
+
+  --kingdom-academy: #3b82f6;
+  --kingdom-career: #f59e0b;
+  --kingdom-alliance: #ec4899;
+  --kingdom-camp: #10b981;
+  --kingdom-creativity: #8b5cf6;
+  --kingdom-tavern: #ef4444;
+  --kingdom-treasury: #eab308;
+
+  --currency-ap: #8b5cf6;
+  --currency-mb: #10b981;
+  --currency-cc: #06b6d4;
+}
+
+/* ───────────────────────────── PIXEL ART UTILITY CLASSES ───────────────────────────── */
+
+/* Chunky retro 3D container */
+.pixel-box {
+  background-color: var(--color-pixel-surface, #121826);
+  border: 2px solid #000000;
+  box-shadow:
+    inset 2px 2px 0px 0px rgba(255, 255, 255, 0.12),
+    inset -2px -2px 0px 0px rgba(0, 0, 0, 0.4),
+    3px 3px 0px 0px #000000;
+}
+
+/* Sunken retro container for inputs, progress tracks */
+.pixel-box-sunken {
+  background-color: var(--color-pixel-surface-sunken, #0b0f19);
+  border: 2px solid #000000;
+  box-shadow:
+    inset 2px 2px 0px 0px rgba(0, 0, 0, 0.5),
+    inset -2px -2px 0px 0px rgba(255, 255, 255, 0.08);
+}
+
+/* Chunky tap-friendly pixel button with 3D press feel */
+.pixel-btn {
+  font-family: var(--font-pixel), monospace;
+  border: 2px solid #000000;
+  box-shadow:
+    0 4px 0 0 #000000,
+    inset 2px 2px 0 0 rgba(255, 255, 255, 0.3),
+    inset -2px -2px 0 0 rgba(0, 0, 0, 0.35);
+  transition: transform 0.05s steps(2), box-shadow 0.05s steps(2);
+  user-select: none;
+  touch-action: manipulation;
+}
+
+.pixel-btn:hover:not(:disabled) {
+  filter: brightness(1.1);
+}
+
+.pixel-btn:active:not(:disabled) {
+  transform: translateY(3px);
+  box-shadow:
+    0 1px 0 0 #000000,
+    inset 2px 2px 0 0 rgba(0, 0, 0, 0.3);
+}
+
+.pixel-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  filter: grayscale(0.6);
+}
+
+/* Pixel text readability */
+.font-pixel {
+  font-family: var(--font-pixel), monospace;
+}
+
+.pixel-text-shadow {
+  text-shadow: 1px 1px 0 #000000, -1px -1px 0 #000000, 1px -1px 0 #000000, -1px 1px 0 #000000;
+}
+
+/* Pixel segmented progress bar with stepped animation */
+.pixel-progress-fill {
+  transition: width 0.35s steps(10);
+  background-image: repeating-linear-gradient(
+    90deg,
+    transparent,
+    transparent 6px,
+    rgba(0, 0, 0, 0.25) 6px,
+    rgba(0, 0, 0, 0.25) 8px
+  );
+}
+
+/* Subtle CRT scanline overlay (optional ambient atmosphere) */
+.scanlines {
+  background: linear-gradient(
+    rgba(18, 24, 38, 0) 50%,
+    rgba(0, 0, 0, 0.2) 50%
+  );
+  background-size: 100% 4px;
+}
+
