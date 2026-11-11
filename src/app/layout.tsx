@@ -1,6 +1,6 @@
 import type { Metadata, Viewport } from "next";
 import { Silkscreen, Inter } from "next/font/google";
-import "../styles/globals.css";
+import "@/styles/globals.css";
 import { Providers } from "@/client/providers";
 import { RegisterPwa } from "@/components/pwa/RegisterPwa";
 
