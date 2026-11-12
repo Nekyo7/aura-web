@@ -38,7 +38,7 @@ export const viewport: Viewport = {
   initialScale: 1,
   maximumScale: 1,
   userScalable: false,
-  themeColor: "#8b5cf6",
+  themeColor: "#000000",
 };
 
 export default function RootLayout({
@@ -50,13 +50,13 @@ export default function RootLayout({
     <html lang="en" className={`${silkscreen.variable} ${inter.variable} dark`}>
       <head>
         <link rel="manifest" href="/manifest.webmanifest" />
-        <meta name="theme-color" content="#8b5cf6" />
+        <meta name="theme-color" content="#000000" />
         <meta name="apple-mobile-web-app-capable" content="yes" />
         <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
         <meta name="apple-mobile-web-app-title" content="AURA" />
         <link rel="apple-touch-icon" href="/icons/apple-touch-icon.png" />
       </head>
-      <body className="bg-pixel-bg text-gray-100 font-sans min-h-screen selection:bg-purple-600 selection:text-white antialiased">
+      <body className="bg-black text-white font-sans min-h-screen selection:bg-[#b026ff] selection:text-black antialiased">
         <RegisterPwa />
         <Providers>{children}</Providers>
       </body>

@@ -4,36 +4,34 @@ import React, { useState } from "react";
 import { trpc } from "@/client/trpc";
 import { PixelCard } from "@/components/pixel/PixelCard";
 import { PixelButton } from "@/components/pixel/PixelButton";
+import { Sparkles, Bot, Flame, Heart } from "lucide-react";
 
 const MOOD_THEMES = {
   THRIVING: {
     badge: "THRIVING",
-    badgeColor: "bg-emerald-950 text-emerald-300 border-emerald-500",
-    containerBg: "from-amber-950/20 via-purple-950/20 to-emerald-950/30",
-    glow: "shadow-[0_0_15px_rgba(52,211,153,0.35)]",
+    badgeColor: "text-[#00ff66] border-[#00ff66]/50 bg-black",
+    containerBg: "from-black via-[#0a0a0a] to-black",
     animationClass: "animate-bounce",
     statusText: "Joyful & Energetic",
   },
   NEUTRAL: {
     badge: "BALANCED",
-    badgeColor: "bg-amber-950 text-amber-300 border-amber-500",
-    containerBg: "from-slate-900 via-purple-950/20 to-slate-900",
-    glow: "shadow-[0_0_10px_rgba(245,158,11,0.25)]",
+    badgeColor: "text-[#ffc600] border-[#ffc600]/50 bg-black",
+    containerBg: "from-black via-[#0a0a0a] to-black",
     animationClass: "animate-pulse",
     statusText: "Calm & Attentive",
   },
   WEAKENED: {
     badge: "RESTING",
-    badgeColor: "bg-rose-950 text-rose-300 border-rose-500",
-    containerBg: "from-slate-950 via-rose-950/20 to-slate-950",
-    glow: "shadow-[0_0_8px_rgba(244,63,94,0.2)]",
+    badgeColor: "text-[#ff3344] border-[#ff3344]/50 bg-black",
+    containerBg: "from-black via-[#0a0a0a] to-black",
     animationClass: "opacity-75",
     statusText: "Drowsy & In Repose",
   },
 };
 
 export function CompanionSprite() {
-  const { data: companion, isLoading, refetch } = trpc.companion.get.useQuery();
+  const { data: companion, isLoading } = trpc.companion.get.useQuery();
   const [petReaction, setPetReaction] = useState<string | null>(null);
 
   const petMutation = trpc.companion.pet.useMutation({
@@ -46,7 +44,7 @@ export function CompanionSprite() {
   if (isLoading) {
     return (
       <PixelCard variant="default" padding="sm" className="animate-pulse">
-        <div className="h-16 bg-slate-800 w-full" />
+        <div className="h-16 bg-neutral-900 w-full" />
       </PixelCard>
     );
   }
@@ -55,47 +53,60 @@ export function CompanionSprite() {
 
   const theme = MOOD_THEMES[companion.mood] ?? MOOD_THEMES.NEUTRAL;
 
+  const getFamiliarIcon = (stage: number) => {
+    switch (stage) {
+      case 0:
+        return <Bot className="w-8 h-8 text-[#00e5ff]" strokeWidth={1.5} />;
+      case 1:
+        return <Bot className="w-8 h-8 text-[#b026ff]" strokeWidth={1.5} />;
+      default:
+        return <Flame className="w-8 h-8 text-[#ffc600]" strokeWidth={1.5} />;
+    }
+  };
+
   return (
     <PixelCard
       variant="default"
       title="Aura Familiar"
       headerRight={
-        <span className={`font-pixel text-[9px] px-2 py-0.5 border ${theme.badgeColor}`}>
+        <span className={`font-sans text-[10px] px-2 py-0.5 border ${theme.badgeColor} font-semibold uppercase tracking-wider`}>
           {theme.badge}
         </span>
       }
       padding="md"
     >
-      <div className={`p-3 bg-linear-to-b ${theme.containerBg} border border-black mb-3 relative overflow-hidden`}>
+      <div className="p-3 bg-[#0a0a0a] border border-[#222222] mb-3 relative overflow-hidden">
         {/* Floating Pet Reaction Toast */}
         {petReaction && (
-          <div className="absolute top-2 inset-x-4 z-20 text-center py-1 px-2 bg-yellow-400 text-black font-pixel text-[10px] font-bold border-2 border-black animate-bounce shadow-md">
+          <div className="absolute top-2 inset-x-4 z-20 text-center py-1 px-2 bg-[#ffc600] text-black font-sans text-xs font-bold border border-black animate-bounce shadow-none">
             {petReaction}
           </div>
         )}
 
-        <div className="flex items-center gap-4">
-          {/* Animated Pixel Sprite Stage Container */}
+        <div className="flex items-center gap-3">
+          {/* Animated Monochrome Sprite Stage Container */}
           <div
-            className={`w-20 h-20 shrink-0 bg-[#090d16] border-2 border-black flex flex-col items-center justify-center relative select-none ${theme.glow}`}
+            className="w-16 h-16 shrink-0 bg-[#0e0e0e] border border-[#333333] border-t-2 border-t-[#b026ff] flex flex-col items-center justify-center relative select-none"
           >
             {/* Ambient Aura Particles */}
             {companion.mood === "THRIVING" && (
-              <span className="absolute -top-1 -right-1 text-xs animate-ping">✨</span>
+              <span className="absolute -top-1 -right-1 text-xs animate-ping">
+                <Sparkles className="w-3 h-3 text-[#00ff66]" strokeWidth={1.5} />
+              </span>
             )}
             {companion.mood === "WEAKENED" && (
-              <span className="absolute -top-1 -right-1 text-xs animate-pulse text-blue-300 font-pixel">
+              <span className="absolute -top-1 -right-1 text-[9px] animate-pulse text-[#00e5ff] font-pixel">
                 zZz
               </span>
             )}
 
-            {/* The Creature Sprite */}
-            <div className={`text-4xl transition-transform ${theme.animationClass}`}>
-              {companion.spriteEmoji}
+            {/* The Creature Sprite (Lucide Monochrome Icon) */}
+            <div className={`transition-transform ${theme.animationClass}`}>
+              {getFamiliarIcon(companion.stage)}
             </div>
 
             {/* Stage Label Tag */}
-            <span className="absolute -bottom-2 px-1.5 py-0.2 bg-purple-900 border border-black text-purple-200 font-pixel text-[8px] font-bold">
+            <span className="absolute -bottom-2 px-1 py-0.2 bg-[#0a0a0a] border border-[#333333] text-[#b026ff] font-sans text-[8px] font-bold uppercase tracking-wider leading-none">
               STAGE {companion.stage}
             </span>
           </div>
@@ -107,31 +118,31 @@ export function CompanionSprite() {
                 <h4 className="font-pixel text-xs font-bold text-white truncate">
                   {companion.stageTitle}
                 </h4>
-                <span className="font-pixel text-[9px] text-gray-400">
+                <span className="font-sans text-[10px] text-neutral-400">
                   {companion.formName}
                 </span>
               </div>
 
               {/* 14-Day Rolling Health Vitality indicator */}
-              <div className="flex items-center gap-2 mb-2">
-                <span className="font-pixel text-[9px] text-gray-400">
-                  14d Avg Vitality:
+              <div className="flex items-center gap-2 mb-1.5">
+                <span className="font-sans text-[10px] text-neutral-400">
+                  14d Avg:
                 </span>
-                <span className="font-pixel text-[10px] font-bold text-yellow-300">
+                <span className="font-pixel text-xs font-bold text-[#ffc600]">
                   {companion.rollingHp} HP
                 </span>
-                <span className="font-pixel text-[9px] text-gray-500">
-                  ({companion.snapshotDaysCount} days tracked)
+                <span className="font-sans text-[10px] text-neutral-500">
+                  ({companion.snapshotDaysCount}d)
                 </span>
               </div>
             </div>
 
             {/* Speech Dialogue Bubble */}
-            <div className="p-2 bg-[#090d16] border border-black/80 relative text-[11px] font-sans text-gray-300 leading-snug">
-              <span className="font-pixel text-[8px] text-purple-400 block mb-0.5 uppercase tracking-wide">
+            <div className="p-2 bg-[#0e0e0e] border border-[#222222] relative text-xs font-sans text-neutral-300 leading-snug">
+              <span className="font-sans text-[9px] text-[#b026ff] block mb-0.5 uppercase tracking-wide font-semibold">
                 Familiar Echo:
               </span>
-              "{companion.dialogue}"
+              &ldquo;{companion.dialogue}&rdquo;
             </div>
           </div>
         </div>
@@ -139,7 +150,7 @@ export function CompanionSprite() {
 
       {/* Interactive Controls */}
       <div className="flex items-center justify-between gap-2 pt-1">
-        <span className="font-pixel text-[9px] text-gray-400">
+        <span className="font-sans text-[10px] text-neutral-400">
           Reflects 14-day rolling discipline average
         </span>
         <PixelButton
@@ -147,7 +158,7 @@ export function CompanionSprite() {
           size="sm"
           onClick={() => petMutation.mutate()}
           disabled={petMutation.isPending}
-          icon={<span>🐾</span>}
+          icon={<Heart className="w-3.5 h-3.5" strokeWidth={1.5} />}
         >
           Pet Companion
         </PixelButton>

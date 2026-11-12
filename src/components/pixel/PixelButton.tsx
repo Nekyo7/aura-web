@@ -1,6 +1,7 @@
 "use client";
 
 import React from "react";
+import { Loader2 } from "lucide-react";
 
 export type PixelButtonVariant =
   | "primary"
@@ -21,21 +22,21 @@ export interface PixelButtonProps
 
 const variantClasses: Record<PixelButtonVariant, string> = {
   primary:
-    "bg-purple-600 hover:bg-purple-500 text-white border-black active:bg-purple-700",
-  success:
-    "bg-emerald-600 hover:bg-emerald-500 text-white border-black active:bg-emerald-700",
-  danger:
-    "bg-rose-600 hover:bg-rose-500 text-white border-black active:bg-rose-700",
-  warning:
-    "bg-amber-500 hover:bg-amber-400 text-gray-950 font-bold border-black active:bg-amber-600",
+    "bg-[#b026ff] text-black border border-[#b026ff] hover:bg-black hover:text-[#b026ff] active:bg-black active:text-[#b026ff]",
   neutral:
-    "bg-slate-800 hover:bg-slate-700 text-slate-200 border-black active:bg-slate-900",
+    "bg-white text-black border border-white hover:bg-black hover:text-white active:bg-black active:text-white",
+  warning:
+    "bg-[#ffc600] text-black border border-[#ffc600] hover:bg-black hover:text-[#ffc600] active:bg-black active:text-[#ffc600]",
+  success:
+    "bg-[#00ff66] text-black border border-[#00ff66] hover:bg-black hover:text-[#00ff66] active:bg-black active:text-[#00ff66]",
+  danger:
+    "bg-[#ff3344] text-black border border-[#ff3344] hover:bg-black hover:text-[#ff3344] active:bg-black active:text-[#ff3344]",
 };
 
 const sizeClasses: Record<PixelButtonSize, string> = {
-  sm: "px-3 py-1.5 text-xs min-h-[36px]",
-  md: "px-5 py-2.5 text-sm min-h-[44px]",
-  lg: "px-6 py-3.5 text-base min-h-[52px]",
+  sm: "px-2.5 py-1 text-xs min-h-[34px]",
+  md: "px-3.5 py-2 text-xs sm:text-sm min-h-[40px]",
+  lg: "px-4.5 py-2.5 text-sm min-h-[44px]",
 };
 
 export const PixelButton: React.FC<PixelButtonProps> = ({
@@ -52,23 +53,24 @@ export const PixelButton: React.FC<PixelButtonProps> = ({
     <button
       disabled={disabled || isLoading}
       className={`
-        pixel-btn
-        inline-flex items-center justify-center gap-2
-        cursor-pointer font-pixel tracking-wide
+        rounded-none shadow-none
+        inline-flex items-center justify-center gap-1.5
+        cursor-pointer font-sans font-bold tracking-wider
         select-none uppercase text-center
+        transition-colors duration-100
         ${variantClasses[variant]}
         ${sizeClasses[size]}
+        ${disabled || isLoading ? "opacity-35 cursor-not-allowed pointer-events-none" : ""}
         ${className}
       `}
       {...props}
     >
       {isLoading ? (
-        <span className="inline-block animate-spin mr-1">⌛</span>
+        <Loader2 className="w-3.5 h-3.5 animate-spin mr-1 shrink-0" strokeWidth={2} />
       ) : icon ? (
-        <span className="shrink-0">{icon}</span>
+        <span className="shrink-0 flex items-center">{icon}</span>
       ) : null}
       <span>{children}</span>
     </button>
   );
 };
-

@@ -8,19 +8,19 @@ const STAGE_CONFIG: Record<number, { title: string; form: string; spriteEmoji: s
   0: {
     title: "Lumina Hatchling",
     form: "Nascent Sprout",
-    spriteEmoji: "🐣",
+    spriteEmoji: "SPROUT",
     description: "A tender spark of life, eagerly absorbing the echoes of your daily habits.",
   },
   1: {
     title: "Aura Familiar",
     form: "Loyal Fox Familiar",
-    spriteEmoji: "🦊",
+    spriteEmoji: "FOX",
     description: "A quick-witted, nimble guide bound to your training and discipline.",
   },
   2: {
     title: "Celestial Sovereign",
     form: "Ascendant Guardian",
-    spriteEmoji: "✨🦊✨",
+    spriteEmoji: "GUARDIAN",
     description: "A luminous celestial guardian radiating raw aura and enduring vitality.",
   },
 };
@@ -170,10 +170,10 @@ export const companionRouter = router({
     }
 
     const reactions = [
-      "♥ Purrs with ethereal energy! ♥",
-      "✨ Emits a cheerful ring of star particles! ✨",
-      "🐾 Playfully nuzzles your hand! 🐾",
-      "🌟 Your companion's aura glows brighter! 🌟",
+      "Purrs with ethereal energy!",
+      "Emits a cheerful ring of light particles!",
+      "Playfully nuzzles your hand!",
+      "Your companion's aura glows brighter!",
     ];
 
     return {

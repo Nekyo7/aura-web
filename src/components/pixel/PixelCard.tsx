@@ -2,74 +2,137 @@
 
 import React from "react";
 
-export type PixelCardVariant = "default" | "sunken" | "highlight" | "tier-thriving" | "tier-neutral" | "tier-weakened";
+export type PixelCardVariant =
+  | "default"
+  | "highlight"
+  | "sunken"
+  | "tier-thriving"
+  | "tier-neutral"
+  | "tier-weakened";
+
+export type PixelCardTitleBarColor =
+  | "purple"
+  | "white"
+  | "gold"
+  | "green"
+  | "red"
+  | "neutral";
 
 export interface PixelCardProps extends React.HTMLAttributes<HTMLDivElement> {
   title?: string;
+  titleBar?: boolean | string;
+  titleBarColor?: PixelCardTitleBarColor;
   headerRight?: React.ReactNode;
   variant?: PixelCardVariant;
   padding?: "none" | "sm" | "md" | "lg";
 }
 
-const variantStyles: Record<PixelCardVariant, string> = {
-  default: "pixel-box bg-[#121826] text-gray-100",
-  sunken: "pixel-box-sunken bg-[#0b0f19] text-gray-200",
-  highlight:
-    "pixel-box bg-[#151c2d] text-gray-100 ring-2 ring-purple-500/50 shadow-[0_0_15px_rgba(168,85,247,0.2)]",
-  "tier-thriving":
-    "pixel-box bg-[#0d1a18] border-emerald-900 text-gray-100 ring-1 ring-emerald-500/40",
-  "tier-neutral":
-    "pixel-box bg-[#1c180e] border-amber-900 text-gray-100 ring-1 ring-amber-500/40",
-  "tier-weakened":
-    "pixel-box bg-[#1c0f0f] border-rose-900 text-gray-100 ring-1 ring-rose-500/40",
+const variantStyles: Record<
+  PixelCardVariant,
+  { container: string; accentColor: string; dotColor: string }
+> = {
+  default: {
+    container: "border border-[#333333] border-t-2 border-t-[#b026ff] bg-[#0A0A0A] text-white",
+    accentColor: "text-[#b026ff]",
+    dotColor: "bg-[#b026ff]",
+  },
+  highlight: {
+    container: "border border-[#333333] border-t-2 border-t-white bg-[#0A0A0A] text-white",
+    accentColor: "text-white",
+    dotColor: "bg-white",
+  },
+  sunken: {
+    container: "border border-[#262626] border-t-2 border-t-neutral-600 bg-[#060606] text-neutral-300",
+    accentColor: "text-neutral-400",
+    dotColor: "bg-neutral-500",
+  },
+  "tier-thriving": {
+    container: "border border-[#333333] border-t-2 border-t-[#00ff66] bg-[#0A0A0A] text-white",
+    accentColor: "text-[#00ff66]",
+    dotColor: "bg-[#00ff66]",
+  },
+  "tier-neutral": {
+    container: "border border-[#333333] border-t-2 border-t-[#ffc600] bg-[#0A0A0A] text-white",
+    accentColor: "text-[#ffc600]",
+    dotColor: "bg-[#ffc600]",
+  },
+  "tier-weakened": {
+    container: "border border-[#333333] border-t-2 border-t-[#ff3344] bg-[#0A0A0A] text-white",
+    accentColor: "text-[#ff3344]",
+    dotColor: "bg-[#ff3344]",
+  },
+};
+
+const titleBarColorMap: Record<PixelCardTitleBarColor, { text: string; dot: string }> = {
+  purple: { text: "text-[#b026ff]", dot: "bg-[#b026ff]" },
+  white: { text: "text-white", dot: "bg-white" },
+  gold: { text: "text-[#ffc600]", dot: "bg-[#ffc600]" },
+  green: { text: "text-[#00ff66]", dot: "bg-[#00ff66]" },
+  red: { text: "text-[#ff3344]", dot: "bg-[#ff3344]" },
+  neutral: { text: "text-neutral-300", dot: "bg-neutral-400" },
 };
 
 const paddingStyles = {
   none: "p-0",
-  sm: "p-3",
-  md: "p-4 sm:p-5",
-  lg: "p-6 sm:p-7",
+  sm: "p-2 sm:p-2.5",
+  md: "p-3 sm:p-4",
+  lg: "p-4 sm:p-5",
 };
 
 export const PixelCard: React.FC<PixelCardProps> = ({
   children,
   title,
+  titleBar,
+  titleBarColor,
   headerRight,
   variant = "default",
   padding = "md",
   className = "",
   ...props
 }) => {
+  const currentVariant = variantStyles[variant] ?? variantStyles.default;
+  const titleText = typeof titleBar === "string" ? titleBar : title;
+  const showTitleBar = Boolean(titleBar || title);
+
+  const colors = titleBarColor
+    ? titleBarColorMap[titleBarColor]
+    : { text: currentVariant.accentColor, dot: currentVariant.dotColor };
+
   return (
     <div
       className={`
-        relative rounded-none
-        ${variantStyles[variant]}
-        ${paddingStyles[padding]}
+        relative rounded-none shadow-none overflow-hidden
+        ${currentVariant.container}
         ${className}
       `}
       {...props}
     >
-      {/* Optional decorative corner pixels */}
-      <span className="absolute -top-1 -left-1 w-1.5 h-1.5 bg-black pointer-events-none" />
-      <span className="absolute -top-1 -right-1 w-1.5 h-1.5 bg-black pointer-events-none" />
-      <span className="absolute -bottom-1 -left-1 w-1.5 h-1.5 bg-black pointer-events-none" />
-      <span className="absolute -bottom-1 -right-1 w-1.5 h-1.5 bg-black pointer-events-none" />
+      {/* Sleek Noctra Terminal Title Bar */}
+      {showTitleBar && (
+        <div className="px-3 py-1.5 flex items-center justify-between border-b border-[#222222] bg-[#0e0e0e] select-none">
+          <div className="flex items-center gap-2 font-pixel text-xs font-bold uppercase tracking-wider truncate">
+            <span className={`inline-block w-1.5 h-1.5 rounded-full ${colors.dot} shrink-0`} />
+            <span className="text-neutral-200 truncate">{titleText}</span>
+          </div>
 
-      {(title || headerRight) && (
-        <div className="flex items-center justify-between pb-3 mb-3 border-b-2 border-black/60">
-          {title && (
-            <h3 className="font-pixel text-xs sm:text-sm tracking-wider uppercase text-purple-300 flex items-center gap-2">
-              <span className="inline-block w-2 h-2 bg-purple-500" />
-              {title}
-            </h3>
-          )}
-          {headerRight && <div className="shrink-0">{headerRight}</div>}
+          <div className="flex items-center gap-1 shrink-0 ml-2">
+            {headerRight ? (
+              <div>{headerRight}</div>
+            ) : (
+              <div className="flex items-center gap-1 opacity-50">
+                <span className="w-1.5 h-1.5 rounded-full bg-neutral-600" />
+                <span className="w-1.5 h-1.5 rounded-full bg-neutral-600" />
+                <span className="w-1.5 h-1.5 rounded-full bg-neutral-600" />
+              </div>
+            )}
+          </div>
         </div>
       )}
 
-      {children}
+      {/* Body content with refined Noctra mobile padding */}
+      <div className={paddingStyles[padding]}>
+        {children}
+      </div>
     </div>
   );
 };
-

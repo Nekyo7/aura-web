@@ -4,6 +4,18 @@ import React, { useState } from "react";
 import { trpc } from "@/client/trpc";
 import { PixelCard } from "@/components/pixel/PixelCard";
 import { PixelButton } from "@/components/pixel/PixelButton";
+import {
+  Activity,
+  Dumbbell,
+  Zap,
+  Brain,
+  BookOpen,
+  Sparkles,
+  Target,
+  Check,
+  X,
+  AlertTriangle,
+} from "lucide-react";
 
 interface CreateSkillModalProps {
   isOpen: boolean;
@@ -11,12 +23,12 @@ interface CreateSkillModalProps {
 }
 
 const ATTRIBUTES = [
-  { key: "STR", name: "Strength", icon: "⚔️", color: "text-rose-400", desc: "Physical power & lifts" },
-  { key: "AGI", name: "Agility", icon: "⚡", color: "text-amber-400", desc: "Speed, cardio & reflex" },
-  { key: "INT", name: "Intelligence", icon: "🧠", color: "text-blue-400", desc: "Logic, code & theory" },
-  { key: "WIS", name: "Wisdom", icon: "📜", color: "text-emerald-400", desc: "Insight, reading & depth" },
-  { key: "CHA", name: "Charisma", icon: "✨", color: "text-purple-400", desc: "Social, speech & art" },
-  { key: "DEX", name: "Dexterity", icon: "🎯", color: "text-teal-400", desc: "Precision, music & craft" },
+  { key: "STR", name: "Strength", icon: Dumbbell, color: "text-[#ff3344]", desc: "Physical power & lifts" },
+  { key: "AGI", name: "Agility", icon: Zap, color: "text-[#ffc600]", desc: "Speed, cardio & reflex" },
+  { key: "INT", name: "Intelligence", icon: Brain, color: "text-[#00e5ff]", desc: "Logic, code & theory" },
+  { key: "WIS", name: "Wisdom", icon: BookOpen, color: "text-[#00ff66]", desc: "Insight, reading & depth" },
+  { key: "CHA", name: "Charisma", icon: Sparkles, color: "text-[#ff2a85]", desc: "Social, speech & art" },
+  { key: "DEX", name: "Dexterity", icon: Target, color: "text-[#b026ff]", desc: "Precision, music & craft" },
 ] as const;
 
 export const CreateSkillModal: React.FC<CreateSkillModalProps> = ({
@@ -118,50 +130,51 @@ export const CreateSkillModal: React.FC<CreateSkillModalProps> = ({
           headerRight={
             <button
               onClick={onClose}
-              className="text-gray-400 hover:text-white font-pixel text-xs px-2 py-0.5 border border-black bg-slate-900"
+              className="text-neutral-400 hover:text-white text-xs p-1 border border-[#333333] bg-[#0a0a0a]"
             >
-              ✕
+              <X className="w-3.5 h-3.5" strokeWidth={2} />
             </button>
           }
         >
-          <form onSubmit={handleSubmit} className="flex flex-col gap-4">
+          <form onSubmit={handleSubmit} className="flex flex-col gap-4 font-sans">
             {errorMsg && (
-              <div className="p-2 border-2 border-rose-600 bg-rose-950/70 text-rose-200 text-xs font-pixel">
-                ⚠️ {errorMsg}
+              <div className="p-2.5 border border-rose-600/70 bg-rose-950/40 text-rose-200 text-xs flex items-center gap-1.5">
+                <AlertTriangle className="w-4 h-4 text-rose-400 shrink-0" strokeWidth={1.5} />
+                <span>{errorMsg}</span>
               </div>
             )}
 
             {/* Skill Name */}
             <div>
-              <label className="block font-pixel text-[11px] text-gray-300 uppercase tracking-wider mb-1.5">
+              <label className="block text-xs font-semibold text-neutral-300 uppercase tracking-wider mb-1.5">
                 Skill Name
               </label>
               <input
                 type="text"
-                placeholder="e.g. Pixel Art, Rust Programming, Kettlebell..."
+                placeholder="e.g. TypeScript Mastery, Running 5k, Oil Painting..."
                 value={name}
                 onChange={(e) => setName(e.target.value)}
                 maxLength={40}
-                className="w-full bg-[#0b0f19] border-2 border-black p-2.5 font-pixel text-xs text-white placeholder-gray-500 focus:outline-none focus:border-purple-500"
+                className="w-full bg-[#0a0a0a] border border-[#333333] p-2.5 text-xs text-white placeholder-neutral-500 focus:outline-none focus:border-[#b026ff]"
               />
             </div>
 
             {/* Kingdom Realm */}
             <div>
-              <label className="block font-pixel text-[11px] text-gray-300 uppercase tracking-wider mb-1.5">
-                Primary Kingdom Sphere
+              <label className="block text-xs font-semibold text-neutral-300 uppercase tracking-wider mb-1.5">
+                Kingdom Sphere
               </label>
               {loadingKingdoms ? (
-                <div className="font-pixel text-xs text-gray-400">Loading kingdoms...</div>
+                <div className="text-xs text-neutral-400">Loading kingdoms...</div>
               ) : (
                 <select
                   value={kingdomId}
                   onChange={(e) => setKingdomId(e.target.value)}
-                  className="w-full bg-[#0b0f19] border-2 border-black p-2.5 font-pixel text-xs text-white focus:outline-none focus:border-purple-500"
+                  className="w-full bg-[#0a0a0a] border border-[#333333] p-2.5 text-xs text-white focus:outline-none focus:border-[#b026ff]"
                 >
                   {kingdoms?.map((k) => (
                     <option key={k.id} value={k.id}>
-                      {k.name} ({k.tagline ?? "Sphere"})
+                      {k.name} ({k.tagline ?? "Realm"})
                     </option>
                   ))}
                 </select>
@@ -169,36 +182,39 @@ export const CreateSkillModal: React.FC<CreateSkillModalProps> = ({
             </div>
 
             {/* Physical Activity (Body Component) Toggle */}
-            <div className="p-3 bg-[#0b0f19] border-2 border-black flex items-center justify-between cursor-pointer"
-                 onClick={() => setCountsAsBody(!countsAsBody)}>
+            <div
+              className="p-3 bg-[#0a0a0a] border border-[#333333] flex items-center justify-between cursor-pointer hover:border-neutral-500 transition-colors"
+              onClick={() => setCountsAsBody(!countsAsBody)}
+            >
               <div className="flex flex-col pr-2">
-                <span className="font-pixel text-xs text-emerald-300 font-bold flex items-center gap-1.5">
-                  <span>🏃</span> Physical Activity (Body)
+                <span className="text-xs text-emerald-300 font-bold flex items-center gap-1.5">
+                  <Activity className="w-3.5 h-3.5 text-emerald-400" strokeWidth={1.5} />
+                  <span>Physical Activity (Body)</span>
                 </span>
-                <span className="text-[10px] text-gray-400 font-sans leading-tight mt-0.5">
+                <span className="text-[11px] text-neutral-400 leading-tight mt-0.5">
                   Feeds the 7-day Vitality &quot;Body&quot; health bar automatically when logged.
                 </span>
               </div>
               <div
-                className={`w-6 h-6 border-2 border-black flex items-center justify-center font-pixel text-xs shrink-0 select-none ${
-                  countsAsBody ? "bg-emerald-600 text-white" : "bg-slate-900 text-transparent"
+                className={`w-5 h-5 border border-[#333333] flex items-center justify-center shrink-0 select-none ${
+                  countsAsBody ? "bg-emerald-600 text-white" : "bg-[#141414] text-transparent"
                 }`}
               >
-                ✓
+                <Check className="w-3.5 h-3.5" strokeWidth={2.5} />
               </div>
             </div>
 
             {/* Attribute Distribution */}
             <div>
-              <div className="flex items-center justify-between mb-2">
-                <label className="block font-pixel text-[11px] text-gray-300 uppercase tracking-wider">
+              <div className="flex items-center justify-between mb-1.5">
+                <label className="block text-xs font-semibold text-neutral-300 uppercase tracking-wider">
                   Attribute Allocation
                 </label>
                 <span className="font-pixel text-[10px] text-purple-300">
                   Total Weight: {totalWeight}
                 </span>
               </div>
-              <p className="text-[10px] text-gray-400 font-sans mb-3">
+              <p className="text-[11px] text-neutral-400 mb-3">
                 Tap (+) or (-) to set which RPG attributes grow when practicing this skill.
               </p>
 
@@ -206,20 +222,24 @@ export const CreateSkillModal: React.FC<CreateSkillModalProps> = ({
                 {ATTRIBUTES.map((attr) => {
                   const val = weights[attr.key] ?? 0;
                   const pct = totalWeight > 0 ? Math.round((val / totalWeight) * 100) : 0;
+                  const Icon = attr.icon;
 
                   return (
                     <div
                       key={attr.key}
-                      className={`p-2 border-2 border-black flex flex-col justify-between transition-colors ${
-                        val > 0 ? "bg-[#151a28] border-purple-900" : "bg-[#0b0f19]"
+                      className={`p-2.5 border flex flex-col justify-between transition-colors ${
+                        val > 0
+                          ? "bg-[#0a0a0a] border-purple-900 border-t-2 border-t-[#b026ff]"
+                          : "bg-[#0a0a0a] border-[#222222]"
                       }`}
                     >
-                      <div className="flex items-center justify-between mb-1">
-                        <span className={`font-pixel text-xs font-bold ${attr.color} flex items-center gap-1`}>
-                          <span>{attr.icon}</span> {attr.key}
+                      <div className="flex items-center justify-between mb-1.5">
+                        <span className={`text-xs font-semibold ${attr.color} flex items-center gap-1.5`}>
+                          <Icon className="w-3.5 h-3.5" strokeWidth={1.5} />
+                          <span>{attr.key}</span>
                         </span>
                         {val > 0 && (
-                          <span className="font-pixel text-[9px] px-1 bg-purple-950 border border-purple-800 text-purple-300">
+                          <span className="font-pixel text-[9px] px-1 bg-[#141414] border border-purple-800 text-purple-300">
                             {pct}%
                           </span>
                         )}
@@ -230,7 +250,7 @@ export const CreateSkillModal: React.FC<CreateSkillModalProps> = ({
                           type="button"
                           onClick={() => handleWeightChange(attr.key, -1)}
                           disabled={val <= 0}
-                          className="w-7 h-7 bg-slate-800 hover:bg-slate-700 disabled:opacity-40 border border-black font-pixel text-xs text-white"
+                          className="w-7 h-7 bg-[#141414] hover:bg-[#222222] disabled:opacity-30 border border-[#333333] text-xs text-white flex items-center justify-center font-bold"
                         >
                           -
                         </button>
@@ -241,7 +261,7 @@ export const CreateSkillModal: React.FC<CreateSkillModalProps> = ({
                           type="button"
                           onClick={() => handleWeightChange(attr.key, 1)}
                           disabled={val >= 5}
-                          className="w-7 h-7 bg-purple-700 hover:bg-purple-600 disabled:opacity-40 border border-black font-pixel text-xs text-white"
+                          className="w-7 h-7 bg-[#b026ff] hover:bg-[#c24bf8] disabled:opacity-30 border border-[#b026ff] text-xs text-black flex items-center justify-center font-bold"
                         >
                           +
                         </button>
@@ -253,7 +273,7 @@ export const CreateSkillModal: React.FC<CreateSkillModalProps> = ({
             </div>
 
             {/* Actions */}
-            <div className="flex gap-2 pt-2">
+            <div className="flex gap-2 pt-2 border-t border-[#222222]">
               <PixelButton
                 type="button"
                 variant="neutral"
@@ -270,7 +290,7 @@ export const CreateSkillModal: React.FC<CreateSkillModalProps> = ({
                 className="w-2/3"
                 isLoading={createSkillMutation.isPending}
               >
-                + Forge Skill
+                Forge Skill
               </PixelButton>
             </div>
           </form>
@@ -279,4 +299,3 @@ export const CreateSkillModal: React.FC<CreateSkillModalProps> = ({
     </div>
   );
 };
-

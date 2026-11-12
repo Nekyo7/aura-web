@@ -5,6 +5,7 @@ import { trpc } from "@/client/trpc";
 import { useLogActivity } from "@/client/hooks/useLogActivity";
 import { PixelButton } from "@/components/pixel/PixelButton";
 import { PixelCard } from "@/components/pixel/PixelCard";
+import { Clock, Check, AlertTriangle } from "lucide-react";
 
 export interface LogTimeSheetProps {
   onSuccess?: () => void;
@@ -34,7 +35,7 @@ export const LogTimeSheet: React.FC<LogTimeSheetProps> = ({
   const [selectedSkillId, setSelectedSkillId] = useState<string>("");
   const [minutes, setMinutes] = useState<number>(45);
   const [note, setNote] = useState<string>("");
-  const [statusMessage, setStatusMessage] = useState<string | null>(null);
+  const [feedback, setFeedback] = useState<{ type: "success" | "error"; text: string } | null>(null);
 
   // Set default selected skill once loaded
   React.useEffect(() => {
@@ -49,7 +50,7 @@ export const LogTimeSheet: React.FC<LogTimeSheetProps> = ({
     e.preventDefault();
     if (!selectedSkillId || minutes <= 0) return;
 
-    setStatusMessage(null);
+    setFeedback(null);
     try {
       const result = await logMutation.mutateAsync({
         skillId: selectedSkillId,
@@ -58,13 +59,19 @@ export const LogTimeSheet: React.FC<LogTimeSheetProps> = ({
         note: note.trim() || undefined,
       });
 
-      setStatusMessage(`✨ Logged ${minutes}m! Gained +${result.xpAwarded} XP`);
+      setFeedback({
+        type: "success",
+        text: `Logged ${minutes}m! Gained +${result.xpAwarded} XP`,
+      });
       setNote("");
       if (onSuccess) onSuccess();
 
-      setTimeout(() => setStatusMessage(null), 4000);
+      setTimeout(() => setFeedback(null), 4000);
     } catch (err: any) {
-      setStatusMessage(`❌ Error: ${err?.message || "Failed to log activity"}`);
+      setFeedback({
+        type: "error",
+        text: err?.message || "Failed to log activity",
+      });
     }
   };
 
@@ -74,17 +81,17 @@ export const LogTimeSheet: React.FC<LogTimeSheetProps> = ({
       variant="default"
       className={`w-full max-w-lg mx-auto ${className}`}
     >
-      <form onSubmit={handleLog} className="flex flex-col gap-4">
+      <form onSubmit={handleLog} className="flex flex-col gap-4 font-sans">
         {/* 1. Skill Selection */}
         <div className="flex flex-col gap-1.5">
-          <label className="font-pixel text-xs text-gray-300 uppercase tracking-wide">
+          <label className="text-xs font-semibold text-neutral-300 uppercase tracking-wide">
             Select Practice / Skill:
           </label>
 
           {isLoadingSkills ? (
-            <div className="text-xs text-gray-400 font-pixel py-2">Loading skills...</div>
+            <div className="text-xs text-neutral-400 py-2">Loading skills...</div>
           ) : !skills || skills.length === 0 ? (
-            <div className="text-xs text-amber-400 font-pixel py-2">No skills available.</div>
+            <div className="text-xs text-amber-400 py-2">No skills available.</div>
           ) : (
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 max-h-48 overflow-y-auto pr-1">
               {skills.map((skill) => {
@@ -95,24 +102,24 @@ export const LogTimeSheet: React.FC<LogTimeSheetProps> = ({
                     type="button"
                     onClick={() => setSelectedSkillId(skill.id)}
                     className={`
-                      text-left p-2.5 border-2 text-xs transition-all cursor-pointer select-none
+                      text-left p-2.5 border text-xs transition-colors cursor-pointer select-none
                       ${
                         isSelected
-                          ? "bg-purple-950/80 border-purple-500 shadow-[inset_0_0_10px_rgba(168,85,247,0.3)] text-white font-bold"
-                          : "bg-[#0b0f19] border-black/80 hover:border-gray-600 text-gray-300"
+                          ? "bg-[#0e0e0e] border-[#b026ff] border-t-2 border-t-[#b026ff] text-white font-bold"
+                          : "bg-[#0a0a0a] border-[#222222] hover:border-neutral-500 text-neutral-300"
                       }
                     `}
                   >
                     <div className="flex items-center justify-between">
-                      <span className="truncate">{skill.name}</span>
+                      <span className="truncate font-semibold">{skill.name}</span>
                       <span
-                        className="text-[10px] px-1.5 py-0.5 border border-black font-pixel uppercase"
-                        style={{ backgroundColor: skill.kingdom?.colorHex || "#3b82f6" }}
+                        className="text-[9px] px-1.5 py-0.2 border border-[#222222] uppercase font-semibold text-white"
+                        style={{ backgroundColor: `${skill.kingdom?.colorHex}30` || "#3b82f630" }}
                       >
                         {skill.kingdom?.name || "Skill"}
                       </span>
                     </div>
-                    <div className="text-[10px] text-gray-400 mt-1 font-mono">
+                    <div className="text-[10px] text-neutral-400 mt-1 font-sans">
                       Rank: {skill.rank?.name || "Origin I"} • {skill.minutesLogged}m
                     </div>
                   </button>
@@ -125,7 +132,7 @@ export const LogTimeSheet: React.FC<LogTimeSheetProps> = ({
         {/* 2. Quick Presets & Custom Duration */}
         <div className="flex flex-col gap-2">
           <div className="flex justify-between items-center">
-            <label className="font-pixel text-xs text-gray-300 uppercase tracking-wide">
+            <label className="text-xs font-semibold text-neutral-300 uppercase tracking-wide">
               Time Spent:
             </label>
             <span className="font-pixel text-xs text-purple-400 font-bold tabular-nums">
@@ -141,12 +148,11 @@ export const LogTimeSheet: React.FC<LogTimeSheetProps> = ({
                 type="button"
                 onClick={() => setMinutes(preset)}
                 className={`
-                  py-2 text-xs font-pixel border-2 border-black cursor-pointer select-none
-                  transition-all active:translate-y-0.5
+                  py-2 text-xs border cursor-pointer select-none font-semibold transition-colors
                   ${
                     minutes === preset
-                      ? "bg-purple-600 text-white font-bold shadow-[inset_0_2px_0_rgba(255,255,255,0.4)]"
-                      : "bg-[#0b0f19] text-gray-300 hover:bg-slate-800"
+                      ? "bg-[#141414] border-white text-white font-bold"
+                      : "bg-[#0a0a0a] border-[#222222] text-neutral-400 hover:border-neutral-500"
                   }
                 `}
               >
@@ -164,7 +170,7 @@ export const LogTimeSheet: React.FC<LogTimeSheetProps> = ({
               step="5"
               value={minutes}
               onChange={(e) => setMinutes(Number(e.target.value))}
-              className="w-full accent-purple-500 cursor-pointer h-2 bg-[#0b0f19] rounded-none border border-black"
+              className="w-full accent-[#b026ff] cursor-pointer h-2 bg-[#141414] rounded-none border border-[#222222]"
             />
             <input
               type="number"
@@ -172,14 +178,14 @@ export const LogTimeSheet: React.FC<LogTimeSheetProps> = ({
               max="600"
               value={minutes}
               onChange={(e) => setMinutes(Math.max(1, Number(e.target.value)))}
-              className="w-16 p-1.5 bg-[#0b0f19] border-2 border-black text-center font-pixel text-xs text-white"
+              className="w-16 p-1.5 bg-[#0a0a0a] border border-[#333333] text-center font-pixel text-xs text-white"
             />
           </div>
         </div>
 
         {/* Optional Note */}
         <div className="flex flex-col gap-1">
-          <label className="font-pixel text-[11px] text-gray-400 uppercase">
+          <label className="text-[11px] font-semibold text-neutral-400 uppercase tracking-wide">
             Quest / Activity Note (Optional):
           </label>
           <input
@@ -188,15 +194,15 @@ export const LogTimeSheet: React.FC<LogTimeSheetProps> = ({
             value={note}
             onChange={(e) => setNote(e.target.value)}
             maxLength={100}
-            className="w-full p-2 bg-[#0b0f19] border-2 border-black text-xs text-gray-200 placeholder-gray-600 focus:outline-none focus:border-purple-500 font-sans"
+            className="w-full p-2 bg-[#0a0a0a] border border-[#333333] text-xs text-white placeholder-neutral-500 focus:outline-none focus:border-[#b026ff] font-sans"
           />
         </div>
 
         {/* Reward Preview */}
         {selectedSkill && (
-          <div className="p-2.5 bg-[#0b0f19]/80 border-2 border-black text-[11px] text-gray-300 flex justify-between items-center">
-            <span className="font-pixel text-gray-400 text-[10px]">EST. REWARD:</span>
-            <div className="flex items-center gap-3 font-pixel">
+          <div className="p-2.5 bg-[#0e0e0e] border border-[#222222] text-xs text-neutral-300 flex justify-between items-center">
+            <span className="font-semibold text-neutral-400 text-[10px] uppercase">EST. REWARD:</span>
+            <div className="flex items-center gap-3 font-pixel text-xs">
               <span className="text-purple-400 font-bold">+{minutes * 10} XP</span>
               <span className="text-amber-400 font-bold">+{((minutes / 60) * 60).toFixed(0)} ATTR PTS</span>
             </div>
@@ -204,15 +210,20 @@ export const LogTimeSheet: React.FC<LogTimeSheetProps> = ({
         )}
 
         {/* Status Toast / Feedback */}
-        {statusMessage && (
+        {feedback && (
           <div
-            className={`p-2 border-2 text-xs font-pixel text-center ${
-              statusMessage.startsWith("✨")
-                ? "bg-emerald-950/80 border-emerald-600 text-emerald-300"
-                : "bg-rose-950/80 border-rose-600 text-rose-300"
+            className={`p-2.5 border text-xs font-sans text-center flex items-center justify-center gap-2 ${
+              feedback.type === "success"
+                ? "bg-[#0a0a0a] border-[#00ff66]/70 text-[#00ff66]"
+                : "bg-[#0a0a0a] border-[#ff3344]/70 text-[#ff3344]"
             }`}
           >
-            {statusMessage}
+            {feedback.type === "success" ? (
+              <Check className="w-3.5 h-3.5 text-[#00ff66]" strokeWidth={2} />
+            ) : (
+              <AlertTriangle className="w-3.5 h-3.5 text-[#ff3344]" strokeWidth={2} />
+            )}
+            <span>{feedback.text}</span>
           </div>
         )}
 
@@ -224,11 +235,11 @@ export const LogTimeSheet: React.FC<LogTimeSheetProps> = ({
           isLoading={logMutation.isPending}
           disabled={!selectedSkillId || minutes <= 0}
           className="w-full mt-1"
+          icon={<Clock className="w-4 h-4 text-black mr-1" strokeWidth={2} />}
         >
-          ⚔️ Log Activity ({minutes} min)
+          Log Activity ({minutes} min)
         </PixelButton>
       </form>
     </PixelCard>
   );
 };
-

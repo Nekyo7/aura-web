@@ -24,12 +24,12 @@ const ATTRIBUTE_CONFIG: {
   color: string;
   description: string;
 }[] = [
-  { key: "STR", label: "STR", color: "#ef4444", description: "Strength & Power" },
-  { key: "DEX", label: "DEX", color: "#f59e0b", description: "Dexterity & Precision" },
-  { key: "INT", label: "INT", color: "#3b82f6", description: "Intellect & Logic" },
-  { key: "WIS", label: "WIS", color: "#8b5cf6", description: "Wisdom & Insight" },
-  { key: "CHA", label: "CHA", color: "#ec4899", description: "Charisma & Aura" },
-  { key: "AGI", label: "AGI", color: "#10b981", description: "Agility & Speed" },
+  { key: "STR", label: "STR", color: "#ff3344", description: "Strength & Power" },
+  { key: "DEX", label: "DEX", color: "#ffc600", description: "Dexterity & Precision" },
+  { key: "INT", label: "INT", color: "#00e5ff", description: "Intellect & Logic" },
+  { key: "WIS", label: "WIS", color: "#b026ff", description: "Wisdom & Insight" },
+  { key: "CHA", label: "CHA", color: "#ff2a85", description: "Charisma & Aura" },
+  { key: "AGI", label: "AGI", color: "#00ff66", description: "Agility & Speed" },
 ];
 
 export const RadarChart: React.FC<RadarChartProps> = ({
@@ -91,9 +91,9 @@ export const RadarChart: React.FC<RadarChartProps> = ({
         <defs>
           {/* Hexagonal radar gradient fill */}
           <radialGradient id="radarGlow" cx="50%" cy="50%" r="50%">
-            <stop offset="0%" stopColor="#8b5cf6" stopOpacity="0.45" />
-            <stop offset="70%" stopColor="#6366f1" stopOpacity="0.25" />
-            <stop offset="100%" stopColor="#3b82f6" stopOpacity="0.1" />
+            <stop offset="0%" stopColor="#b026ff" stopOpacity="0.55" />
+            <stop offset="70%" stopColor="#b026ff" stopOpacity="0.25" />
+            <stop offset="100%" stopColor="#00e5ff" stopOpacity="0.1" />
           </radialGradient>
         </defs>
 
@@ -102,8 +102,8 @@ export const RadarChart: React.FC<RadarChartProps> = ({
           cx={center}
           cy={center}
           r={radius + 8}
-          fill="#080c14"
-          stroke="#1e293b"
+          fill="#000000"
+          stroke="#262626"
           strokeWidth="2"
         />
 
@@ -112,8 +112,8 @@ export const RadarChart: React.FC<RadarChartProps> = ({
           <polygon
             key={`grid-${idx}`}
             points={points}
-            fill={idx === 3 ? "rgba(15, 23, 42, 0.4)" : "none"}
-            stroke="#1e293b"
+            fill={idx === 3 ? "rgba(255, 255, 255, 0.02)" : "none"}
+            stroke="#262626"
             strokeWidth={idx === 3 ? "1.5" : "1"}
             strokeDasharray={idx < 3 ? "3,3" : "none"}
           />
@@ -129,7 +129,7 @@ export const RadarChart: React.FC<RadarChartProps> = ({
               y1={center}
               x2={end.x}
               y2={end.y}
-              stroke="#2a354c"
+              stroke="#262626"
               strokeWidth="1.5"
             />
           );
@@ -139,7 +139,7 @@ export const RadarChart: React.FC<RadarChartProps> = ({
         <motion.polygon
           points={polygonPath}
           fill="url(#radarGlow)"
-          stroke="#a855f7"
+          stroke="#b026ff"
           strokeWidth="2.5"
           initial={{ opacity: 0, scale: 0.8 }}
           animate={{ opacity: 1, scale: 1 }}

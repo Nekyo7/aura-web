@@ -5,6 +5,7 @@ import { trpc } from "@/client/trpc";
 import { PixelCard } from "@/components/pixel/PixelCard";
 import { PixelButton } from "@/components/pixel/PixelButton";
 import { getTierDefaultRewards } from "@/server/services/quest.service";
+import { X, AlertTriangle } from "lucide-react";
 
 interface CreateQuestModalProps {
   isOpen: boolean;
@@ -12,11 +13,11 @@ interface CreateQuestModalProps {
 }
 
 const TIERS = [
-  { tier: 1, label: "T1: Novice", color: "border-gray-500 text-gray-300" },
-  { tier: 2, label: "T2: Adept", color: "border-emerald-500 text-emerald-300" },
-  { tier: 3, label: "T3: Veteran", color: "border-blue-500 text-blue-300" },
-  { tier: 4, label: "T4: Master", color: "border-purple-500 text-purple-300" },
-  { tier: 5, label: "T5: Legendary", color: "border-amber-500 text-amber-300" },
+  { tier: 1, label: "T1: Novice", color: "border-neutral-600 text-neutral-300" },
+  { tier: 2, label: "T2: Adept", color: "border-emerald-500/70 text-emerald-300" },
+  { tier: 3, label: "T3: Veteran", color: "border-blue-500/70 text-blue-300" },
+  { tier: 4, label: "T4: Master", color: "border-purple-500/70 text-purple-300" },
+  { tier: 5, label: "T5: Legendary", color: "border-amber-500/70 text-amber-300" },
 ];
 
 export const CreateQuestModal: React.FC<CreateQuestModalProps> = ({
@@ -102,22 +103,23 @@ export const CreateQuestModal: React.FC<CreateQuestModalProps> = ({
           headerRight={
             <button
               onClick={onClose}
-              className="text-gray-400 hover:text-white font-pixel text-xs px-2 py-0.5 border border-black bg-slate-900"
+              className="text-neutral-400 hover:text-white text-xs p-1 border border-[#333333] bg-[#0a0a0a]"
             >
-              ✕
+              <X className="w-3.5 h-3.5" strokeWidth={2} />
             </button>
           }
         >
-          <form onSubmit={handleSubmit} className="flex flex-col gap-4">
+          <form onSubmit={handleSubmit} className="flex flex-col gap-4 font-sans">
             {errorMsg && (
-              <div className="p-2 border-2 border-rose-600 bg-rose-950/70 text-rose-200 text-xs font-pixel">
-                ⚠️ {errorMsg}
+              <div className="p-2.5 border border-rose-600/70 bg-rose-950/40 text-rose-200 text-xs flex items-center gap-1.5">
+                <AlertTriangle className="w-4 h-4 text-rose-400 shrink-0" strokeWidth={1.5} />
+                <span>{errorMsg}</span>
               </div>
             )}
 
             {/* Quest Title */}
             <div>
-              <label className="block font-pixel text-[11px] text-gray-300 uppercase tracking-wider mb-1.5">
+              <label className="block text-xs font-semibold text-neutral-300 uppercase tracking-wider mb-1.5">
                 Bounty Title
               </label>
               <input
@@ -126,13 +128,13 @@ export const CreateQuestModal: React.FC<CreateQuestModalProps> = ({
                 value={title}
                 onChange={(e) => setTitle(e.target.value)}
                 maxLength={60}
-                className="w-full bg-[#0b0f19] border-2 border-black p-2.5 font-pixel text-xs text-white placeholder-gray-500 focus:outline-none focus:border-blue-500"
+                className="w-full bg-[#0a0a0a] border border-[#333333] p-2.5 text-xs text-white placeholder-neutral-500 focus:outline-none focus:border-[#00e5ff]"
               />
             </div>
 
             {/* Description (Optional) */}
             <div>
-              <label className="block font-pixel text-[11px] text-gray-300 uppercase tracking-wider mb-1.5">
+              <label className="block text-xs font-semibold text-neutral-300 uppercase tracking-wider mb-1.5">
                 Description / Checklist (Optional)
               </label>
               <textarea
@@ -141,22 +143,22 @@ export const CreateQuestModal: React.FC<CreateQuestModalProps> = ({
                 onChange={(e) => setDescription(e.target.value)}
                 rows={2}
                 maxLength={140}
-                className="w-full bg-[#0b0f19] border-2 border-black p-2 font-pixel text-xs text-white placeholder-gray-500 focus:outline-none focus:border-blue-500 resize-none"
+                className="w-full bg-[#0a0a0a] border border-[#333333] p-2 text-xs text-white placeholder-neutral-500 focus:outline-none focus:border-[#00e5ff] resize-none"
               />
             </div>
 
             {/* Kingdom Realm */}
             <div>
-              <label className="block font-pixel text-[11px] text-gray-300 uppercase tracking-wider mb-1.5">
+              <label className="block text-xs font-semibold text-neutral-300 uppercase tracking-wider mb-1.5">
                 Kingdom Sphere
               </label>
               {loadingKingdoms ? (
-                <div className="font-pixel text-xs text-gray-400">Loading kingdoms...</div>
+                <div className="text-xs text-neutral-400">Loading kingdoms...</div>
               ) : (
                 <select
                   value={kingdomId}
                   onChange={(e) => setKingdomId(e.target.value)}
-                  className="w-full bg-[#0b0f19] border-2 border-black p-2.5 font-pixel text-xs text-white focus:outline-none focus:border-blue-500"
+                  className="w-full bg-[#0a0a0a] border border-[#333333] p-2.5 text-xs text-white focus:outline-none focus:border-[#00e5ff]"
                 >
                   {kingdoms?.map((k) => (
                     <option key={k.id} value={k.id}>
@@ -169,13 +171,13 @@ export const CreateQuestModal: React.FC<CreateQuestModalProps> = ({
 
             {/* Linked Skill (Optional) */}
             <div>
-              <label className="block font-pixel text-[11px] text-gray-300 uppercase tracking-wider mb-1.5">
+              <label className="block text-xs font-semibold text-neutral-300 uppercase tracking-wider mb-1.5">
                 Link to Skill (Optional)
               </label>
               <select
                 value={skillId}
                 onChange={(e) => setSkillId(e.target.value)}
-                className="w-full bg-[#0b0f19] border-2 border-black p-2.5 font-pixel text-xs text-white focus:outline-none focus:border-blue-500"
+                className="w-full bg-[#0a0a0a] border border-[#333333] p-2.5 text-xs text-white focus:outline-none focus:border-[#00e5ff]"
               >
                 <option value="">-- None (Standalone Bounty) --</option>
                 {skills?.map((s) => (
@@ -188,7 +190,7 @@ export const CreateQuestModal: React.FC<CreateQuestModalProps> = ({
 
             {/* Tier Selector */}
             <div>
-              <label className="block font-pixel text-[11px] text-gray-300 uppercase tracking-wider mb-1.5">
+              <label className="block text-xs font-semibold text-neutral-300 uppercase tracking-wider mb-1.5">
                 Difficulty Tier
               </label>
               <div className="grid grid-cols-5 gap-1.5 mb-2">
@@ -197,21 +199,21 @@ export const CreateQuestModal: React.FC<CreateQuestModalProps> = ({
                     key={t.tier}
                     type="button"
                     onClick={() => setTier(t.tier)}
-                    className={`py-2 px-1 border-2 font-pixel text-[10px] text-center transition-all ${
+                    className={`py-2 px-1 border font-sans text-[10px] font-semibold text-center transition-colors ${
                       tier === t.tier
-                        ? "bg-blue-900/60 border-blue-400 text-white shadow-[0_0_10px_rgba(59,130,246,0.3)]"
-                        : "bg-[#0b0f19] border-black text-gray-400 hover:text-gray-200"
+                        ? "bg-[#141414] border-white text-white font-bold"
+                        : "bg-[#0a0a0a] border-[#222222] text-neutral-400 hover:border-neutral-500"
                     }`}
                   >
-                    T{t.tier}
+                    {t.label}
                   </button>
                 ))}
               </div>
 
-              {/* Reward Preview based on Tier */}
-              <div className="p-2.5 bg-[#0b0f19] border border-black flex items-center justify-between text-xs font-pixel">
-                <span className="text-gray-400 text-[10px]">REWARDS:</span>
-                <div className="flex items-center gap-2 text-[10px]">
+              {/* Dynamic Reward Preview Banner */}
+              <div className="p-2.5 bg-[#0e0e0e] border border-[#222222] flex items-center justify-between text-xs">
+                <span className="text-neutral-400 font-semibold">Tier Rewards:</span>
+                <div className="flex items-center gap-2 font-pixel text-[10px]">
                   <span className="text-blue-400">+{currentRewards.baseXp} XP</span>
                   <span className="text-amber-400">+{currentRewards.mbReward} MB</span>
                   {currentRewards.apReward > 0 && (
@@ -224,48 +226,52 @@ export const CreateQuestModal: React.FC<CreateQuestModalProps> = ({
               </div>
             </div>
 
-            {/* Repeat Cadence */}
+            {/* Recurrence Cadence */}
             <div>
-              <label className="block font-pixel text-[11px] text-gray-300 uppercase tracking-wider mb-1.5">
+              <label className="block text-xs font-semibold text-neutral-300 uppercase tracking-wider mb-1.5">
                 Repeat Cadence
               </label>
               <div className="grid grid-cols-3 gap-2">
-                {(["ONCE", "DAILY", "WEEKLY"] as const).map((r) => (
+                {[
+                  { key: "DAILY", label: "Daily" },
+                  { key: "WEEKLY", label: "Weekly" },
+                  { key: "ONCE", label: "One-Off" },
+                ].map((c) => (
                   <button
-                    key={r}
+                    key={c.key}
                     type="button"
-                    onClick={() => setRepeat(r)}
-                    className={`py-2 px-2 border-2 font-pixel text-xs text-center transition-all ${
-                      repeat === r
-                        ? "bg-purple-900/60 border-purple-400 text-white"
-                        : "bg-[#0b0f19] border-black text-gray-400 hover:text-gray-200"
+                    onClick={() => setRepeat(c.key as any)}
+                    className={`py-2 text-xs font-semibold text-center border transition-colors ${
+                      repeat === c.key
+                        ? "bg-[#141414] border-white text-white font-bold"
+                        : "bg-[#0a0a0a] border-[#222222] text-neutral-400 hover:border-neutral-500"
                     }`}
                   >
-                    {r}
+                    {c.label}
                   </button>
                 ))}
               </div>
             </div>
 
-            {/* Actions */}
-            <div className="flex gap-2 pt-2">
+            {/* Submit */}
+            <div className="flex gap-2 pt-2 border-t border-[#222222]">
               <PixelButton
                 type="button"
                 variant="neutral"
-                size="sm"
-                className="w-1/3"
+                size="md"
                 onClick={onClose}
+                className="flex-1"
               >
                 Cancel
               </PixelButton>
               <PixelButton
                 type="submit"
                 variant="primary"
-                size="sm"
-                className="w-2/3"
+                size="md"
                 isLoading={createQuestMutation.isPending}
+                className="flex-1"
               >
-                + Post Bounty
+                Post Bounty
               </PixelButton>
             </div>
           </form>
@@ -274,4 +280,3 @@ export const CreateQuestModal: React.FC<CreateQuestModalProps> = ({
     </div>
   );
 };
-

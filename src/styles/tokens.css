@@ -1,120 +1,110 @@
 /**
  * AURA RPG Design Tokens & Pixel Utility Classes
- * project-context.md Sections 1, 2, 5
+ * High-Contrast Retro Terminal Theme
  */
 
 @theme {
   --font-pixel: var(--font-pixel), "Silkscreen", monospace;
-  --font-sans: var(--font-sans), "Inter", sans-serif;
+  --font-heading: var(--font-pixel), "Silkscreen", monospace;
+  --font-sans: var(--font-sans), Inter, sans-serif;
+  --font-mono: ui-monospace, SFMono-Regular, monospace;
 
-  /* RPG Health Tiers */
-  --color-tier-thriving: #10b981;
-  --color-tier-neutral: #f59e0b;
-  --color-tier-weakened: #ef4444;
+  /* RPG Health Tiers (High-Contrast Neon) */
+  --color-tier-thriving: #00ff66;
+  --color-tier-neutral: #ffc600;
+  --color-tier-weakened: #ff3344;
 
   /* 7 Kingdoms */
-  --color-kingdom-academy: #3b82f6;
-  --color-kingdom-career: #f59e0b;
-  --color-kingdom-alliance: #ec4899;
-  --color-kingdom-camp: #10b981;
-  --color-kingdom-creativity: #8b5cf6;
-  --color-kingdom-tavern: #ef4444;
-  --color-kingdom-treasury: #eab308;
+  --color-kingdom-academy: #00e5ff;
+  --color-kingdom-career: #ffc600;
+  --color-kingdom-alliance: #ff2a85;
+  --color-kingdom-camp: #00ff66;
+  --color-kingdom-creativity: #b026ff;
+  --color-kingdom-tavern: #ff3344;
+  --color-kingdom-treasury: #ffea00;
 
   /* Currencies */
-  --color-currency-ap: #8b5cf6;
-  --color-currency-mb: #10b981;
-  --color-currency-cc: #06b6d4;
+  --color-currency-ap: #b026ff;
+  --color-currency-mb: #00ff66;
+  --color-currency-cc: #00e5ff;
 
   /* 6 Core Attributes */
-  --color-attr-str: #ef4444;
-  --color-attr-agi: #10b981;
-  --color-attr-int: #3b82f6;
-  --color-attr-cha: #ec4899;
-  --color-attr-dex: #f59e0b;
-  --color-attr-wis: #8b5cf6;
+  --color-attr-str: #ff3344;
+  --color-attr-agi: #00ff66;
+  --color-attr-int: #00e5ff;
+  --color-attr-cha: #ff2a85;
+  --color-attr-dex: #ffc600;
+  --color-attr-wis: #b026ff;
 
-  /* Surfaces & Borders */
-  --color-pixel-bg: #090d16;
-  --color-pixel-surface: #121826;
-  --color-pixel-surface-raised: #1e2638;
-  --color-pixel-surface-sunken: #0b0f19;
-  --color-pixel-border: #2a3449;
-  --color-pixel-border-highlight: #475569;
-  --color-pixel-border-dark: #030712;
+  /* Surfaces & High-Contrast Borders */
+  --color-pixel-bg: #000000;
+  --color-pixel-surface: #0a0a0a;
+  --color-pixel-surface-raised: #141414;
+  --color-pixel-surface-sunken: #050505;
+  --color-pixel-border: #ffffff;
+  --color-pixel-neon-purple: #b026ff;
+  --color-pixel-warning: #ffc600;
 }
 
 :root {
-  --tier-thriving: #10b981;
-  --tier-neutral: #f59e0b;
-  --tier-weakened: #ef4444;
+  --tier-thriving: #00ff66;
+  --tier-neutral: #ffc600;
+  --tier-weakened: #ff3344;
 
-  --kingdom-academy: #3b82f6;
-  --kingdom-career: #f59e0b;
-  --kingdom-alliance: #ec4899;
-  --kingdom-camp: #10b981;
-  --kingdom-creativity: #8b5cf6;
-  --kingdom-tavern: #ef4444;
-  --kingdom-treasury: #eab308;
+  --kingdom-academy: #00e5ff;
+  --kingdom-career: #ffc600;
+  --kingdom-alliance: #ff2a85;
+  --kingdom-camp: #00ff66;
+  --kingdom-creativity: #b026ff;
+  --kingdom-tavern: #ff3344;
+  --kingdom-treasury: #ffea00;
 
-  --currency-ap: #8b5cf6;
-  --currency-mb: #10b981;
-  --currency-cc: #06b6d4;
+  --currency-ap: #b026ff;
+  --currency-mb: #00ff66;
+  --currency-cc: #00e5ff;
 }
 
 /* ───────────────────────────── PIXEL ART UTILITY CLASSES ───────────────────────────── */
 
-/* Chunky retro 3D container */
+/* Noctra terminal card: 1px solid #333333 border, top accent, #0A0A0A interior */
 .pixel-box {
-  background-color: var(--color-pixel-surface, #121826);
-  border: 2px solid #000000;
-  box-shadow:
-    inset 2px 2px 0px 0px rgba(255, 255, 255, 0.12),
-    inset -2px -2px 0px 0px rgba(0, 0, 0, 0.4),
-    3px 3px 0px 0px #000000;
+  background-color: #0a0a0a;
+  border: 1px solid #333333;
+  border-top: 2px solid #b026ff;
+  border-radius: 0;
+  box-shadow: none;
 }
 
 /* Sunken retro container for inputs, progress tracks */
 .pixel-box-sunken {
-  background-color: var(--color-pixel-surface-sunken, #0b0f19);
-  border: 2px solid #000000;
-  box-shadow:
-    inset 2px 2px 0px 0px rgba(0, 0, 0, 0.5),
-    inset -2px -2px 0px 0px rgba(255, 255, 255, 0.08);
+  background-color: #060606;
+  border: 1px solid #262626;
+  border-top: 2px solid #525252;
+  border-radius: 0;
+  box-shadow: none;
 }
 
-/* Chunky tap-friendly pixel button with 3D press feel */
+/* Chunky high-contrast retro button with invert hover */
 .pixel-btn {
   font-family: var(--font-pixel), monospace;
-  border: 2px solid #000000;
-  box-shadow:
-    0 4px 0 0 #000000,
-    inset 2px 2px 0 0 rgba(255, 255, 255, 0.3),
-    inset -2px -2px 0 0 rgba(0, 0, 0, 0.35);
-  transition: transform 0.05s steps(2), box-shadow 0.05s steps(2);
+  border-radius: 0;
   user-select: none;
   touch-action: manipulation;
-}
-
-.pixel-btn:hover:not(:disabled) {
-  filter: brightness(1.1);
-}
-
-.pixel-btn:active:not(:disabled) {
-  transform: translateY(3px);
-  box-shadow:
-    0 1px 0 0 #000000,
-    inset 2px 2px 0 0 rgba(0, 0, 0, 0.3);
+  transition: none;
 }
 
 .pixel-btn:disabled {
-  opacity: 0.5;
+  opacity: 0.35;
   cursor: not-allowed;
-  filter: grayscale(0.6);
+  filter: grayscale(1);
 }
 
 /* Pixel text readability */
 .font-pixel {
+  font-family: var(--font-pixel), monospace;
+}
+
+.font-heading {
   font-family: var(--font-pixel), monospace;
 }
 
@@ -129,17 +119,18 @@
     90deg,
     transparent,
     transparent 6px,
-    rgba(0, 0, 0, 0.25) 6px,
-    rgba(0, 0, 0, 0.25) 8px
+    rgba(0, 0, 0, 0.4) 6px,
+    rgba(0, 0, 0, 0.4) 8px
   );
 }
 
-/* Subtle CRT scanline overlay (optional ambient atmosphere) */
+/* Subtle CRT scanline overlay */
 .scanlines {
-  background: linear-gradient(
-    rgba(18, 24, 38, 0) 50%,
-    rgba(0, 0, 0, 0.2) 50%
+  background: repeating-linear-gradient(
+    0deg,
+    rgba(0, 0, 0, 0.25) 0px,
+    rgba(0, 0, 0, 0.25) 1px,
+    transparent 1px,
+    transparent 2px
   );
-  background-size: 100% 4px;
 }
-

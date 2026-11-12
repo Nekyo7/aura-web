@@ -5,15 +5,28 @@ import Link from "next/link";
 import { trpc } from "@/client/trpc";
 import { PixelCard } from "@/components/pixel/PixelCard";
 import { PixelButton } from "@/components/pixel/PixelButton";
+import {
+  Globe,
+  Zap,
+  BookOpen,
+  Briefcase,
+  Users,
+  Tent,
+  Palette,
+  Coffee,
+  Coins,
+  ArrowLeft,
+  Plus,
+} from "lucide-react";
 
-const KINGDOM_EMOJIS: Record<string, string> = {
-  academy: "📖",
-  career: "💼",
-  alliance: "🤝",
-  camp: "⛺",
-  creativity: "🎨",
-  tavern: "🍺",
-  treasury: "🪙",
+const KINGDOM_ICONS: Record<string, React.ComponentType<{ className?: string; strokeWidth?: number }>> = {
+  academy: BookOpen,
+  career: Briefcase,
+  alliance: Users,
+  camp: Tent,
+  creativity: Palette,
+  tavern: Coffee,
+  treasury: Coins,
 };
 
 export default function KingdomsPage() {
@@ -29,36 +42,36 @@ export default function KingdomsPage() {
       {/* Header Banner */}
       <PixelCard variant="default" padding="md">
         <div className="flex items-center gap-3 mb-3">
-          <div className="w-12 h-12 bg-purple-950 border-2 border-purple-500 flex items-center justify-center text-2xl select-none shadow-[2px_2px_0px_0px_#000]">
-            🏰
+          <div className="w-11 h-11 bg-[#0a0a0a] border border-[#333333] border-t-2 border-t-[#b026ff] flex items-center justify-center select-none">
+            <Globe className="w-5 h-5 text-[#b026ff]" strokeWidth={1.5} />
           </div>
           <div>
-            <h1 className="font-pixel text-base font-bold text-purple-300">
+            <h1 className="font-pixel text-sm sm:text-base font-bold text-purple-300">
               The Seven Realms
             </h1>
-            <p className="font-pixel text-[10px] text-gray-400">
+            <p className="font-sans text-[11px] text-neutral-400">
               Life OS Territory & Sphere Progression
             </p>
           </div>
         </div>
 
         {/* Global Sphere Stats */}
-        <div className="grid grid-cols-2 gap-2 p-2 bg-[#0b0f19] border border-black text-center">
+        <div className="grid grid-cols-2 gap-2 p-2.5 bg-[#0a0a0a] border border-[#222222] text-center">
           <div>
-            <span className="font-pixel text-[9px] text-gray-400 block uppercase">
+            <span className="font-sans text-[10px] text-neutral-400 block uppercase font-medium">
               Total Realm XP
             </span>
-            <span className="font-pixel text-xs font-bold text-yellow-400">
+            <span className="font-pixel text-xs font-bold text-[#ffc600]">
               {totalRealmXp.toLocaleString()} XP
             </span>
           </div>
           <div>
-            <span className="font-pixel text-[9px] text-gray-400 block uppercase">
+            <span className="font-sans text-[10px] text-neutral-400 block uppercase font-medium">
               Dominant Sphere
             </span>
             <span
               className="font-pixel text-xs font-bold truncate block"
-              style={{ color: dominantKingdom?.colorHex ?? "#a855f7" }}
+              style={{ color: dominantKingdom?.colorHex ?? "#b026ff" }}
             >
               {dominantKingdom ? `${dominantKingdom.name}` : "None"}
             </span>
@@ -71,8 +84,8 @@ export default function KingdomsPage() {
         <div className="flex flex-col gap-3">
           {[1, 2, 3].map((i) => (
             <PixelCard key={i} variant="default" padding="md" className="animate-pulse">
-              <div className="h-6 bg-slate-800 w-1/3 mb-2" />
-              <div className="h-4 bg-slate-900 w-2/3" />
+              <div className="h-6 bg-neutral-900 w-1/3 mb-2" />
+              <div className="h-4 bg-neutral-900 w-2/3" />
             </PixelCard>
           ))}
         </div>
@@ -82,7 +95,7 @@ export default function KingdomsPage() {
       {!isLoading && kingdoms && (
         <div className="flex flex-col gap-3">
           {kingdoms.map((k) => {
-            const emoji = KINGDOM_EMOJIS[k.slug] || "⚔️";
+            const IconComponent = KINGDOM_ICONS[k.slug] || Globe;
             const hasSkills = k.topSkills && k.topSkills.length > 0;
             const isSurge =
               !!k.surgeUntil &&
@@ -95,17 +108,15 @@ export default function KingdomsPage() {
             return (
               <div
                 key={k.id}
-                className={`bg-[#121826] border-2 p-3 text-white transition-all relative ${
-                  isSurge
-                    ? "border-amber-400 shadow-[0_0_15px_rgba(251,191,36,0.35),3px_3px_0px_0px_#000]"
-                    : "shadow-[3px_3px_0px_0px_#000]"
+                className={`bg-[#0a0a0a] border border-[#222222] border-t-2 p-3 text-white transition-colors relative rounded-none shadow-none ${
+                  isSurge ? "border-t-[#ffc600]" : ""
                 }`}
-                style={{ borderColor: isSurge ? "#f59e0b" : k.colorHex }}
+                style={{ borderTopColor: isSurge ? "#ffc600" : k.colorHex }}
               >
                 {/* Active Surge Glowing Top Ribbon */}
                 {isSurge && (
-                  <div className="absolute -top-2.5 right-3 px-2 py-0.5 bg-amber-400 border border-black text-black font-pixel text-[9px] font-bold shadow-xs animate-pulse">
-                    ⚡ MOMENTUM SURGE ACTIVE
+                  <div className="absolute -top-2.5 right-3 px-2 py-0.5 bg-[#ffc600] text-black font-sans text-[9px] font-bold flex items-center gap-1">
+                    <Zap className="w-2.5 h-2.5" strokeWidth={2.5} /> MOMENTUM SURGE ACTIVE
                   </div>
                 )}
 
@@ -113,12 +124,10 @@ export default function KingdomsPage() {
                 <div className="flex items-start justify-between gap-2 mb-2">
                   <div className="flex items-center gap-2.5">
                     <div
-                      className={`w-10 h-10 border border-black flex items-center justify-center text-xl bg-[#090d16] ${
-                        isSurge ? "animate-bounce" : ""
-                      }`}
-                      style={{ boxShadow: `inset 0 0 12px ${k.colorHex}33` }}
+                      className="w-8 h-8 border border-[#333333] flex items-center justify-center bg-[#0e0e0e]"
+                      style={{ color: k.colorHex }}
                     >
-                      {emoji}
+                      <IconComponent className="w-4 h-4" strokeWidth={1.5} />
                     </div>
                     <div>
                       <h2
@@ -127,7 +136,7 @@ export default function KingdomsPage() {
                       >
                         {k.name}
                       </h2>
-                      <p className="font-sans text-[11px] text-gray-400">
+                      <p className="font-sans text-xs text-neutral-400">
                         {k.tagline || k.slug}
                       </p>
                     </div>
@@ -135,10 +144,10 @@ export default function KingdomsPage() {
 
                   {/* XP Badge */}
                   <div className="flex flex-col items-end">
-                    <span className="font-pixel text-[9px] text-gray-400 uppercase">
+                    <span className="font-sans text-[10px] text-neutral-400 uppercase font-medium">
                       Influence
                     </span>
-                    <span className="font-pixel text-xs font-bold text-yellow-300">
+                    <span className="font-pixel text-xs font-bold text-[#ffc600]">
                       {k.xp.toLocaleString()} XP
                     </span>
                   </div>
@@ -146,34 +155,32 @@ export default function KingdomsPage() {
 
                 {/* Surge or Baseline Banner */}
                 {isSurge ? (
-                  <div className="mb-2.5 px-2.5 py-1.5 bg-gradient-to-r from-amber-950/80 to-purple-950/80 border border-amber-500 text-amber-200 font-pixel text-[10px] flex items-center justify-between shadow-[inset_0_0_8px_rgba(245,158,11,0.2)]">
-                    <div className="flex items-center gap-1.5">
-                      <span className="text-amber-400">⚡</span>
-                      <span className="font-bold text-amber-300">
-                        {k.surgeMultiplier}x Realm XP Multiplier
-                      </span>
+                  <div className="mb-2 px-2.5 py-1.5 bg-[#0e0e0e] border border-[#ffc600]/60 text-[#ffc600] font-sans text-xs flex items-center justify-between">
+                    <div className="flex items-center gap-1.5 font-semibold">
+                      <Zap className="w-3.5 h-3.5 text-[#ffc600]" strokeWidth={2} />
+                      <span>{k.surgeMultiplier}x Realm XP Multiplier</span>
                     </div>
-                    <span className="text-gray-400 text-[9px]">
+                    <span className="text-neutral-400 text-[10px]">
                       {remainingHours}h remaining
                     </span>
                   </div>
                 ) : (
-                  <div className="mb-2 px-2 py-0.5 bg-[#090d16] border border-black/60 text-gray-400 font-pixel text-[9px] flex items-center justify-between">
+                  <div className="mb-2 px-2.5 py-1 bg-[#0e0e0e] border border-[#1a1a1a] text-neutral-400 font-sans text-[11px] flex items-center justify-between">
                     <span>Weekly Baseline:</span>
-                    <span className="text-gray-300">
+                    <span className="text-neutral-300 font-medium">
                       {Math.round(k.baselineMinutesPerWeek / 60)}h / week
                     </span>
                   </div>
                 )}
 
                 {/* Dominant Skills Section */}
-                <div className="mt-2 pt-2 border-t border-black/40">
+                <div className="mt-2.5 pt-2 border-t border-[#1a1a1a]">
                   <div className="flex items-center justify-between mb-1.5">
-                    <span className="font-pixel text-[9px] text-gray-400 uppercase tracking-wide">
+                    <span className="font-sans text-[10px] text-neutral-400 uppercase tracking-wide font-semibold">
                       Dominant Skills
                     </span>
                     {hasSkills && (
-                      <span className="font-pixel text-[9px] text-gray-500">
+                      <span className="font-sans text-[10px] text-neutral-500">
                         {k.topSkills.length} active
                       </span>
                     )}
@@ -184,25 +191,25 @@ export default function KingdomsPage() {
                       {k.topSkills.map((s) => (
                         <div
                           key={s.id}
-                          className="flex items-center justify-between p-1.5 bg-[#0b0f19] border border-black text-xs"
+                          className="flex items-center justify-between p-2 bg-[#0e0e0e] border border-[#1f1f1f] text-xs font-sans"
                         >
                           <div className="flex items-center gap-2">
-                            <span className="font-pixel text-[10px] text-purple-300 font-bold">
+                            <span className="text-[#b026ff] font-semibold">
                               {s.name}
                             </span>
-                            <span className="font-pixel text-[9px] px-1 py-0.2 bg-slate-800 text-amber-300 border border-slate-700">
+                            <span className="text-[10px] px-1.5 py-0.2 bg-[#171717] text-amber-300 border border-[#2a2a2a] font-medium">
                               {s.rankName}
                             </span>
                           </div>
-                          <span className="font-pixel text-[10px] text-gray-400">
+                          <span className="text-[11px] text-neutral-400 font-medium">
                             {Math.floor(s.minutesLogged / 60)}h {s.minutesLogged % 60}m
                           </span>
                         </div>
                       ))}
                     </div>
                   ) : (
-                    <div className="p-2 bg-[#090d16] border border-black text-center">
-                      <p className="font-sans text-[11px] text-gray-500">
+                    <div className="p-2 bg-[#0e0e0e] border border-[#1a1a1a] text-center">
+                      <p className="font-sans text-xs text-neutral-500">
                         No skills trained in this realm yet.
                       </p>
                     </div>
@@ -217,19 +224,19 @@ export default function KingdomsPage() {
       {/* Navigation footer */}
       <div className="flex flex-col gap-2 mt-2">
         <Link href="/chronicle">
-          <PixelButton variant="primary" size="sm" className="w-full" icon={<span>📖</span>}>
+          <PixelButton variant="primary" size="sm" className="w-full" icon={<BookOpen className="w-3.5 h-3.5" strokeWidth={1.5} />}>
             Open Weekly Chronicle
           </PixelButton>
         </Link>
         <div className="flex gap-2">
           <Link href="/skills" className="flex-1">
-            <PixelButton variant="neutral" size="sm" className="w-full">
-              + New Skill
+            <PixelButton variant="neutral" size="sm" className="w-full" icon={<Plus className="w-3.5 h-3.5" strokeWidth={2} />}>
+              New Skill
             </PixelButton>
           </Link>
           <Link href="/character" className="flex-1">
-            <PixelButton variant="neutral" size="sm" className="w-full">
-              ◀ Character Sheet
+            <PixelButton variant="neutral" size="sm" className="w-full" icon={<ArrowLeft className="w-3.5 h-3.5" strokeWidth={2} />}>
+              Character Sheet
             </PixelButton>
           </Link>
         </div>

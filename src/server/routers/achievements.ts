@@ -36,7 +36,7 @@ export const achievementsRouter = router({
         name: ach.name,
         description: ach.description,
         isSecret: ach.isSecret,
-        emoji: def?.emoji ?? "🏆",
+        emoji: def?.emoji ?? "trophy",
         apReward: ach.apReward,
         mbReward: ach.mbReward,
         ccReward: ach.ccReward,

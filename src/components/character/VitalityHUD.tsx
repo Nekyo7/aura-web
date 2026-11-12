@@ -5,6 +5,14 @@ import { trpc } from "@/client/trpc";
 import { PixelCard } from "@/components/pixel/PixelCard";
 import { PixelBar } from "@/components/pixel/PixelBar";
 import { PixelButton } from "@/components/pixel/PixelButton";
+import {
+  Activity,
+  Flame,
+  Scale,
+  Sparkles,
+  Check,
+  X,
+} from "lucide-react";
 
 interface VitalityData {
   hp: number;
@@ -25,19 +33,19 @@ const TIER_CONFIG = {
   THRIVING: {
     label: "THRIVING",
     badge: "1.00x XP",
-    color: "text-emerald-400 border-emerald-500 bg-emerald-950/80",
+    color: "text-[#00ff66] border-[#00ff66]/60 bg-black",
     desc: "Peak vitality. Full reward gains.",
   },
   NEUTRAL: {
     label: "NEUTRAL",
     badge: "0.85x XP",
-    color: "text-amber-400 border-amber-500 bg-amber-950/80",
+    color: "text-[#ffc600] border-[#ffc600]/60 bg-black",
     desc: "Steady state. Gentle decay buffer.",
   },
   WEAKENED: {
     label: "WEAKENED",
     badge: "0.50x XP",
-    color: "text-rose-400 border-rose-500 bg-rose-950/80",
+    color: "text-[#ff3344] border-[#ff3344]/60 bg-black",
     desc: "Low vitality. Log Camp physical activity to recover.",
   },
 };
@@ -73,7 +81,7 @@ export const VitalityHUD: React.FC<VitalityHUDProps> = ({
       title="Vitality Matrix (7-Day Rolling)"
       padding="md"
       headerRight={
-        <span className={`font-pixel text-[10px] px-2 py-0.5 border ${tier.color} font-bold`}>
+        <span className={`font-sans text-[10px] px-2 py-0.5 border ${tier.color} font-semibold uppercase tracking-wider`}>
           {tier.label} ({tier.badge})
         </span>
       }
@@ -91,78 +99,78 @@ export const VitalityHUD: React.FC<VitalityHUDProps> = ({
       </div>
 
       {/* 4 Rolling Sub-components */}
-      <div className="grid grid-cols-2 gap-3 pt-3 border-t border-black/40">
+      <div className="grid grid-cols-2 gap-2 pt-3 border-t border-[#222222]">
         {/* 1. Rhythm */}
-        <div className="flex flex-col gap-1">
-          <div className="flex items-center justify-between text-[11px] font-pixel">
-            <span className="text-gray-300 flex items-center gap-1">
-              <span>🥁</span> Rhythm
+        <div className="flex flex-col gap-1.5 p-2 bg-[#0a0a0a] border border-[#222222] border-t-2 border-t-[#00e5ff]">
+          <div className="flex items-center justify-between text-xs">
+            <span className="text-white flex items-center gap-1.5 font-sans font-medium">
+              <Activity className="w-3.5 h-3.5 text-[#00e5ff]" strokeWidth={1.5} /> Rhythm
             </span>
-            <span className="text-blue-300 font-bold">{vitality.rhythm.toFixed(0)}%</span>
+            <span className="text-[#00e5ff] font-pixel text-xs font-bold">{vitality.rhythm.toFixed(0)}%</span>
           </div>
           <PixelBar
             value={vitality.rhythm}
             max={100}
             size="sm"
             variant="custom"
-            customColor="#3B82F6"
+            customColor="#00e5ff"
             showValueText={false}
           />
-          <span className="text-[9px] text-gray-400 font-sans">
-            Showing up (Target: 4/7 days)
+          <span className="text-[10px] text-neutral-400 font-sans">
+            Showing up (Target: 4/7)
           </span>
         </div>
 
         {/* 2. Body */}
-        <div className="flex flex-col gap-1">
-          <div className="flex items-center justify-between text-[11px] font-pixel">
-            <span className="text-gray-300 flex items-center gap-1">
-              <span>🏃</span> Body
+        <div className="flex flex-col gap-1.5 p-2 bg-[#0a0a0a] border border-[#222222] border-t-2 border-t-[#00ff66]">
+          <div className="flex items-center justify-between text-xs">
+            <span className="text-white flex items-center gap-1.5 font-sans font-medium">
+              <Flame className="w-3.5 h-3.5 text-[#00ff66]" strokeWidth={1.5} /> Body
             </span>
-            <span className="text-emerald-300 font-bold">{vitality.body.toFixed(0)}%</span>
+            <span className="text-[#00ff66] font-pixel text-xs font-bold">{vitality.body.toFixed(0)}%</span>
           </div>
           <PixelBar
             value={vitality.body}
             max={100}
             size="sm"
             variant="custom"
-            customColor="#10B981"
+            customColor="#00ff66"
             showValueText={false}
           />
-          <span className="text-[9px] text-gray-400 font-sans">
-            Physical activity (Camp skills)
+          <span className="text-[10px] text-neutral-400 font-sans">
+            Physical activity (Camp)
           </span>
         </div>
 
         {/* 3. Balance */}
-        <div className="flex flex-col gap-1">
-          <div className="flex items-center justify-between text-[11px] font-pixel">
-            <span className="text-gray-300 flex items-center gap-1">
-              <span>⚖️</span> Balance
+        <div className="flex flex-col gap-1.5 p-2 bg-[#0a0a0a] border border-[#222222] border-t-2 border-t-[#b026ff]">
+          <div className="flex items-center justify-between text-xs">
+            <span className="text-white flex items-center gap-1.5 font-sans font-medium">
+              <Scale className="w-3.5 h-3.5 text-[#b026ff]" strokeWidth={1.5} /> Balance
             </span>
-            <span className="text-purple-300 font-bold">{vitality.balance.toFixed(0)}%</span>
+            <span className="text-[#b026ff] font-pixel text-xs font-bold">{vitality.balance.toFixed(0)}%</span>
           </div>
           <PixelBar
             value={vitality.balance}
             max={100}
             size="sm"
             variant="custom"
-            customColor="#8B5CF6"
+            customColor="#b026ff"
             showValueText={false}
           />
-          <span className="text-[9px] text-gray-400 font-sans">
+          <span className="text-[10px] text-neutral-400 font-sans">
             Domain breadth (3+ Realms)
           </span>
         </div>
 
         {/* 4. Spirit */}
-        <div className="flex flex-col gap-1">
-          <div className="flex items-center justify-between text-[11px] font-pixel">
-            <span className="text-gray-300 flex items-center gap-1">
-              <span>🧘</span> Spirit
+        <div className="flex flex-col gap-1.5 p-2 bg-[#0a0a0a] border border-[#222222] border-t-2 border-t-[#ffc600]">
+          <div className="flex items-center justify-between text-xs">
+            <span className="text-white flex items-center gap-1.5 font-sans font-medium">
+              <Sparkles className="w-3.5 h-3.5 text-[#ffc600]" strokeWidth={1.5} /> Spirit
             </span>
-            <span className="text-amber-300 font-bold">
-              {vitality.spirit !== null ? `${vitality.spirit.toFixed(0)}%` : "Excluded"}
+            <span className="text-[#ffc600] font-pixel text-xs font-bold">
+              {vitality.spirit !== null ? `${vitality.spirit.toFixed(0)}%` : "N/A"}
             </span>
           </div>
           <PixelBar
@@ -170,51 +178,55 @@ export const VitalityHUD: React.FC<VitalityHUDProps> = ({
             max={100}
             size="sm"
             variant="custom"
-            customColor="#F59E0B"
+            customColor="#ffc600"
             showValueText={false}
           />
-          <span className="text-[9px] text-gray-400 font-sans">
-            Daily check-in (Mood & Energy)
+          <span className="text-[10px] text-neutral-400 font-sans">
+            Check-in (Mood & Energy)
           </span>
         </div>
       </div>
 
       {/* 2-Tap Daily Check-in Area */}
-      <div className="mt-4 pt-3 border-t border-black/40">
+      <div className="mt-3 pt-3 border-t border-[#222222]">
         {checkedInToday ? (
-          <div className="flex items-center justify-between p-2 bg-[#0b0f19] border border-black font-pixel text-xs text-emerald-300">
-            <span className="flex items-center gap-1.5">
-              <span>✨</span> Today&apos;s Spirit Check-In Logged
+          <div className="flex items-center justify-between p-2.5 bg-[#0a0a0a] border border-[#00ff66]/50 font-sans text-xs text-[#00ff66]">
+            <span className="flex items-center gap-2 font-medium">
+              <Check className="w-4 h-4 text-[#00ff66]" strokeWidth={2} /> Today&apos;s Spirit Check-In Logged
             </span>
-            <span className="text-[10px] text-gray-400 font-sans">Thanks for reflecting!</span>
+            <span className="text-[10px] text-neutral-400">Recorded</span>
           </div>
         ) : showCheckInForm ? (
-          <form onSubmit={handleCheckInSubmit} className="p-3 bg-[#0b0f19] border border-black flex flex-col gap-3 font-pixel">
-            <div className="flex items-center justify-between text-xs text-amber-300 font-bold">
-              <span>🧘 Daily 2-Tap Spirit Check-In</span>
+          <form onSubmit={handleCheckInSubmit} className="p-3 bg-[#0a0a0a] border border-[#ffc600]/60 flex flex-col gap-3 font-sans">
+            <div className="flex items-center justify-between text-xs text-[#ffc600] font-bold">
+              <span className="flex items-center gap-1.5">
+                <Sparkles className="w-3.5 h-3.5" strokeWidth={1.5} /> Daily 2-Tap Spirit Check-In
+              </span>
               <button
                 type="button"
                 onClick={() => setShowCheckInForm(false)}
-                className="text-gray-400 hover:text-white text-[10px]"
+                className="text-neutral-400 hover:text-white flex items-center gap-1 text-[11px]"
               >
-                ✕ Cancel
+                <X className="w-3 h-3" strokeWidth={2} /> Cancel
               </button>
             </div>
 
             {/* Energy (1..5) */}
             <div>
-              <div className="flex items-center justify-between text-[10px] text-gray-300 mb-1">
+              <div className="flex items-center justify-between text-xs text-neutral-300 mb-1.5 font-sans">
                 <span>Energy Level:</span>
-                <span className="text-amber-400 font-bold">{energy} / 5</span>
+                <span className="text-[#ffc600] font-bold font-pixel">{energy} / 5</span>
               </div>
-              <div className="grid grid-cols-5 gap-1">
+              <div className="grid grid-cols-5 gap-1.5">
                 {[1, 2, 3, 4, 5].map((lvl) => (
                   <button
                     key={lvl}
                     type="button"
                     onClick={() => setEnergy(lvl)}
-                    className={`py-1 text-xs border border-black ${
-                      energy === lvl ? "bg-amber-600 text-black font-bold" : "bg-slate-900 text-gray-300"
+                    className={`py-1.5 text-xs font-pixel ${
+                      energy === lvl
+                        ? "bg-[#ffc600] text-black font-bold"
+                        : "bg-[#141414] border border-[#262626] text-neutral-300 hover:border-white"
                     }`}
                   >
                     {lvl}
@@ -225,18 +237,20 @@ export const VitalityHUD: React.FC<VitalityHUDProps> = ({
 
             {/* Mood (1..5) */}
             <div>
-              <div className="flex items-center justify-between text-[10px] text-gray-300 mb-1">
+              <div className="flex items-center justify-between text-xs text-neutral-300 mb-1.5 font-sans">
                 <span>Mood / State:</span>
-                <span className="text-purple-400 font-bold">{mood} / 5</span>
+                <span className="text-[#b026ff] font-bold font-pixel">{mood} / 5</span>
               </div>
-              <div className="grid grid-cols-5 gap-1">
+              <div className="grid grid-cols-5 gap-1.5">
                 {[1, 2, 3, 4, 5].map((lvl) => (
                   <button
                     key={lvl}
                     type="button"
                     onClick={() => setMood(lvl)}
-                    className={`py-1 text-xs border border-black ${
-                      mood === lvl ? "bg-purple-600 text-white font-bold" : "bg-slate-900 text-gray-300"
+                    className={`py-1.5 text-xs font-pixel ${
+                      mood === lvl
+                        ? "bg-[#b026ff] text-black font-bold"
+                        : "bg-[#141414] border border-[#262626] text-neutral-300 hover:border-white"
                     }`}
                   >
                     {lvl}
@@ -255,12 +269,12 @@ export const VitalityHUD: React.FC<VitalityHUDProps> = ({
             </PixelButton>
           </form>
         ) : (
-          <div className="flex items-center justify-between p-2 bg-[#0b0f19] border border-black">
+          <div className="flex items-center justify-between p-2.5 bg-[#0a0a0a] border border-[#222222]">
             <div className="flex flex-col">
-              <span className="font-pixel text-xs text-amber-300 font-bold">
+              <span className="font-sans text-xs text-[#ffc600] font-bold">
                 Optional Daily Reflection
               </span>
-              <span className="text-[10px] text-gray-400 font-sans">
+              <span className="text-[10px] text-neutral-400 font-sans">
                 Takes 2 taps. Never mandatory, never penalized.
               </span>
             </div>
@@ -268,8 +282,9 @@ export const VitalityHUD: React.FC<VitalityHUDProps> = ({
               variant="neutral"
               size="sm"
               onClick={() => setShowCheckInForm(true)}
+              icon={<Check className="w-3.5 h-3.5 mr-0.5" strokeWidth={2} />}
             >
-              🧘 Check In
+              Check In
             </PixelButton>
           </div>
         )}
@@ -277,4 +292,3 @@ export const VitalityHUD: React.FC<VitalityHUDProps> = ({
     </PixelCard>
   );
 };
-

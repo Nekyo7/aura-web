@@ -3,14 +3,48 @@
 @import "./tokens.css";
 
 :root {
-  --background: #090d16;
-  --foreground: #f3f4f6;
+  --background: #000000;
+  --foreground: #ffffff;
+  --neon-purple: #b026ff;
+  --warning-gold: #ffc600;
 }
 
 body {
-  background-color: var(--background);
-  color: var(--foreground);
-  font-family: var(--font-sans), system-ui, -apple-system, sans-serif;
+  background-color: #000000;
+  background-image: radial-gradient(circle at 50% 25%, #141418 0%, #08080a 55%, #000000 100%);
+  background-attachment: fixed;
+  color: #ffffff;
+  font-family: var(--font-sans), sans-serif;
   overflow-x: hidden;
   -webkit-tap-highlight-color: transparent;
+  min-height: 100vh;
+  position: relative;
+}
+
+/* Subtle fixed CRT horizontal scanlines overlay - faint texture */
+body::after {
+  content: "";
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 9999;
+  background: repeating-linear-gradient(
+    0deg,
+    rgba(0, 0, 0, 0.4) 0px,
+    rgba(0, 0, 0, 0.4) 1px,
+    transparent 1px,
+    transparent 2px
+  );
+  opacity: 0.12;
+}
+
+/* Subtle vignette focus overlay */
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
+  background: radial-gradient(circle at 50% 30%, transparent 35%, rgba(0, 0, 0, 0.75) 100%);
+  opacity: 0.6;
 }

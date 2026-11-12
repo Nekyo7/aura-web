@@ -26,39 +26,39 @@ export interface PixelBarProps {
 
 const colorVariants: Record<PixelBarVariant, { bg: string; fill: string; border: string }> = {
   hp: {
-    bg: "bg-red-950/60",
-    fill: "bg-gradient-to-r from-red-600 to-rose-500",
-    border: "border-red-900/60",
+    bg: "bg-black",
+    fill: "bg-gradient-to-r from-[#ff3344] to-[#ff2a85]",
+    border: "border-[#ff3344]",
   },
   xp: {
-    bg: "bg-purple-950/60",
-    fill: "bg-gradient-to-r from-purple-600 via-indigo-500 to-cyan-400",
-    border: "border-purple-900/60",
+    bg: "bg-black",
+    fill: "bg-gradient-to-r from-[#b026ff] to-[#00e5ff]",
+    border: "border-[#b026ff]",
   },
   "tier-thriving": {
-    bg: "bg-emerald-950/60",
-    fill: "bg-gradient-to-r from-emerald-600 to-teal-400",
-    border: "border-emerald-900/60",
+    bg: "bg-black",
+    fill: "bg-gradient-to-r from-[#00ff66] to-[#00e5ff]",
+    border: "border-[#00ff66]",
   },
   "tier-neutral": {
-    bg: "bg-amber-950/60",
-    fill: "bg-gradient-to-r from-amber-600 to-yellow-400",
-    border: "border-amber-900/60",
+    bg: "bg-black",
+    fill: "bg-gradient-to-r from-[#ffc600] to-[#ff9900]",
+    border: "border-[#ffc600]",
   },
   "tier-weakened": {
-    bg: "bg-rose-950/60",
-    fill: "bg-gradient-to-r from-rose-700 to-red-500",
-    border: "border-rose-900/60",
+    bg: "bg-black",
+    fill: "bg-gradient-to-r from-[#ff3344] to-[#cc0022]",
+    border: "border-[#ff3344]",
   },
   ap: {
-    bg: "bg-indigo-950/60",
-    fill: "bg-gradient-to-r from-indigo-500 to-purple-400",
-    border: "border-indigo-900/60",
+    bg: "bg-black",
+    fill: "bg-gradient-to-r from-[#b026ff] to-[#9900ff]",
+    border: "border-[#b026ff]",
   },
   custom: {
-    bg: "bg-slate-950/60",
-    fill: "bg-purple-500",
-    border: "border-slate-800",
+    bg: "bg-black",
+    fill: "bg-[#b026ff]",
+    border: "border-neutral-700",
   },
 };
 
@@ -112,11 +112,11 @@ export const PixelBar: React.FC<PixelBarProps> = ({
         </div>
       )}
 
-      {/* Bar Frame with Sunken Pixel Bevel */}
+      {/* Bar Frame with Sleek Noctra Bevel */}
       <div
         className={`
-          relative w-full overflow-hidden border-2 border-black
-          bg-[#070b12] shadow-[inset_2px_2px_0_0_#000,inset_-1px_-1px_0_0_rgba(255,255,255,0.1)]
+          relative w-full overflow-hidden border border-[#333333]
+          bg-[#050505] rounded-none shadow-none
           ${sizeStyles[size]}
         `}
       >

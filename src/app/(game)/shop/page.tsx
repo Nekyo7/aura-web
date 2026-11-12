@@ -6,13 +6,26 @@ import { trpc } from "@/client/trpc";
 import { PixelCard } from "@/components/pixel/PixelCard";
 import { PixelButton } from "@/components/pixel/PixelButton";
 import { useCelebrationStore } from "@/client/stores/celebration.store";
+import {
+  Coins,
+  Hourglass,
+  Gift,
+  Wind,
+  Shield,
+  RotateCcw,
+  Sparkles,
+  AlertTriangle,
+  Plus,
+  X,
+  ArrowLeft,
+  Loader2,
+} from "lucide-react";
 
 export default function ShopPage() {
   const [activeTab, setActiveTab] = useState<"MEW_BUCKS" | "CHRONO">("MEW_BUCKS");
   const [showAddModal, setShowAddModal] = useState(false);
   const [newTreatName, setNewTreatName] = useState("");
   const [newTreatCost, setNewTreatCost] = useState(50);
-  const [newTreatEmoji, setNewTreatEmoji] = useState("🎁");
   const [feedbackMsg, setFeedbackMsg] = useState<{ type: "success" | "error"; text: string } | null>(null);
 
   const utils = trpc.useUtils();
@@ -103,7 +116,6 @@ export default function ShopPage() {
     createRewardMutation.mutate({
       name: newTreatName.trim(),
       costMb: Number(newTreatCost),
-      emoji: newTreatEmoji || "🎁",
     });
   };
 
@@ -112,13 +124,15 @@ export default function ShopPage() {
       {/* Wallet Balance Strip */}
       <PixelCard variant="highlight" padding="sm">
         <div className="flex items-center justify-between">
-          <div className="flex items-center gap-2">
-            <span className="text-2xl select-none">🪙</span>
+          <div className="flex items-center gap-2.5">
+            <div className="w-9 h-9 bg-[#0e0e0e] border border-[#333333] flex items-center justify-center">
+              <Coins className="w-5 h-5 text-[#ffc600]" strokeWidth={1.5} />
+            </div>
             <div>
               <h2 className="font-pixel text-xs sm:text-sm font-bold text-amber-300">
                 Reward Sanctuary
               </h2>
-              <p className="font-pixel text-[10px] text-gray-400">
+              <p className="font-sans text-[11px] text-neutral-400">
                 Discipline Into Guilt-Free Fun
               </p>
             </div>
@@ -127,21 +141,21 @@ export default function ShopPage() {
           {/* Wallets Pill Container */}
           <div className="flex items-center gap-2">
             {/* Mew Bucks */}
-            <div className="flex items-center gap-1 px-2 py-1 bg-amber-950/80 border border-amber-600 font-pixel text-xs text-amber-300">
-              <span>🪙</span>
-              <span className="font-bold tabular-nums">
+            <div className="flex items-center gap-1.5 px-2 py-0.5 bg-[#0a0a0a] border border-[#ffc600]/60 font-sans text-xs text-[#ffc600]">
+              <Coins className="w-3.5 h-3.5 text-[#ffc600]" strokeWidth={1.5} />
+              <span className="font-bold tabular-nums font-pixel text-xs">
                 {loadingBalances ? "..." : (balances?.mb ?? 0)}
               </span>
-              <span className="text-[9px] text-amber-400">MB</span>
+              <span className="text-[9px] text-neutral-400 font-semibold">MB</span>
             </div>
 
             {/* Chrono Chirals */}
-            <div className="flex items-center gap-1 px-2 py-1 bg-cyan-950/80 border border-cyan-600 font-pixel text-xs text-cyan-300">
-              <span>⌛</span>
-              <span className="font-bold tabular-nums">
+            <div className="flex items-center gap-1.5 px-2 py-0.5 bg-[#0a0a0a] border border-[#00e5ff]/60 font-sans text-xs text-[#00e5ff]">
+              <Hourglass className="w-3.5 h-3.5 text-[#00e5ff]" strokeWidth={1.5} />
+              <span className="font-bold tabular-nums font-pixel text-xs">
                 {loadingBalances ? "..." : (balances?.cc ?? 0)}
               </span>
-              <span className="text-[9px] text-cyan-400">CC</span>
+              <span className="text-[9px] text-neutral-400 font-semibold">CC</span>
             </div>
           </div>
         </div>
@@ -150,13 +164,18 @@ export default function ShopPage() {
       {/* Global Feedback Banner */}
       {feedbackMsg && (
         <div
-          className={`p-2.5 font-pixel text-xs border-2 ${
+          className={`p-2.5 font-sans text-xs border flex items-center gap-2 ${
             feedbackMsg.type === "success"
-              ? "border-emerald-600 bg-emerald-950/90 text-emerald-200"
-              : "border-rose-600 bg-rose-950/90 text-rose-200"
+              ? "border-[#00ff66]/60 bg-[#0a0a0a] text-[#00ff66]"
+              : "border-[#ff3344]/60 bg-[#0a0a0a] text-[#ff3344]"
           }`}
         >
-          {feedbackMsg.type === "success" ? "✨" : "⚠️"} {feedbackMsg.text}
+          {feedbackMsg.type === "success" ? (
+            <Sparkles className="w-4 h-4 text-[#00ff66] shrink-0" strokeWidth={1.5} />
+          ) : (
+            <AlertTriangle className="w-4 h-4 text-[#ff3344] shrink-0" strokeWidth={1.5} />
+          )}
+          <span>{feedbackMsg.text}</span>
         </div>
       )}
 
@@ -165,24 +184,26 @@ export default function ShopPage() {
         <button
           type="button"
           onClick={() => setActiveTab("MEW_BUCKS")}
-          className={`py-2.5 px-3 border-2 font-pixel text-xs transition-all uppercase flex items-center justify-center gap-1.5 ${
+          className={`py-2 px-3 border font-sans text-xs rounded-none transition-colors uppercase flex items-center justify-center gap-1.5 font-semibold ${
             activeTab === "MEW_BUCKS"
-              ? "bg-amber-950/80 border-amber-500 text-amber-300 shadow-[0_0_12px_rgba(245,158,11,0.25)]"
-              : "bg-[#0b0f19] border-black text-gray-400 hover:text-white"
+              ? "bg-[#ffc600] border-[#ffc600] text-black font-bold"
+              : "bg-[#0a0a0a] border-[#222222] text-neutral-400 hover:text-white hover:border-neutral-500"
           }`}
         >
-          <span>🪙</span> Mew Bucks Treats
+          <Coins className="w-3.5 h-3.5" strokeWidth={1.5} />
+          <span>Mew Bucks Treats</span>
         </button>
         <button
           type="button"
           onClick={() => setActiveTab("CHRONO")}
-          className={`py-2.5 px-3 border-2 font-pixel text-xs transition-all uppercase flex items-center justify-center gap-1.5 ${
+          className={`py-2 px-3 border font-sans text-xs rounded-none transition-colors uppercase flex items-center justify-center gap-1.5 font-semibold ${
             activeTab === "CHRONO"
-              ? "bg-cyan-950/80 border-cyan-500 text-cyan-300 shadow-[0_0_12px_rgba(6,182,212,0.25)]"
-              : "bg-[#0b0f19] border-black text-gray-400 hover:text-white"
+              ? "bg-[#00e5ff] border-[#00e5ff] text-black font-bold"
+              : "bg-[#0a0a0a] border-[#222222] text-neutral-400 hover:text-white hover:border-neutral-500"
           }`}
         >
-          <span>⌛</span> Chrono Sanctuary
+          <Hourglass className="w-3.5 h-3.5" strokeWidth={1.5} />
+          <span>Chrono Sanctuary</span>
         </button>
       </div>
 
@@ -198,51 +219,42 @@ export default function ShopPage() {
                 variant="primary"
                 size="sm"
                 onClick={() => setShowAddModal(!showAddModal)}
+                icon={showAddModal ? <X className="w-3 h-3" /> : <Plus className="w-3 h-3" />}
               >
-                {showAddModal ? "✕ Close" : "+ Add Treat"}
+                {showAddModal ? "Close" : "Add Treat"}
               </PixelButton>
             }
           >
-            <p className="text-[11px] text-gray-400 font-sans leading-relaxed mb-3">
+            <p className="text-xs text-neutral-400 font-sans leading-relaxed mb-3">
               Earn Mew Bucks by completing quests, then cash them in for real-life pleasures completely guilt-free.
             </p>
 
             {/* Quick Add Treat Form */}
             {showAddModal && (
-              <form onSubmit={handleAddTreat} className="p-3 mb-4 bg-[#0b0f19] border-2 border-black flex flex-col gap-2.5 font-pixel">
-                <span className="text-xs text-amber-300 font-bold block">
+              <form onSubmit={handleAddTreat} className="p-3 mb-4 bg-[#0e0e0e] border border-[#222222] flex flex-col gap-3 font-sans">
+                <span className="text-xs text-amber-300 font-bold block uppercase tracking-wide">
                   Define a Real-Life Reward
                 </span>
-                <div className="flex gap-2">
-                  <input
-                    type="text"
-                    placeholder="Emoji"
-                    value={newTreatEmoji}
-                    onChange={(e) => setNewTreatEmoji(e.target.value)}
-                    maxLength={2}
-                    className="w-12 bg-black border border-black p-2 text-center text-sm text-white"
-                  />
-                  <input
-                    type="text"
-                    placeholder="e.g. 1 Episode of Anime, Coffee & Pastry..."
-                    value={newTreatName}
-                    onChange={(e) => setNewTreatName(e.target.value)}
-                    maxLength={40}
-                    className="flex-1 bg-black border border-black p-2 text-xs text-white placeholder-gray-500"
-                  />
-                </div>
+                <input
+                  type="text"
+                  placeholder="e.g. 1 Episode of Anime, Coffee & Pastry..."
+                  value={newTreatName}
+                  onChange={(e) => setNewTreatName(e.target.value)}
+                  maxLength={40}
+                  className="w-full bg-[#0a0a0a] border border-[#333333] p-2 text-xs text-white placeholder-neutral-500 focus:outline-none focus:border-[#ffc600]"
+                />
 
                 <div className="flex items-center gap-2">
-                  <span className="text-[11px] text-gray-400">Cost:</span>
+                  <span className="text-xs text-neutral-400">Cost:</span>
                   <input
                     type="number"
                     min={1}
                     max={1000}
                     value={newTreatCost}
                     onChange={(e) => setNewTreatCost(Number(e.target.value))}
-                    className="w-20 bg-black border border-black p-1.5 text-xs text-amber-300 text-center font-bold"
+                    className="w-20 bg-[#0a0a0a] border border-[#333333] p-1.5 text-xs text-amber-300 text-center font-bold"
                   />
-                  <span className="text-[10px] text-amber-400">Mew Bucks</span>
+                  <span className="text-xs text-neutral-400">Mew Bucks</span>
 
                   <PixelButton
                     type="submit"
@@ -258,10 +270,11 @@ export default function ShopPage() {
             )}
 
             {/* Rewards List */}
-            <div className="flex flex-col gap-2.5">
+            <div className="flex flex-col gap-2">
               {loadingRewards ? (
-                <div className="py-6 text-center font-pixel text-xs text-gray-400">
-                  <span className="animate-spin mr-2">⌛</span> Opening the Vault...
+                <div className="py-6 text-center font-sans text-xs text-neutral-400 flex items-center justify-center">
+                  <Loader2 className="w-4 h-4 animate-spin mr-2 text-neutral-400" strokeWidth={2} />
+                  <span>Opening the Vault...</span>
                 </div>
               ) : rewards && rewards.length > 0 ? (
                 rewards.map((reward) => {
@@ -270,15 +283,17 @@ export default function ShopPage() {
                   return (
                     <div
                       key={reward.id}
-                      className="p-3 bg-[#0b0f19] border border-black flex items-center justify-between gap-2"
+                      className="p-3 bg-[#0a0a0a] border border-[#222222] flex items-center justify-between gap-2"
                     >
                       <div className="flex items-center gap-2.5 min-w-0">
-                        <span className="text-xl shrink-0 select-none">{reward.emoji || "🎁"}</span>
+                        <div className="w-8 h-8 bg-[#0e0e0e] border border-[#333333] flex items-center justify-center shrink-0">
+                          <Gift className="w-4 h-4 text-[#ffc600]" strokeWidth={1.5} />
+                        </div>
                         <div className="flex flex-col min-w-0">
-                          <span className="font-pixel text-xs font-bold text-white truncate">
+                          <span className="font-sans text-xs font-semibold text-white truncate">
                             {reward.name}
                           </span>
-                          <span className="font-pixel text-[10px] text-amber-400">
+                          <span className="font-pixel text-[10px] text-amber-400 font-bold">
                             {reward.costMb} Mew Bucks
                           </span>
                         </div>
@@ -301,16 +316,16 @@ export default function ShopPage() {
                               archiveRewardMutation.mutate({ rewardId: reward.id });
                             }
                           }}
-                          className="font-pixel text-[9px] text-gray-500 hover:text-rose-400 p-1"
+                          className="text-neutral-500 hover:text-rose-400 p-1"
                         >
-                          ✕
+                          <X className="w-3.5 h-3.5" strokeWidth={1.5} />
                         </button>
                       </div>
                     </div>
                   );
                 })
               ) : (
-                <div className="py-4 text-center font-pixel text-xs text-gray-400">
+                <div className="py-4 text-center font-sans text-xs text-neutral-400">
                   No treats defined yet. Add your favorite treat above!
                 </div>
               )}
@@ -323,21 +338,23 @@ export default function ShopPage() {
       {activeTab === "CHRONO" && (
         <div className="flex flex-col gap-3">
           <PixelCard variant="default" title="Chrono Sanctuary" padding="md">
-            <p className="text-[11px] text-gray-400 font-sans leading-relaxed mb-4">
+            <p className="text-xs text-neutral-400 font-sans leading-relaxed mb-4">
               Rare, recovery-oriented items for life interruptions. Chrono Chirals are earned at major milestone rank tier-ups (every III→I boundary).
             </p>
 
             <div className="flex flex-col gap-3">
               {/* Item 1: Second Wind */}
-              <div className="p-3.5 bg-[#0b0f19] border border-black flex flex-col gap-2">
+              <div className="p-3 bg-[#0a0a0a] border border-[#222222] border-t-2 border-t-[#00e5ff] flex flex-col gap-2">
                 <div className="flex items-start justify-between">
                   <div className="flex items-center gap-2.5">
-                    <span className="text-2xl select-none">💨</span>
+                    <div className="w-9 h-9 bg-[#0e0e0e] border border-[#333333] flex items-center justify-center">
+                      <Wind className="w-5 h-5 text-[#00e5ff]" strokeWidth={1.5} />
+                    </div>
                     <div>
                       <h4 className="font-pixel text-xs font-bold text-cyan-300">
                         Second Wind
                       </h4>
-                      <span className="font-pixel text-[10px] text-cyan-400">
+                      <span className="font-sans text-[10px] text-cyan-400 font-semibold">
                         Cost: 1 Chrono Chiral
                       </span>
                     </div>
@@ -352,21 +369,23 @@ export default function ShopPage() {
                     Activate
                   </PixelButton>
                 </div>
-                <p className="text-[11px] text-gray-400 font-sans leading-snug">
+                <p className="text-xs text-neutral-400 font-sans leading-relaxed">
                   Shields your character for 24 hours: Vitality is treated as at least <strong className="text-amber-400">Neutral (0.85x)</strong> even if HP drops into Weakened tier.
                 </p>
               </div>
 
               {/* Item 2: Rust Ward */}
-              <div className="p-3.5 bg-[#0b0f19] border border-black flex flex-col gap-2">
+              <div className="p-3 bg-[#0a0a0a] border border-[#222222] border-t-2 border-t-[#00e5ff] flex flex-col gap-2">
                 <div className="flex items-start justify-between">
                   <div className="flex items-center gap-2.5">
-                    <span className="text-2xl select-none">🛡️</span>
+                    <div className="w-9 h-9 bg-[#0e0e0e] border border-[#333333] flex items-center justify-center">
+                      <Shield className="w-5 h-5 text-[#00e5ff]" strokeWidth={1.5} />
+                    </div>
                     <div>
                       <h4 className="font-pixel text-xs font-bold text-cyan-300">
                         Rust Ward
                       </h4>
-                      <span className="font-pixel text-[10px] text-cyan-400">
+                      <span className="font-sans text-[10px] text-cyan-400 font-semibold">
                         Cost: 2 Chrono Chirals
                       </span>
                     </div>
@@ -381,21 +400,23 @@ export default function ShopPage() {
                     Activate
                   </PixelButton>
                 </div>
-                <p className="text-[11px] text-gray-400 font-sans leading-snug">
+                <p className="text-xs text-neutral-400 font-sans leading-relaxed">
                   Freezes skill rust and decay for 7 continuous days. Ideal for guilt-free holidays, travel, or sick leave.
                 </p>
               </div>
 
               {/* Item 3: Chrono Rewind */}
-              <div className="p-3.5 bg-[#0b0f19] border border-black flex flex-col gap-2">
+              <div className="p-3 bg-[#0a0a0a] border border-[#222222] border-t-2 border-t-[#00e5ff] flex flex-col gap-2">
                 <div className="flex items-start justify-between">
                   <div className="flex items-center gap-2.5">
-                    <span className="text-2xl select-none">⏳</span>
+                    <div className="w-9 h-9 bg-[#0e0e0e] border border-[#333333] flex items-center justify-center">
+                      <RotateCcw className="w-5 h-5 text-[#00e5ff]" strokeWidth={1.5} />
+                    </div>
                     <div>
                       <h4 className="font-pixel text-xs font-bold text-cyan-300">
                         Chrono Rewind
                       </h4>
-                      <span className="font-pixel text-[10px] text-cyan-400">
+                      <span className="font-sans text-[10px] text-cyan-400 font-semibold">
                         Cost: 1 Chrono Chiral
                       </span>
                     </div>
@@ -410,7 +431,7 @@ export default function ShopPage() {
                     Activate
                   </PixelButton>
                 </div>
-                <p className="text-[11px] text-gray-400 font-sans leading-snug">
+                <p className="text-xs text-neutral-400 font-sans leading-relaxed">
                   Backfill missed logged activity within a 48-hour window without penalty.
                 </p>
               </div>
@@ -421,8 +442,8 @@ export default function ShopPage() {
 
       {/* Return Button */}
       <Link href="/character">
-        <PixelButton variant="neutral" size="sm" className="w-full">
-          ◀ Back to Character Sheet
+        <PixelButton variant="neutral" size="sm" className="w-full" icon={<ArrowLeft className="w-3.5 h-3.5 mr-1" strokeWidth={2} />}>
+          Back to Character Sheet
         </PixelButton>
       </Link>
     </div>

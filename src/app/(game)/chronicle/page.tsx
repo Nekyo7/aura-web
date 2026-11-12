@@ -4,6 +4,7 @@ import React, { useState } from "react";
 import Link from "next/link";
 import { trpc } from "@/client/trpc";
 import { PixelButton } from "@/components/pixel/PixelButton";
+import { Scroll, BookOpen, Globe, ArrowLeft } from "lucide-react";
 
 export default function ChroniclePage() {
   const { data: currentWeek, isLoading } = trpc.chronicle.getCurrentWeek.useQuery();
@@ -15,12 +16,11 @@ export default function ChroniclePage() {
   return (
     <div className="flex flex-col gap-4 pb-12 max-w-2xl mx-auto">
       {/* Ancient Book Spine Header */}
-      <div className="bg-[#241a12] border-4 border-[#785127] p-3 text-center shadow-[4px_4px_0px_0px_#000] relative">
-        <div className="absolute top-0 inset-x-8 h-1 bg-[#a16207] opacity-60" />
-        <span className="font-pixel text-[9px] uppercase tracking-widest text-[#d4b996] block mb-1">
-          ✦ Sacred Archive of Life OS ✦
+      <div className="bg-[#141210] border border-[#333333] border-t-2 border-t-[#ffc600] p-3 text-center shadow-none relative">
+        <span className="font-sans text-[10px] uppercase tracking-widest text-[#d4b996] block mb-1 font-semibold">
+          Sacred Archive of Life OS
         </span>
-        <h1 className="font-pixel text-base font-bold text-[#fef08a] tracking-wide">
+        <h1 className="font-pixel text-sm sm:text-base font-bold text-[#fef08a] tracking-wide">
           The Weekly Chronicle
         </h1>
         <p className="font-sans text-xs text-[#d4b996] mt-0.5 italic">
@@ -30,9 +30,9 @@ export default function ChroniclePage() {
 
       {/* Loading Skeleton */}
       {isLoading && (
-        <div className="bg-[#1c140e] border-2 border-[#785127] p-6 text-center animate-pulse">
-          <div className="text-2xl mb-2">📜</div>
-          <span className="font-pixel text-xs text-[#d4b996]">
+        <div className="bg-[#0e0c0a] border border-[#262626] p-6 text-center animate-pulse">
+          <Scroll className="w-8 h-8 text-[#d4b996] mx-auto mb-2 opacity-60" strokeWidth={1.5} />
+          <span className="font-sans text-xs text-[#d4b996]">
             Unfurling the parchment scrolls...
           </span>
         </div>
@@ -40,32 +40,21 @@ export default function ChroniclePage() {
 
       {/* The Dusty Fantasy Book / Tome */}
       {!isLoading && activePayload && (
-        <div className="relative bg-[#1c140e] border-4 border-[#8c5a2b] shadow-[6px_6px_0px_0px_#000,inset_0_0_20px_rgba(0,0,0,0.8)] text-[#f5e6c8] p-5 sm:p-7">
-          {/* Decorative Corner Ornaments */}
-          <div className="absolute top-2 left-2 text-[#a16207] text-xs select-none">╔</div>
-          <div className="absolute top-2 right-2 text-[#a16207] text-xs select-none">╗</div>
-          <div className="absolute bottom-2 left-2 text-[#a16207] text-xs select-none">╚</div>
-          <div className="absolute bottom-2 right-2 text-[#a16207] text-xs select-none">╝</div>
-
-          {/* Book Bookmark Ribbon */}
-          <div className="absolute -top-3 right-6 w-5 h-8 bg-rose-800 border-x border-b border-black shadow-md flex items-end justify-center pb-0.5">
-            <span className="text-[8px] text-yellow-300">★</span>
-          </div>
-
+        <div className="relative bg-[#100d0a] border border-[#3d2c1d] border-t-2 border-t-[#a16207] text-[#f5e6c8] p-5 sm:p-6 shadow-none">
           {/* Chapter Title & Date Range */}
-          <div className="text-center border-b-2 border-[#785127]/60 pb-3 mb-5">
-            <span className="font-pixel text-[10px] text-[#fbbf24] uppercase tracking-wider block">
+          <div className="text-center border-b border-[#3d2c1d] pb-3 mb-4">
+            <span className="font-sans text-[11px] text-[#fbbf24] uppercase tracking-wider block font-semibold">
               {activePayload.weekTitle}
             </span>
-            <h2 className="font-pixel text-sm font-bold text-[#fde047] mt-0.5">
+            <h2 className="font-pixel text-xs sm:text-sm font-bold text-[#fde047] mt-0.5">
               Cycle of {activePayload.weekRangeText}
             </h2>
           </div>
 
           {/* Wax Seals / Stat Runes */}
-          <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 mb-6">
-            <div className="bg-[#120c08] border border-[#785127] p-2 text-center">
-              <span className="font-pixel text-[8px] text-[#d4b996] uppercase block">
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 mb-5">
+            <div className="bg-[#0a0806] border border-[#2a1e14] p-2 text-center">
+              <span className="font-sans text-[10px] text-[#d4b996] uppercase block font-semibold">
                 Logged Effort
               </span>
               <span className="font-pixel text-xs font-bold text-[#fef08a]">
@@ -73,8 +62,8 @@ export default function ChroniclePage() {
               </span>
             </div>
 
-            <div className="bg-[#120c08] border border-[#785127] p-2 text-center">
-              <span className="font-pixel text-[8px] text-[#d4b996] uppercase block">
+            <div className="bg-[#0a0806] border border-[#2a1e14] p-2 text-center">
+              <span className="font-sans text-[10px] text-[#d4b996] uppercase block font-semibold">
                 Sessions
               </span>
               <span className="font-pixel text-xs font-bold text-[#fef08a]">
@@ -82,8 +71,8 @@ export default function ChroniclePage() {
               </span>
             </div>
 
-            <div className="bg-[#120c08] border border-[#785127] p-2 text-center">
-              <span className="font-pixel text-[8px] text-[#d4b996] uppercase block">
+            <div className="bg-[#0a0806] border border-[#2a1e14] p-2 text-center">
+              <span className="font-sans text-[10px] text-[#d4b996] uppercase block font-semibold">
                 Dominant Realm
               </span>
               <span className="font-pixel text-xs font-bold text-[#fef08a] truncate block">
@@ -91,8 +80,8 @@ export default function ChroniclePage() {
               </span>
             </div>
 
-            <div className="bg-[#120c08] border border-[#785127] p-2 text-center">
-              <span className="font-pixel text-[8px] text-[#d4b996] uppercase block">
+            <div className="bg-[#0a0806] border border-[#2a1e14] p-2 text-center">
+              <span className="font-sans text-[10px] text-[#d4b996] uppercase block font-semibold">
                 Vitality Tier
               </span>
               <span className="font-pixel text-xs font-bold text-[#fef08a]">
@@ -101,41 +90,40 @@ export default function ChroniclePage() {
             </div>
           </div>
 
-          {/* The Narrative Manuscript (Old Font / Book Styling) */}
-          <div className="space-y-4 font-serif text-sm sm:text-base leading-relaxed text-[#f0dfc8] border-y border-[#785127]/40 py-5">
-            {/* Illuminated First Letter on Prologue */}
-            <p className="first-letter:font-pixel first-letter:text-3xl first-letter:float-left first-letter:mr-2 first-letter:text-[#fbbf24] first-letter:leading-none">
+          {/* The Narrative Manuscript */}
+          <div className="space-y-4 font-sans text-xs sm:text-sm leading-relaxed text-[#f0dfc8] border-y border-[#3d2c1d] py-4">
+            <p className="first-letter:font-pixel first-letter:text-2xl first-letter:float-left first-letter:mr-2 first-letter:text-[#fbbf24] first-letter:leading-none">
               {activePayload.prologue}
             </p>
 
-            <p className="bg-[#150d09]/60 p-3 border-l-2 border-[#a16207] italic text-[#e6d0b3]">
+            <p className="bg-[#0a0806] p-3 border-l-2 border-[#a16207] italic text-[#e6d0b3]">
               {activePayload.dominantKingdomText}
             </p>
 
             <p>{activePayload.accomplishmentsText}</p>
 
-            <p className="bg-[#150d09]/60 p-3 border-l-2 border-emerald-700/60 text-[#e6d0b3]">
+            <p className="bg-[#0a0806] p-3 border-l-2 border-emerald-700/60 text-[#e6d0b3]">
               {activePayload.vitalityText}
             </p>
 
-            <p className="text-center italic text-xs font-pixel text-[#d4b996] pt-2">
-              "{activePayload.epilogue}"
+            <p className="text-center italic text-xs text-[#d4b996] pt-1">
+              &ldquo;{activePayload.epilogue}&rdquo;
             </p>
           </div>
 
           {/* Key Achievements List */}
           {activePayload.highlights && activePayload.highlights.length > 0 && (
-            <div className="mt-5 pt-3">
-              <span className="font-pixel text-[9px] uppercase text-[#fbbf24] block mb-2 tracking-wide">
-                ✦ Significant Accomplishments ✦
+            <div className="mt-4 pt-2">
+              <span className="font-sans text-[11px] uppercase text-[#fbbf24] block mb-2 tracking-wide font-semibold">
+                Significant Accomplishments
               </span>
               <div className="flex flex-col gap-1.5">
                 {activePayload.highlights.map((h: string, idx: number) => (
                   <div
                     key={idx}
-                    className="flex items-center gap-2 p-1.5 bg-[#120c08] border border-[#785127]/60 text-xs text-[#e6d0b3]"
+                    className="flex items-center gap-2 p-2 bg-[#0a0806] border border-[#2a1e14] text-xs font-sans text-[#e6d0b3]"
                   >
-                    <span className="text-amber-400">❖</span>
+                    <span className="w-1.5 h-1.5 rounded-full bg-[#fbbf24]" />
                     <span>{h}</span>
                   </div>
                 ))}
@@ -151,8 +139,9 @@ export default function ChroniclePage() {
                 size="sm"
                 onClick={() => setSelectedHistoryPayload(null)}
                 className="w-full"
+                icon={<ArrowLeft className="w-3.5 h-3.5 mr-1" strokeWidth={2} />}
               >
-                ◀ Return to Current Week Chronicle
+                Return to Current Week Chronicle
               </PixelButton>
             </div>
           )}
@@ -161,8 +150,8 @@ export default function ChroniclePage() {
 
       {/* Historical Chronicles Drawer */}
       {history && history.length > 1 && (
-        <div className="bg-[#16100b] border-2 border-[#785127] p-3 text-[#d4b996]">
-          <h3 className="font-pixel text-xs font-bold text-[#fbbf24] mb-2 uppercase">
+        <div className="bg-[#0e0c0a] border border-[#2a1e14] p-3 text-[#d4b996]">
+          <h3 className="font-sans text-xs font-bold text-[#fbbf24] mb-2 uppercase">
             Past Tome Chapters ({history.length})
           </h3>
           <div className="flex flex-col gap-1.5">
@@ -171,18 +160,19 @@ export default function ChroniclePage() {
                 key={entry.id}
                 type="button"
                 onClick={() => setSelectedHistoryPayload(entry.payload)}
-                className="flex items-center justify-between p-2 bg-[#0e0805] border border-[#785127]/60 text-left hover:border-amber-500 transition-colors cursor-pointer"
+                className="flex items-center justify-between p-2 bg-[#080605] border border-[#221810] text-left hover:border-amber-500 transition-colors cursor-pointer"
               >
                 <div className="flex flex-col">
                   <span className="font-pixel text-[10px] font-bold text-[#fef08a]">
                     {entry.payload.weekTitle}
                   </span>
-                  <span className="text-[10px] text-gray-400">
+                  <span className="font-sans text-[10px] text-neutral-400">
                     {entry.payload.weekRangeText}
                   </span>
                 </div>
-                <span className="font-pixel text-[9px] text-[#fbbf24]">
-                  {entry.payload.stats.totalHours}h • Read 📖
+                <span className="font-sans text-[10px] text-[#fbbf24] flex items-center gap-1 font-medium">
+                  <span>{entry.payload.stats.totalHours}h</span>
+                  <BookOpen className="w-3 h-3 ml-1 text-[#fbbf24]" strokeWidth={1.5} />
                 </span>
               </button>
             ))}
@@ -193,17 +183,16 @@ export default function ChroniclePage() {
       {/* Navigation Footer */}
       <div className="flex gap-2">
         <Link href="/kingdoms" className="flex-1">
-          <PixelButton variant="primary" size="sm" className="w-full">
-            🏰 View Kingdoms
+          <PixelButton variant="primary" size="sm" className="w-full" icon={<Globe className="w-3.5 h-3.5 mr-1" strokeWidth={1.5} />}>
+            View Kingdoms
           </PixelButton>
         </Link>
         <Link href="/character" className="flex-1">
-          <PixelButton variant="neutral" size="sm" className="w-full">
-            ◀ Character Sheet
+          <PixelButton variant="neutral" size="sm" className="w-full" icon={<ArrowLeft className="w-3.5 h-3.5 mr-1" strokeWidth={2} />}>
+            Character Sheet
           </PixelButton>
         </Link>
       </div>
     </div>
   );
 }
-

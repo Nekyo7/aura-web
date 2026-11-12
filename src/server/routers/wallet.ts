@@ -47,9 +47,9 @@ export const walletRouter = router({
     // Seed starter treats if user has none
     if (rewards.length === 0) {
       const starters = [
-        { name: "Watch 1 Episode of Anime / Show", emoji: "📺", costMb: 40 },
-        { name: "Guilt-Free Gaming (1 Hour)", emoji: "🎮", costMb: 60 },
-        { name: "Cheat Meal / Favorite Coffee", emoji: "☕", costMb: 100 },
+        { name: "Watch 1 Episode of Anime / Show", emoji: "tv", costMb: 40 },
+        { name: "Guilt-Free Gaming (1 Hour)", emoji: "gamepad", costMb: 60 },
+        { name: "Cheat Meal / Favorite Coffee", emoji: "coffee", costMb: 100 },
       ];
 
       for (const s of starters) {
@@ -81,7 +81,7 @@ export const walletRouter = router({
       z.object({
         name: z.string().trim().min(1, "Reward name is required"),
         costMb: z.number().int().positive("Cost must be at least 1 Mew Buck"),
-        emoji: z.string().optional().default("🎁"),
+        emoji: z.string().optional().default("gift"),
       })
     )
     .mutation(async ({ ctx, input }) => {
@@ -92,7 +92,7 @@ export const walletRouter = router({
           userId,
           name: input.name,
           costMb: input.costMb,
-          emoji: input.emoji || "🎁",
+          emoji: input.emoji || "gift",
         },
       });
     }),
