@@ -105,7 +105,7 @@ export function AchievementsBoard() {
 
       {/* Achievements Grid */}
       {!isLoading && achievements && (
-        <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
+        <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
           {achievements.map((ach) => {
             const isHidden = ach.isSecret && !ach.isUnlocked;
 
@@ -114,10 +114,10 @@ export function AchievementsBoard() {
                 key={ach.id}
                 type="button"
                 onClick={() => setSelectedAchievement(ach)}
-                className={`flex flex-col text-left p-2.5 border rounded-none transition-colors relative select-none ${
+                className={`flex flex-col text-left p-3 transition-colors relative select-none cursor-pointer border-b ${
                   ach.isUnlocked
-                    ? "bg-[#0a0a0a] border-[#ffc600]/60 border-t-2 border-t-[#ffc600] text-white cursor-pointer hover:border-[#ffc600]"
-                    : "bg-[#0a0a0a] border-[#222222] text-neutral-500 opacity-60 hover:opacity-100 hover:border-neutral-600 cursor-pointer"
+                    ? "bg-zinc-950/70 hover:bg-zinc-900 border-zinc-800 text-white"
+                    : "bg-transparent hover:bg-zinc-950 border-zinc-900 text-zinc-500 opacity-55 hover:opacity-100"
                 }`}
               >
                 {/* Monochrome Icon / Lock Status */}
@@ -126,11 +126,11 @@ export function AchievementsBoard() {
                     {getAchievementIcon(ach.key, ach.isSecret, ach.isUnlocked, "w-4 h-4")}
                   </div>
                   {ach.isUnlocked ? (
-                    <span className="font-sans text-[9px] px-1.5 py-0.2 bg-[#ffc600] text-black font-bold flex items-center gap-0.5">
-                      <Check className="w-2.5 h-2.5" strokeWidth={3} /> DONE
+                    <span className="font-sans text-[9px] px-1.5 py-0.2 bg-zinc-900 text-emerald-400 border border-zinc-800 font-medium flex items-center gap-0.5">
+                      <Check className="w-2.5 h-2.5" strokeWidth={2.5} /> DONE
                     </span>
                   ) : (
-                    <Lock className="w-3 h-3 text-neutral-500" strokeWidth={1.5} />
+                    <Lock className="w-3 h-3 text-zinc-600" strokeWidth={1.5} />
                   )}
                 </div>
 
@@ -140,15 +140,15 @@ export function AchievementsBoard() {
                 </span>
 
                 {/* Rewards preview */}
-                <div className="flex items-center gap-1 mt-auto font-sans text-[10px] font-semibold">
+                <div className="flex items-center gap-1 mt-auto font-sans text-[10px] text-zinc-500 font-medium">
                   {ach.apReward > 0 && (
-                    <span className="text-[#b026ff]">+{ach.apReward} AP</span>
+                    <span className="text-purple-400">+{ach.apReward} AP</span>
                   )}
                   {ach.mbReward > 0 && (
-                    <span className="text-[#00ff66]">+{ach.mbReward} MB</span>
+                    <span className="text-emerald-400">+{ach.mbReward} MB</span>
                   )}
                   {ach.ccReward > 0 && (
-                    <span className="text-[#00e5ff]">+{ach.ccReward} CC</span>
+                    <span className="text-cyan-400">+{ach.ccReward} CC</span>
                   )}
                 </div>
               </button>
@@ -202,22 +202,22 @@ export function AchievementsBoard() {
 
             {/* Rewards Breakdown */}
             <div className="mb-4">
-              <span className="font-sans text-[10px] text-neutral-400 uppercase block mb-1.5 font-semibold">
+              <span className="font-sans text-[10px] text-zinc-500 uppercase block mb-1.5 font-medium">
                 Bounty Rewards:
               </span>
               <div className="flex items-center gap-2">
                 {selectedAchievement.apReward > 0 && (
-                  <div className="px-2 py-0.5 bg-[#0a0a0a] border border-[#b026ff]/60 font-sans text-[10px] text-[#b026ff] font-semibold">
+                  <div className="px-2 py-0.5 bg-zinc-900 border border-zinc-800 font-sans text-[11px] text-purple-400 font-medium">
                     +{selectedAchievement.apReward} AP
                   </div>
                 )}
                 {selectedAchievement.mbReward > 0 && (
-                  <div className="px-2 py-0.5 bg-[#0a0a0a] border border-[#00ff66]/60 font-sans text-[10px] text-[#00ff66] font-semibold">
+                  <div className="px-2 py-0.5 bg-zinc-900 border border-zinc-800 font-sans text-[11px] text-emerald-400 font-medium">
                     +{selectedAchievement.mbReward} MB
                   </div>
                 )}
                 {selectedAchievement.ccReward > 0 && (
-                  <div className="px-2 py-0.5 bg-[#0a0a0a] border border-[#00e5ff]/60 font-sans text-[10px] text-[#00e5ff] font-semibold">
+                  <div className="px-2 py-0.5 bg-zinc-900 border border-zinc-800 font-sans text-[11px] text-cyan-400 font-medium">
                     +{selectedAchievement.ccReward} CC
                   </div>
                 )}

@@ -34,9 +34,9 @@ const variantClasses: Record<PixelButtonVariant, string> = {
 };
 
 const sizeClasses: Record<PixelButtonSize, string> = {
-  sm: "px-2.5 py-1 text-xs min-h-[34px]",
-  md: "px-3.5 py-2 text-xs sm:text-sm min-h-[40px]",
-  lg: "px-4.5 py-2.5 text-sm min-h-[44px]",
+  sm: "px-3 py-1 text-xs h-7 min-h-[28px]",
+  md: "px-3.5 py-1.5 text-xs sm:text-sm h-8.5 min-h-[34px]",
+  lg: "px-4 py-2 text-xs sm:text-sm h-9.5 min-h-[38px]",
 };
 
 export const PixelButton: React.FC<PixelButtonProps> = ({

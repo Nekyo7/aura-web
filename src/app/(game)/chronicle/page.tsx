@@ -14,9 +14,9 @@ export default function ChroniclePage() {
   const activePayload = selectedHistoryPayload || currentWeek?.payload;
 
   return (
-    <div className="flex flex-col gap-4 pb-12 max-w-2xl mx-auto">
+    <div className="flex flex-col gap-6 pb-12 max-w-2xl mx-auto">
       {/* Ancient Book Spine Header */}
-      <div className="bg-[#141210] border border-[#333333] border-t-2 border-t-[#ffc600] p-3 text-center shadow-none relative">
+      <div className="bg-[#141210] border border-[#333333] border-t-2 border-t-[#ffc600] p-4 text-center shadow-none relative">
         <span className="font-sans text-[10px] uppercase tracking-widest text-[#d4b996] block mb-1 font-semibold">
           Sacred Archive of Life OS
         </span>
@@ -30,7 +30,7 @@ export default function ChroniclePage() {
 
       {/* Loading Skeleton */}
       {isLoading && (
-        <div className="bg-[#0e0c0a] border border-[#262626] p-6 text-center animate-pulse">
+        <div className="bg-[#0e0c0a] border border-[#262626] p-8 text-center animate-pulse">
           <Scroll className="w-8 h-8 text-[#d4b996] mx-auto mb-2 opacity-60" strokeWidth={1.5} />
           <span className="font-sans text-xs text-[#d4b996]">
             Unfurling the parchment scrolls...
@@ -42,56 +42,56 @@ export default function ChroniclePage() {
       {!isLoading && activePayload && (
         <div className="relative bg-[#100d0a] border border-[#3d2c1d] border-t-2 border-t-[#a16207] text-[#f5e6c8] p-5 sm:p-6 shadow-none">
           {/* Chapter Title & Date Range */}
-          <div className="text-center border-b border-[#3d2c1d] pb-3 mb-4">
-            <span className="font-sans text-[11px] text-[#fbbf24] uppercase tracking-wider block font-semibold">
+          <div className="text-center border-b border-[#3d2c1d] pb-4 mb-5">
+            <span className="font-sans text-xs text-[#fbbf24] uppercase tracking-wider block font-medium">
               {activePayload.weekTitle}
             </span>
-            <h2 className="font-pixel text-xs sm:text-sm font-bold text-[#fde047] mt-0.5">
+            <h2 className="font-pixel text-xs sm:text-sm font-bold text-[#fde047] mt-1">
               Cycle of {activePayload.weekRangeText}
             </h2>
           </div>
 
-          {/* Wax Seals / Stat Runes */}
-          <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 mb-5">
-            <div className="bg-[#0a0806] border border-[#2a1e14] p-2 text-center">
-              <span className="font-sans text-[10px] text-[#d4b996] uppercase block font-semibold">
+          {/* Stat Runes - Clean Borderless Layout */}
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 mb-6 pb-5 border-b border-[#3d2c1d] text-center">
+            <div>
+              <span className="font-sans text-[10px] text-[#d4b996] uppercase block font-medium">
                 Logged Effort
               </span>
-              <span className="font-pixel text-xs font-bold text-[#fef08a]">
+              <span className="font-pixel text-xs font-bold text-[#fef08a] mt-0.5 block">
                 {activePayload.stats.totalHours} Hours
               </span>
             </div>
 
-            <div className="bg-[#0a0806] border border-[#2a1e14] p-2 text-center">
-              <span className="font-sans text-[10px] text-[#d4b996] uppercase block font-semibold">
+            <div>
+              <span className="font-sans text-[10px] text-[#d4b996] uppercase block font-medium">
                 Sessions
               </span>
-              <span className="font-pixel text-xs font-bold text-[#fef08a]">
+              <span className="font-pixel text-xs font-bold text-[#fef08a] mt-0.5 block">
                 {activePayload.stats.sessionsCount} Feats
               </span>
             </div>
 
-            <div className="bg-[#0a0806] border border-[#2a1e14] p-2 text-center">
-              <span className="font-sans text-[10px] text-[#d4b996] uppercase block font-semibold">
+            <div>
+              <span className="font-sans text-[10px] text-[#d4b996] uppercase block font-medium">
                 Dominant Realm
               </span>
-              <span className="font-pixel text-xs font-bold text-[#fef08a] truncate block">
+              <span className="font-pixel text-xs font-bold text-[#fef08a] truncate block mt-0.5">
                 {activePayload.stats.dominantKingdomName}
               </span>
             </div>
 
-            <div className="bg-[#0a0806] border border-[#2a1e14] p-2 text-center">
-              <span className="font-sans text-[10px] text-[#d4b996] uppercase block font-semibold">
+            <div>
+              <span className="font-sans text-[10px] text-[#d4b996] uppercase block font-medium">
                 Vitality Tier
               </span>
-              <span className="font-pixel text-xs font-bold text-[#fef08a]">
+              <span className="font-pixel text-xs font-bold text-[#fef08a] mt-0.5 block">
                 {activePayload.stats.vitalityTier}
               </span>
             </div>
           </div>
 
           {/* The Narrative Manuscript */}
-          <div className="space-y-4 font-sans text-xs sm:text-sm leading-relaxed text-[#f0dfc8] border-y border-[#3d2c1d] py-4">
+          <div className="space-y-4 font-sans text-xs sm:text-sm leading-relaxed text-[#f0dfc8] border-b border-[#3d2c1d] pb-5">
             <p className="first-letter:font-pixel first-letter:text-2xl first-letter:float-left first-letter:mr-2 first-letter:text-[#fbbf24] first-letter:leading-none">
               {activePayload.prologue}
             </p>
@@ -113,17 +113,17 @@ export default function ChroniclePage() {
 
           {/* Key Achievements List */}
           {activePayload.highlights && activePayload.highlights.length > 0 && (
-            <div className="mt-4 pt-2">
-              <span className="font-sans text-[11px] uppercase text-[#fbbf24] block mb-2 tracking-wide font-semibold">
+            <div className="mt-5">
+              <span className="font-sans text-xs uppercase text-[#fbbf24] block mb-3 tracking-wide font-medium">
                 Significant Accomplishments
               </span>
-              <div className="flex flex-col gap-1.5">
+              <div className="space-y-2">
                 {activePayload.highlights.map((h: string, idx: number) => (
                   <div
                     key={idx}
-                    className="flex items-center gap-2 p-2 bg-[#0a0806] border border-[#2a1e14] text-xs font-sans text-[#e6d0b3]"
+                    className="flex items-center gap-2.5 py-1 text-xs font-sans text-[#e6d0b3]"
                   >
-                    <span className="w-1.5 h-1.5 rounded-full bg-[#fbbf24]" />
+                    <span className="w-1.5 h-1.5 rounded-full bg-[#fbbf24] shrink-0" />
                     <span>{h}</span>
                   </div>
                 ))}
@@ -133,7 +133,7 @@ export default function ChroniclePage() {
 
           {/* Reset button if viewing history */}
           {selectedHistoryPayload && (
-            <div className="mt-4">
+            <div className="mt-5">
               <PixelButton
                 variant="neutral"
                 size="sm"

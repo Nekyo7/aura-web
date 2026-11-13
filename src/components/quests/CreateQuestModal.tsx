@@ -211,8 +211,8 @@ export const CreateQuestModal: React.FC<CreateQuestModalProps> = ({
               </div>
 
               {/* Dynamic Reward Preview Banner */}
-              <div className="p-2.5 bg-[#0e0e0e] border border-[#222222] flex items-center justify-between text-xs">
-                <span className="text-neutral-400 font-semibold">Tier Rewards:</span>
+              <div className="p-2.5 bg-zinc-950 border border-zinc-800 flex items-center justify-between text-xs">
+                <span className="text-zinc-400 font-medium text-[11px]">Tier Rewards:</span>
                 <div className="flex items-center gap-2 font-pixel text-[10px]">
                   <span className="text-blue-400">+{currentRewards.baseXp} XP</span>
                   <span className="text-amber-400">+{currentRewards.mbReward} MB</span>

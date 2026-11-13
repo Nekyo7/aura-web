@@ -218,7 +218,7 @@ export const CreateSkillModal: React.FC<CreateSkillModalProps> = ({
                 Tap (+) or (-) to set which RPG attributes grow when practicing this skill.
               </p>
 
-              <div className="grid grid-cols-2 gap-2">
+              <div className="grid grid-cols-2 gap-2.5">
                 {ATTRIBUTES.map((attr) => {
                   const val = weights[attr.key] ?? 0;
                   const pct = totalWeight > 0 ? Math.round((val / totalWeight) * 100) : 0;
@@ -229,8 +229,8 @@ export const CreateSkillModal: React.FC<CreateSkillModalProps> = ({
                       key={attr.key}
                       className={`p-2.5 border flex flex-col justify-between transition-colors ${
                         val > 0
-                          ? "bg-[#0a0a0a] border-purple-900 border-t-2 border-t-[#b026ff]"
-                          : "bg-[#0a0a0a] border-[#222222]"
+                          ? "bg-zinc-900 border-zinc-700 border-t-2 border-t-[#b026ff]"
+                          : "bg-zinc-950/70 border-zinc-800/80"
                       }`}
                     >
                       <div className="flex items-center justify-between mb-1.5">
@@ -239,7 +239,7 @@ export const CreateSkillModal: React.FC<CreateSkillModalProps> = ({
                           <span>{attr.key}</span>
                         </span>
                         {val > 0 && (
-                          <span className="font-pixel text-[9px] px-1 bg-[#141414] border border-purple-800 text-purple-300">
+                          <span className="font-pixel text-[9px] px-1 bg-zinc-950 border border-zinc-800 text-purple-300">
                             {pct}%
                           </span>
                         )}
@@ -250,7 +250,7 @@ export const CreateSkillModal: React.FC<CreateSkillModalProps> = ({
                           type="button"
                           onClick={() => handleWeightChange(attr.key, -1)}
                           disabled={val <= 0}
-                          className="w-7 h-7 bg-[#141414] hover:bg-[#222222] disabled:opacity-30 border border-[#333333] text-xs text-white flex items-center justify-center font-bold"
+                          className="w-7 h-7 bg-zinc-900 hover:bg-zinc-800 disabled:opacity-20 border border-zinc-800 text-xs text-white flex items-center justify-center font-bold cursor-pointer"
                         >
                           -
                         </button>
@@ -261,7 +261,7 @@ export const CreateSkillModal: React.FC<CreateSkillModalProps> = ({
                           type="button"
                           onClick={() => handleWeightChange(attr.key, 1)}
                           disabled={val >= 5}
-                          className="w-7 h-7 bg-[#b026ff] hover:bg-[#c24bf8] disabled:opacity-30 border border-[#b026ff] text-xs text-black flex items-center justify-center font-bold"
+                          className="w-7 h-7 bg-[#b026ff] hover:bg-[#c24bf8] disabled:opacity-20 text-xs text-black flex items-center justify-center font-bold cursor-pointer"
                         >
                           +
                         </button>

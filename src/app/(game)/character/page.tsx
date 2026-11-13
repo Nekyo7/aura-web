@@ -22,19 +22,19 @@ const TIER_INFO: Record<string, { label: string; badge: string; color: string; d
   THRIVING: {
     label: "THRIVING",
     badge: "1.00x XP",
-    color: "text-[#00ff66] border-[#00ff66]/70 bg-black",
+    color: "text-emerald-400 border-zinc-800 bg-zinc-900/90",
     desc: "Peak vitality. Full reward gains.",
   },
   NEUTRAL: {
     label: "NEUTRAL",
     badge: "0.85x XP",
-    color: "text-[#ffc600] border-[#ffc600]/70 bg-black",
+    color: "text-amber-400 border-zinc-800 bg-zinc-900/90",
     desc: "Steady state. Moderate decay buffer.",
   },
   WEAKENED: {
     label: "WEAKENED",
     badge: "0.50x XP",
-    color: "text-[#ff3344] border-[#ff3344]/70 bg-black",
+    color: "text-rose-400 border-zinc-800 bg-zinc-900/90",
     desc: "Low vitality. Rest or log Camp activities to recover.",
   },
 };
@@ -47,7 +47,7 @@ export default function CharacterPage() {
     return (
       <div className="flex flex-col items-center justify-center min-h-[60vh] gap-3">
         <div className="w-8 h-8 border-2 border-[#b026ff] border-t-transparent animate-spin" />
-        <span className="font-sans text-xs text-neutral-400">Loading Character Sheet...</span>
+        <span className="font-sans text-xs text-zinc-500">Loading Character Sheet...</span>
       </div>
     );
   }
@@ -57,7 +57,7 @@ export default function CharacterPage() {
       <PixelCard variant="default" className="text-center p-6 my-8">
         <AlertTriangle className="w-8 h-8 text-rose-400 mx-auto mb-2" strokeWidth={1.5} />
         <h3 className="font-pixel text-sm text-rose-400 mb-2">Failed to load character</h3>
-        <p className="text-xs text-neutral-400 font-sans mb-4">{error?.message || "Character data missing"}</p>
+        <p className="text-xs text-zinc-500 font-sans mb-4">{error?.message || "Character data missing"}</p>
         <PixelButton variant="primary" size="sm" onClick={() => refetch()}>
           Retry
         </PixelButton>
@@ -74,17 +74,17 @@ export default function CharacterPage() {
   const tier = TIER_INFO[character.healthTier] ?? TIER_INFO.THRIVING;
 
   return (
-    <div className="flex flex-col gap-3">
+    <div className="flex flex-col gap-6">
       {/* 1. CHARACTER HEADER & AVATAR BADGE */}
-      <PixelCard variant="highlight" title="CHARACTER SHEET" padding="sm" className="relative overflow-hidden">
-        <div className="flex items-center gap-3">
+      <PixelCard variant="highlight" title="CHARACTER SHEET" padding="md" className="relative overflow-hidden">
+        <div className="flex items-center gap-4">
           {/* Avatar Frame */}
           <div className="relative shrink-0">
-            <div className="w-13 h-13 bg-[#0a0a0a] border border-[#333333] border-t-2 border-t-[#b026ff] flex items-center justify-center select-none">
+            <div className="w-14 h-14 bg-[#0a0a0a] border border-zinc-800 border-t-2 border-t-[#b026ff] flex items-center justify-center select-none">
               <User className="w-7 h-7 text-[#b026ff]" strokeWidth={1.5} />
             </div>
             {/* Level Tag badge on avatar */}
-            <div className="absolute -bottom-1 -right-1 px-1.5 py-0.2 bg-[#ffc600] text-black font-pixel text-[9px] font-bold">
+            <div className="absolute -bottom-1 -right-1 px-1.5 py-0.2 bg-zinc-900 border border-zinc-800 text-amber-400 font-pixel text-[9px] font-bold">
               LV.{character.level}
             </div>
           </div>
@@ -96,21 +96,21 @@ export default function CharacterPage() {
                 {character.name || "Adventurer"}
               </h1>
               {/* Aura Points Pill */}
-              <div className="flex items-center gap-1.5 px-2 py-0.5 bg-[#0a0a0a] border border-[#333333] font-sans text-xs text-[#b026ff]">
+              <div className="flex items-center gap-1.5 px-2 py-0.5 bg-zinc-900 border border-zinc-800 font-sans text-xs text-purple-400">
                 <Sparkles className="w-3 h-3 text-[#b026ff]" strokeWidth={1.5} />
                 <span className="font-bold tabular-nums">{character.auraPoints ?? 0}</span>
-                <span className="text-[9px] text-neutral-400 font-semibold">AP</span>
+                <span className="text-[9px] text-zinc-500 font-medium">AP</span>
               </div>
             </div>
 
-            <div className="text-xs font-sans text-neutral-400 mt-0.5">
-              Title: <span className="text-white font-medium">{character.titleKey ?? "Novice Nomad"}</span>
+            <div className="text-xs font-sans text-zinc-500 mt-0.5">
+              Title: <span className="text-zinc-300 font-medium">{character.titleKey ?? "Novice Nomad"}</span>
             </div>
 
             {/* Health Tier Badge */}
-            <div className="flex items-center gap-2 mt-1">
+            <div className="flex items-center gap-2 mt-1.5">
               <span
-                className={`font-sans text-[10px] px-2 py-0.5 border ${tier.color} font-semibold uppercase tracking-wider`}
+                className={`font-sans text-[10px] px-2 py-0.5 border ${tier.color} font-medium uppercase tracking-wider`}
               >
                 {tier.label} ({tier.badge})
               </span>
@@ -145,33 +145,37 @@ export default function CharacterPage() {
       <PixelCard
         title="Attribute Radar"
         headerRight={
-          <span className="font-sans text-[10px] text-neutral-400 font-medium">
+          <span className="font-sans text-xs text-zinc-500 font-medium">
             6 Core Pillars
           </span>
         }
         variant="default"
+        padding="md"
       >
         <RadarChart attributes={attributeMap} />
 
-        {/* Grid Breakdown of Attributes */}
-        <div className="grid grid-cols-3 gap-1.5 mt-3 pt-3 border-t border-[#222222]">
+        {/* Clean Borderless Attribute Pillars */}
+        <div className="grid grid-cols-3 gap-3 mt-4 pt-4 border-t border-zinc-800/80">
           {[
-            { key: "STR", name: "Strength", color: "text-[#ff3344] border-t-[#ff3344]" },
-            { key: "DEX", name: "Dexterity", color: "text-[#ffc600] border-t-[#ffc600]" },
-            { key: "INT", name: "Intellect", color: "text-[#00e5ff] border-t-[#00e5ff]" },
-            { key: "WIS", name: "Wisdom", color: "text-[#b026ff] border-t-[#b026ff]" },
-            { key: "CHA", name: "Charisma", color: "text-[#ff2a85] border-t-[#ff2a85]" },
-            { key: "AGI", name: "Agility", color: "text-[#00ff66] border-t-[#00ff66]" },
+            { key: "STR", name: "Strength" },
+            { key: "DEX", name: "Dexterity" },
+            { key: "INT", name: "Intellect" },
+            { key: "WIS", name: "Wisdom" },
+            { key: "CHA", name: "Charisma" },
+            { key: "AGI", name: "Agility" },
           ].map((attr) => (
             <div
               key={attr.key}
-              className={`p-1.5 bg-[#0a0a0a] border border-[#222222] border-t-2 ${attr.color} flex flex-col items-center justify-center`}
+              className="py-1 flex flex-col items-center justify-center text-center"
             >
-              <span className="text-[10px] font-sans font-semibold text-neutral-400">
-                {attr.key}
+              <span className="text-xs font-sans font-medium text-zinc-500">
+                {attr.name}
               </span>
-              <span className="text-xs text-white font-pixel font-bold tabular-nums mt-0.5">
+              <span className="text-sm text-white font-pixel font-bold tabular-nums mt-0.5">
                 {(attributeMap[attr.key as AttributeKey] ?? 0).toFixed(1)}
+              </span>
+              <span className="text-[10px] font-sans text-zinc-600 uppercase tracking-wider">
+                {attr.key}
               </span>
             </div>
           ))}
@@ -179,10 +183,10 @@ export default function CharacterPage() {
       </PixelCard>
 
       {/* 5. ONE-TAP ACTION / LOGGING SHEET TOGGLE */}
-      <div className="flex flex-col gap-3">
+      <div className="flex flex-col gap-4">
         <PixelButton
           variant={showLogSheet ? "neutral" : "primary"}
-          size="lg"
+          size="md"
           onClick={() => setShowLogSheet(!showLogSheet)}
           className="w-full"
           icon={showLogSheet ? <ChevronUp className="w-4 h-4" /> : <Plus className="w-4 h-4" />}

@@ -33,19 +33,19 @@ const TIER_CONFIG = {
   THRIVING: {
     label: "THRIVING",
     badge: "1.00x XP",
-    color: "text-[#00ff66] border-[#00ff66]/60 bg-black",
+    color: "text-emerald-400 border-zinc-800 bg-zinc-900/90",
     desc: "Peak vitality. Full reward gains.",
   },
   NEUTRAL: {
     label: "NEUTRAL",
     badge: "0.85x XP",
-    color: "text-[#ffc600] border-[#ffc600]/60 bg-black",
+    color: "text-amber-400 border-zinc-800 bg-zinc-900/90",
     desc: "Steady state. Gentle decay buffer.",
   },
   WEAKENED: {
     label: "WEAKENED",
     badge: "0.50x XP",
-    color: "text-[#ff3344] border-[#ff3344]/60 bg-black",
+    color: "text-rose-400 border-zinc-800 bg-zinc-900/90",
     desc: "Low vitality. Log Camp physical activity to recover.",
   },
 };
@@ -81,13 +81,13 @@ export const VitalityHUD: React.FC<VitalityHUDProps> = ({
       title="Vitality Matrix (7-Day Rolling)"
       padding="md"
       headerRight={
-        <span className={`font-sans text-[10px] px-2 py-0.5 border ${tier.color} font-semibold uppercase tracking-wider`}>
+        <span className={`font-sans text-[10px] px-2 py-0.5 border ${tier.color} font-medium uppercase tracking-wider`}>
           {tier.label} ({tier.badge})
         </span>
       }
     >
       {/* Main HP Bar */}
-      <div className="mb-4">
+      <div className="mb-5">
         <PixelBar
           label="Overall Vitality (HP)"
           sublabel={tier.desc}
@@ -98,15 +98,20 @@ export const VitalityHUD: React.FC<VitalityHUDProps> = ({
         />
       </div>
 
-      {/* 4 Rolling Sub-components */}
-      <div className="grid grid-cols-2 gap-2 pt-3 border-t border-[#222222]">
+      {/* 4 Rolling Sub-components - Clean Vertical List */}
+      <div className="space-y-4 pt-5 border-t border-zinc-800/80">
         {/* 1. Rhythm */}
-        <div className="flex flex-col gap-1.5 p-2 bg-[#0a0a0a] border border-[#222222] border-t-2 border-t-[#00e5ff]">
+        <div className="space-y-1.5">
           <div className="flex items-center justify-between text-xs">
-            <span className="text-white flex items-center gap-1.5 font-sans font-medium">
+            <span className="text-white flex items-center gap-2 font-sans font-medium">
               <Activity className="w-3.5 h-3.5 text-[#00e5ff]" strokeWidth={1.5} /> Rhythm
             </span>
-            <span className="text-[#00e5ff] font-pixel text-xs font-bold">{vitality.rhythm.toFixed(0)}%</span>
+            <div className="flex items-center gap-2 font-sans">
+              <span className="text-[11px] text-zinc-500">Target: 4/7d</span>
+              <span className="text-[#00e5ff] font-pixel text-xs font-bold tabular-nums">
+                {vitality.rhythm.toFixed(0)}%
+              </span>
+            </div>
           </div>
           <PixelBar
             value={vitality.rhythm}
@@ -116,18 +121,20 @@ export const VitalityHUD: React.FC<VitalityHUDProps> = ({
             customColor="#00e5ff"
             showValueText={false}
           />
-          <span className="text-[10px] text-neutral-400 font-sans">
-            Showing up (Target: 4/7)
-          </span>
         </div>
 
         {/* 2. Body */}
-        <div className="flex flex-col gap-1.5 p-2 bg-[#0a0a0a] border border-[#222222] border-t-2 border-t-[#00ff66]">
+        <div className="space-y-1.5">
           <div className="flex items-center justify-between text-xs">
-            <span className="text-white flex items-center gap-1.5 font-sans font-medium">
+            <span className="text-white flex items-center gap-2 font-sans font-medium">
               <Flame className="w-3.5 h-3.5 text-[#00ff66]" strokeWidth={1.5} /> Body
             </span>
-            <span className="text-[#00ff66] font-pixel text-xs font-bold">{vitality.body.toFixed(0)}%</span>
+            <div className="flex items-center gap-2 font-sans">
+              <span className="text-[11px] text-zinc-500">Physical activity (Camp)</span>
+              <span className="text-[#00ff66] font-pixel text-xs font-bold tabular-nums">
+                {vitality.body.toFixed(0)}%
+              </span>
+            </div>
           </div>
           <PixelBar
             value={vitality.body}
@@ -137,18 +144,20 @@ export const VitalityHUD: React.FC<VitalityHUDProps> = ({
             customColor="#00ff66"
             showValueText={false}
           />
-          <span className="text-[10px] text-neutral-400 font-sans">
-            Physical activity (Camp)
-          </span>
         </div>
 
         {/* 3. Balance */}
-        <div className="flex flex-col gap-1.5 p-2 bg-[#0a0a0a] border border-[#222222] border-t-2 border-t-[#b026ff]">
+        <div className="space-y-1.5">
           <div className="flex items-center justify-between text-xs">
-            <span className="text-white flex items-center gap-1.5 font-sans font-medium">
+            <span className="text-white flex items-center gap-2 font-sans font-medium">
               <Scale className="w-3.5 h-3.5 text-[#b026ff]" strokeWidth={1.5} /> Balance
             </span>
-            <span className="text-[#b026ff] font-pixel text-xs font-bold">{vitality.balance.toFixed(0)}%</span>
+            <div className="flex items-center gap-2 font-sans">
+              <span className="text-[11px] text-zinc-500">Domain breadth (3+ Realms)</span>
+              <span className="text-[#b026ff] font-pixel text-xs font-bold tabular-nums">
+                {vitality.balance.toFixed(0)}%
+              </span>
+            </div>
           </div>
           <PixelBar
             value={vitality.balance}
@@ -158,20 +167,20 @@ export const VitalityHUD: React.FC<VitalityHUDProps> = ({
             customColor="#b026ff"
             showValueText={false}
           />
-          <span className="text-[10px] text-neutral-400 font-sans">
-            Domain breadth (3+ Realms)
-          </span>
         </div>
 
         {/* 4. Spirit */}
-        <div className="flex flex-col gap-1.5 p-2 bg-[#0a0a0a] border border-[#222222] border-t-2 border-t-[#ffc600]">
+        <div className="space-y-1.5">
           <div className="flex items-center justify-between text-xs">
-            <span className="text-white flex items-center gap-1.5 font-sans font-medium">
+            <span className="text-white flex items-center gap-2 font-sans font-medium">
               <Sparkles className="w-3.5 h-3.5 text-[#ffc600]" strokeWidth={1.5} /> Spirit
             </span>
-            <span className="text-[#ffc600] font-pixel text-xs font-bold">
-              {vitality.spirit !== null ? `${vitality.spirit.toFixed(0)}%` : "N/A"}
-            </span>
+            <div className="flex items-center gap-2 font-sans">
+              <span className="text-[11px] text-zinc-500">Check-in (Mood & Energy)</span>
+              <span className="text-[#ffc600] font-pixel text-xs font-bold tabular-nums">
+                {vitality.spirit !== null ? `${vitality.spirit.toFixed(0)}%` : "N/A"}
+              </span>
+            </div>
           </div>
           <PixelBar
             value={vitality.spirit ?? 0}
@@ -181,23 +190,20 @@ export const VitalityHUD: React.FC<VitalityHUDProps> = ({
             customColor="#ffc600"
             showValueText={false}
           />
-          <span className="text-[10px] text-neutral-400 font-sans">
-            Check-in (Mood & Energy)
-          </span>
         </div>
       </div>
 
       {/* 2-Tap Daily Check-in Area */}
-      <div className="mt-3 pt-3 border-t border-[#222222]">
+      <div className="mt-5 pt-5 border-t border-zinc-800/80">
         {checkedInToday ? (
-          <div className="flex items-center justify-between p-2.5 bg-[#0a0a0a] border border-[#00ff66]/50 font-sans text-xs text-[#00ff66]">
+          <div className="flex items-center justify-between py-1 font-sans text-xs text-[#00ff66]">
             <span className="flex items-center gap-2 font-medium">
               <Check className="w-4 h-4 text-[#00ff66]" strokeWidth={2} /> Today&apos;s Spirit Check-In Logged
             </span>
-            <span className="text-[10px] text-neutral-400">Recorded</span>
+            <span className="text-[11px] text-zinc-500">Recorded</span>
           </div>
         ) : showCheckInForm ? (
-          <form onSubmit={handleCheckInSubmit} className="p-3 bg-[#0a0a0a] border border-[#ffc600]/60 flex flex-col gap-3 font-sans">
+          <form onSubmit={handleCheckInSubmit} className="flex flex-col gap-3 font-sans">
             <div className="flex items-center justify-between text-xs text-[#ffc600] font-bold">
               <span className="flex items-center gap-1.5">
                 <Sparkles className="w-3.5 h-3.5" strokeWidth={1.5} /> Daily 2-Tap Spirit Check-In
@@ -205,7 +211,7 @@ export const VitalityHUD: React.FC<VitalityHUDProps> = ({
               <button
                 type="button"
                 onClick={() => setShowCheckInForm(false)}
-                className="text-neutral-400 hover:text-white flex items-center gap-1 text-[11px]"
+                className="text-zinc-500 hover:text-white flex items-center gap-1 text-[11px] cursor-pointer"
               >
                 <X className="w-3 h-3" strokeWidth={2} /> Cancel
               </button>
@@ -213,7 +219,7 @@ export const VitalityHUD: React.FC<VitalityHUDProps> = ({
 
             {/* Energy (1..5) */}
             <div>
-              <div className="flex items-center justify-between text-xs text-neutral-300 mb-1.5 font-sans">
+              <div className="flex items-center justify-between text-xs text-zinc-400 mb-1.5 font-sans">
                 <span>Energy Level:</span>
                 <span className="text-[#ffc600] font-bold font-pixel">{energy} / 5</span>
               </div>
@@ -226,7 +232,7 @@ export const VitalityHUD: React.FC<VitalityHUDProps> = ({
                     className={`py-1.5 text-xs font-pixel ${
                       energy === lvl
                         ? "bg-[#ffc600] text-black font-bold"
-                        : "bg-[#141414] border border-[#262626] text-neutral-300 hover:border-white"
+                        : "bg-zinc-900 border border-zinc-800 text-zinc-400 hover:border-zinc-600"
                     }`}
                   >
                     {lvl}
@@ -237,7 +243,7 @@ export const VitalityHUD: React.FC<VitalityHUDProps> = ({
 
             {/* Mood (1..5) */}
             <div>
-              <div className="flex items-center justify-between text-xs text-neutral-300 mb-1.5 font-sans">
+              <div className="flex items-center justify-between text-xs text-zinc-400 mb-1.5 font-sans">
                 <span>Mood / State:</span>
                 <span className="text-[#b026ff] font-bold font-pixel">{mood} / 5</span>
               </div>
@@ -250,7 +256,7 @@ export const VitalityHUD: React.FC<VitalityHUDProps> = ({
                     className={`py-1.5 text-xs font-pixel ${
                       mood === lvl
                         ? "bg-[#b026ff] text-black font-bold"
-                        : "bg-[#141414] border border-[#262626] text-neutral-300 hover:border-white"
+                        : "bg-zinc-900 border border-zinc-800 text-zinc-400 hover:border-zinc-600"
                     }`}
                   >
                     {lvl}
@@ -269,12 +275,12 @@ export const VitalityHUD: React.FC<VitalityHUDProps> = ({
             </PixelButton>
           </form>
         ) : (
-          <div className="flex items-center justify-between p-2.5 bg-[#0a0a0a] border border-[#222222]">
+          <div className="flex items-center justify-between py-1">
             <div className="flex flex-col">
-              <span className="font-sans text-xs text-[#ffc600] font-bold">
+              <span className="font-sans text-xs text-white font-medium">
                 Optional Daily Reflection
               </span>
-              <span className="text-[10px] text-neutral-400 font-sans">
+              <span className="text-[11px] text-zinc-500 font-sans">
                 Takes 2 taps. Never mandatory, never penalized.
               </span>
             </div>

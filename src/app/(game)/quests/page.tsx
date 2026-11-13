@@ -55,7 +55,7 @@ export default function QuestsPage() {
   };
 
   return (
-    <div className="flex flex-col gap-4">
+    <div className="flex flex-col gap-6">
       {/* Header */}
       <PixelCard
         variant="default"
@@ -72,169 +72,166 @@ export default function QuestsPage() {
           </PixelButton>
         }
       >
-        <div className="flex items-center gap-3 mb-1">
-          <div className="w-11 h-11 bg-[#0a0a0a] border border-[#333333] border-t-2 border-t-[#00e5ff] flex items-center justify-center select-none">
-            <Scroll className="w-5 h-5 text-[#00e5ff]" strokeWidth={1.5} />
+        <div className="flex items-center gap-4">
+          <div className="w-12 h-12 bg-[#0a0a0a] border border-zinc-800 border-t-2 border-t-[#00e5ff] flex items-center justify-center select-none shrink-0">
+            <Scroll className="w-6 h-6 text-[#00e5ff]" strokeWidth={1.5} />
           </div>
           <div>
             <h2 className="font-pixel text-xs sm:text-sm font-bold text-blue-300">
               Adventurer Bounties
             </h2>
-            <p className="font-sans text-[11px] text-neutral-400">
+            <p className="font-sans text-xs text-zinc-500 mt-0.5">
               Daily & Weekly Cycles • Earn Mew Bucks & Chrono Chirals
             </p>
           </div>
         </div>
       </PixelCard>
 
-      {/* Quests List */}
-      <div className="flex flex-col gap-3">
-        <div className="flex items-center justify-between px-1">
-          <h3 className="font-sans text-xs text-neutral-300 uppercase tracking-wider font-semibold flex items-center gap-1.5">
-            <Target className="w-3.5 h-3.5 text-[#ffc600]" strokeWidth={1.5} />
-            <span>Active Bounties ({quests?.length ?? 0})</span>
-          </h3>
-          <span className="font-sans text-[10px] text-neutral-500">
-            Resets automatically
+      {/* Quests Container - Single Parent Card, Subtle Dividers */}
+      <PixelCard
+        variant="default"
+        title={`Active Bounties (${quests?.length ?? 0})`}
+        padding="md"
+        headerRight={
+          <span className="font-sans text-xs text-zinc-500 font-medium">
+            Resets Automatically
           </span>
-        </div>
-
+        }
+      >
         {isLoading ? (
-          <PixelCard variant="default" padding="md">
-            <div className="flex items-center justify-center py-6 font-sans text-xs text-neutral-400">
-              <Loader2 className="w-4 h-4 animate-spin mr-2 text-neutral-400" strokeWidth={2} />
-              <span>Inspecting bounty board...</span>
-            </div>
-          </PixelCard>
+          <div className="flex items-center justify-center py-8 font-sans text-xs text-zinc-500">
+            <Loader2 className="w-4 h-4 animate-spin mr-2 text-zinc-500" strokeWidth={2} />
+            <span>Inspecting bounty board...</span>
+          </div>
         ) : quests && quests.length > 0 ? (
-          quests.map((quest) => {
-            const tierStyle = TIER_COLORS[quest.tier] ?? TIER_COLORS[1];
-            const isCompleted = quest.isCompletedCurrentPeriod;
-            const isSubmitting = completingQuestId === quest.id;
+          <div className="space-y-6">
+            {quests.map((quest, index) => {
+              const tierStyle = TIER_COLORS[quest.tier] ?? TIER_COLORS[1];
+              const isCompleted = quest.isCompletedCurrentPeriod;
+              const isSubmitting = completingQuestId === quest.id;
 
-            return (
-              <PixelCard
-                key={quest.id}
-                variant={isCompleted ? "sunken" : "default"}
-                padding="md"
-                className={isCompleted ? "opacity-75" : ""}
-              >
-                <div className="flex items-start justify-between gap-2 mb-2">
-                  <div className="flex flex-col">
-                    <div className="flex items-center gap-2">
-                      <h4 className={`font-pixel text-xs sm:text-sm font-bold ${isCompleted ? "line-through text-neutral-500" : "text-white"}`}>
-                        {quest.title}
-                      </h4>
+              return (
+                <div
+                  key={quest.id}
+                  className={`${index > 0 ? "pt-6 border-t border-zinc-800/80" : ""} ${
+                    isCompleted ? "opacity-60" : ""
+                  }`}
+                >
+                  <div className="flex items-start justify-between gap-3 mb-2.5">
+                    <div className="flex flex-col min-w-0">
+                      <div className="flex items-center gap-2">
+                        <h4 className={`font-pixel text-xs sm:text-sm font-bold ${isCompleted ? "line-through text-zinc-500" : "text-white"}`}>
+                          {quest.title}
+                        </h4>
+                      </div>
+
+                      {quest.description && (
+                        <p className="text-xs text-zinc-400 font-sans mt-1 leading-relaxed">
+                          {quest.description}
+                        </p>
+                      )}
+
+                      {/* Quiet Metadata tags */}
+                      <div className="flex flex-wrap items-center gap-1.5 mt-2.5">
+                        {/* Kingdom */}
+                        <span
+                          className="font-sans text-[10px] px-2 py-0.5 bg-zinc-900 border border-zinc-800 flex items-center gap-1 font-medium"
+                          style={{ color: quest.kingdom.colorHex }}
+                        >
+                          <Globe className="w-2.5 h-2.5" strokeWidth={1.5} />
+                          {quest.kingdom.name}
+                        </span>
+
+                        {/* Tier */}
+                        <span
+                          className="font-sans text-[10px] px-2 py-0.5 bg-zinc-900 border border-zinc-800 text-zinc-400 font-medium"
+                        >
+                          {tierStyle.label}
+                        </span>
+
+                        {/* Repeat cadence */}
+                        <span className="font-sans text-[10px] px-2 py-0.5 bg-zinc-900 border border-zinc-800 text-zinc-400 flex items-center gap-1 font-medium">
+                          <Repeat className="w-2.5 h-2.5" strokeWidth={1.5} />
+                          {quest.repeat}
+                        </span>
+
+                        {/* Linked Skill */}
+                        {quest.skill && (
+                          <span className="font-sans text-[10px] px-2 py-0.5 bg-zinc-900 border border-zinc-800 text-cyan-400 flex items-center gap-1 font-medium">
+                            <Zap className="w-2.5 h-2.5" strokeWidth={1.5} />
+                            {quest.skill.name}
+                          </span>
+                        )}
+                      </div>
                     </div>
 
-                    {quest.description && (
-                      <p className="text-xs text-neutral-400 font-sans mt-0.5 leading-relaxed">
-                        {quest.description}
-                      </p>
-                    )}
-
-                    {/* Metadata tags */}
-                    <div className="flex flex-wrap items-center gap-1.5 mt-2">
-                      {/* Kingdom */}
-                      <span
-                        className="font-sans text-[10px] px-1.5 py-0.5 border border-[#222222] bg-[#0e0e0e] flex items-center gap-1 font-medium"
-                        style={{ color: quest.kingdom.colorHex }}
-                      >
-                        <Globe className="w-2.5 h-2.5" strokeWidth={1.5} />
-                        {quest.kingdom.name}
-                      </span>
-
-                      {/* Tier */}
-                      <span
-                        className={`font-sans text-[10px] px-1.5 py-0.5 border ${tierStyle.border} ${tierStyle.bg} ${tierStyle.text} font-medium`}
-                      >
-                        {tierStyle.label}
-                      </span>
-
-                      {/* Repeat cadence */}
-                      <span className="font-sans text-[10px] px-1.5 py-0.5 border border-[#222222] bg-[#0e0e0e] text-purple-300 flex items-center gap-1 font-medium">
-                        <Repeat className="w-2.5 h-2.5" strokeWidth={1.5} />
-                        {quest.repeat}
-                      </span>
-
-                      {/* Linked Skill */}
-                      {quest.skill && (
-                        <span className="font-sans text-[10px] px-1.5 py-0.5 border border-[#222222] bg-[#0e0e0e] text-cyan-300 flex items-center gap-1 font-medium">
-                          <Zap className="w-2.5 h-2.5" strokeWidth={1.5} />
-                          {quest.skill.name}
+                    {/* Completion Action / Status */}
+                    <div className="flex flex-col items-end shrink-0">
+                      {isCompleted ? (
+                        <span className="font-sans text-xs px-2.5 py-1 bg-zinc-900 border border-zinc-800 text-emerald-400 font-medium flex items-center gap-1 select-none">
+                          <Check className="w-3 h-3" strokeWidth={2} /> CLAIMED
                         </span>
+                      ) : (
+                        <PixelButton
+                          variant="success"
+                          size="sm"
+                          onClick={() => handleCompleteQuest(quest.id)}
+                          isLoading={isSubmitting}
+                        >
+                          Complete
+                        </PixelButton>
                       )}
                     </div>
                   </div>
 
-                  {/* Completion Action / Status */}
-                  <div className="flex flex-col items-end shrink-0">
-                    {isCompleted ? (
-                      <span className="font-sans text-[10px] px-2 py-1 border border-emerald-600/70 bg-emerald-950/40 text-emerald-300 font-bold flex items-center gap-1 select-none">
-                        <Check className="w-3 h-3" strokeWidth={2} /> CLAIMED
-                      </span>
-                    ) : (
-                      <PixelButton
-                        variant="success"
-                        size="sm"
-                        onClick={() => handleCompleteQuest(quest.id)}
-                        isLoading={isSubmitting}
-                      >
-                        Complete
-                      </PixelButton>
-                    )}
+                  {/* Reward Strip */}
+                  <div className="flex items-center justify-between pt-2.5 text-xs font-sans">
+                    <div className="flex items-center gap-2.5 text-xs">
+                      <span className="text-zinc-500 uppercase tracking-wide text-[10px]">Bounty:</span>
+                      <span className="text-blue-400/90 font-medium">+{quest.baseXp} XP</span>
+                      <span className="text-amber-400/90 font-medium">+{quest.mbReward} MB</span>
+                      {quest.apReward > 0 && (
+                        <span className="text-purple-400/90 font-medium">+{quest.apReward} AP</span>
+                      )}
+                      {quest.ccReward > 0 && (
+                        <span className="text-cyan-400/90 font-medium">+{quest.ccReward} CC</span>
+                      )}
+                    </div>
+
+                    {/* Archive button */}
+                    <button
+                      type="button"
+                      onClick={() => {
+                        if (confirm(`Dismiss bounty "${quest.title}"?`)) {
+                          archiveMutation.mutate({ questId: quest.id });
+                        }
+                      }}
+                      disabled={archiveMutation.isPending}
+                      className="font-sans text-xs text-zinc-600 hover:text-rose-400 underline cursor-pointer"
+                    >
+                      Dismiss
+                    </button>
                   </div>
                 </div>
-
-                {/* Reward Strip */}
-                <div className="flex items-center justify-between pt-2 mt-2 border-t border-[#222222] text-xs font-sans">
-                  <div className="flex items-center gap-2 text-[10px] font-semibold">
-                    <span className="text-neutral-500 uppercase tracking-wide">Bounty:</span>
-                    <span className="text-blue-400">+{quest.baseXp} XP</span>
-                    <span className="text-amber-400">+{quest.mbReward} MB</span>
-                    {quest.apReward > 0 && (
-                      <span className="text-purple-400">+{quest.apReward} AP</span>
-                    )}
-                    {quest.ccReward > 0 && (
-                      <span className="text-cyan-400">+{quest.ccReward} CC</span>
-                    )}
-                  </div>
-
-                  {/* Archive button */}
-                  <button
-                    type="button"
-                    onClick={() => {
-                      if (confirm(`Dismiss bounty "${quest.title}"?`)) {
-                        archiveMutation.mutate({ questId: quest.id });
-                      }
-                    }}
-                    disabled={archiveMutation.isPending}
-                    className="font-sans text-[10px] text-neutral-500 hover:text-rose-400 underline cursor-pointer"
-                  >
-                    Dismiss
-                  </button>
-                </div>
-              </PixelCard>
-            );
-          })
+              );
+            })}
+          </div>
         ) : (
-          <PixelCard variant="default" padding="md">
-            <div className="text-center py-4">
-              <p className="font-sans text-xs text-neutral-400 mb-3">
-                No active bounties posted. Create your first goal!
-              </p>
-              <PixelButton
-                variant="primary"
-                size="sm"
-                onClick={() => setIsCreateModalOpen(true)}
-                icon={<Plus className="w-3.5 h-3.5" strokeWidth={2} />}
-              >
-                Post First Bounty
-              </PixelButton>
-            </div>
-          </PixelCard>
+          <div className="text-center py-6">
+            <p className="font-sans text-xs text-zinc-500 mb-3">
+              No active bounties posted. Create your first goal!
+            </p>
+            <PixelButton
+              variant="primary"
+              size="sm"
+              onClick={() => setIsCreateModalOpen(true)}
+              icon={<Plus className="w-3.5 h-3.5" strokeWidth={2} />}
+            >
+              Post First Bounty
+            </PixelButton>
+          </div>
         )}
-      </div>
+      </PixelCard>
 
       {/* Return to Character Sheet */}
       <Link href="/character">

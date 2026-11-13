@@ -65,37 +65,37 @@ export default function HomePage() {
           Life Operating System
         </div>
 
-        <PixelCard variant="default" title="TERMINAL PROMPT" padding="sm" className="max-w-xs mb-5 text-center">
-          <p className="font-sans text-xs text-neutral-300 leading-relaxed">
+        <PixelCard variant="default" title="TERMINAL PROMPT" padding="md" className="max-w-xs mb-6 text-center">
+          <p className="font-sans text-xs text-zinc-400 leading-relaxed">
             &ldquo;You don&apos;t just play the character, you become the character through what you do in real life.&rdquo;
           </p>
         </PixelCard>
 
-        {/* 4 Feature Pillars Grid */}
-        <div className="grid grid-cols-2 gap-2 w-full max-w-xs mb-6 text-left">
-          <div className="p-2.5 bg-[#0a0a0a] border border-[#262626] border-t border-t-[#00ff66] flex flex-col">
-            <span className="text-[10px] text-[#00ff66] font-bold font-sans uppercase flex items-center gap-1.5">
-              <Activity className="w-3.5 h-3.5 text-[#00ff66]" strokeWidth={1.5} /> VITALITY
+        {/* 4 Feature Pillars Grid - Clean Borderless Rows */}
+        <div className="grid grid-cols-2 gap-3 w-full max-w-xs mb-6 text-left">
+          <div className="p-2.5 bg-zinc-950/70 border-b border-zinc-800 flex flex-col">
+            <span className="text-xs text-emerald-400 font-medium font-sans uppercase flex items-center gap-1.5">
+              <Activity className="w-3.5 h-3.5 text-emerald-400" strokeWidth={1.5} /> VITALITY
             </span>
-            <span className="text-[10px] text-neutral-400 font-sans mt-0.5">Automated HP, zero chores</span>
+            <span className="text-[11px] text-zinc-500 font-sans mt-0.5">Automated HP, zero chores</span>
           </div>
-          <div className="p-2.5 bg-[#0a0a0a] border border-[#262626] border-t border-t-[#ffc600] flex flex-col">
-            <span className="text-[10px] text-[#ffc600] font-bold font-sans uppercase flex items-center gap-1.5">
-              <Award className="w-3.5 h-3.5 text-[#ffc600]" strokeWidth={1.5} /> 19 RANKS
+          <div className="p-2.5 bg-zinc-950/70 border-b border-zinc-800 flex flex-col">
+            <span className="text-xs text-amber-400 font-medium font-sans uppercase flex items-center gap-1.5">
+              <Award className="w-3.5 h-3.5 text-amber-400" strokeWidth={1.5} /> 19 RANKS
             </span>
-            <span className="text-[10px] text-neutral-400 font-sans mt-0.5">Origin I to 10k hr Kanye</span>
+            <span className="text-[11px] text-zinc-500 font-sans mt-0.5">Origin I to 10k hr Kanye</span>
           </div>
-          <div className="p-2.5 bg-[#0a0a0a] border border-[#262626] border-t border-t-[#b026ff] flex flex-col">
-            <span className="text-[10px] text-[#b026ff] font-bold font-sans uppercase flex items-center gap-1.5">
+          <div className="p-2.5 bg-zinc-950/70 border-b border-zinc-800 flex flex-col">
+            <span className="text-xs text-[#b026ff] font-medium font-sans uppercase flex items-center gap-1.5">
               <Globe className="w-3.5 h-3.5 text-[#b026ff]" strokeWidth={1.5} /> 7 REALMS
             </span>
-            <span className="text-[10px] text-neutral-400 font-sans mt-0.5">Deep life domain mapping</span>
+            <span className="text-[11px] text-zinc-500 font-sans mt-0.5">Deep life domain mapping</span>
           </div>
-          <div className="p-2.5 bg-[#0a0a0a] border border-[#262626] border-t border-t-[#00e5ff] flex flex-col">
-            <span className="text-[10px] text-[#00e5ff] font-bold font-sans uppercase flex items-center gap-1.5">
-              <Shield className="w-3.5 h-3.5 text-[#00e5ff]" strokeWidth={1.5} /> ZERO GUILT
+          <div className="p-2.5 bg-zinc-950/70 border-b border-zinc-800 flex flex-col">
+            <span className="text-xs text-cyan-400 font-medium font-sans uppercase flex items-center gap-1.5">
+              <Shield className="w-3.5 h-3.5 text-cyan-400" strokeWidth={1.5} /> ZERO GUILT
             </span>
-            <span className="text-[10px] text-neutral-400 font-sans mt-0.5">Hours & ranks never decay</span>
+            <span className="text-[11px] text-zinc-500 font-sans mt-0.5">Hours & ranks never decay</span>
           </div>
         </div>
 

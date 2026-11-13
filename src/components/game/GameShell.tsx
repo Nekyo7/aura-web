@@ -77,7 +77,7 @@ export const GameShell: React.FC<GameShellProps> = ({ children, user }) => {
       </header>
 
       {/* 2. MAIN SCROLLABLE CONTENT */}
-      <main className="flex-1 p-3 sm:p-4 pb-24 overflow-y-auto">
+      <main className="flex-1 p-4 sm:p-5 pb-28 overflow-y-auto">
         {children}
       </main>
 

@@ -79,21 +79,22 @@ export const LogTimeSheet: React.FC<LogTimeSheetProps> = ({
     <PixelCard
       title="Log Life Action"
       variant="default"
+      padding="md"
       className={`w-full max-w-lg mx-auto ${className}`}
     >
-      <form onSubmit={handleLog} className="flex flex-col gap-4 font-sans">
+      <form onSubmit={handleLog} className="flex flex-col gap-5 font-sans">
         {/* 1. Skill Selection */}
-        <div className="flex flex-col gap-1.5">
-          <label className="text-xs font-semibold text-neutral-300 uppercase tracking-wide">
+        <div className="flex flex-col gap-2">
+          <label className="text-xs font-medium text-zinc-400 uppercase tracking-wide">
             Select Practice / Skill:
           </label>
 
           {isLoadingSkills ? (
-            <div className="text-xs text-neutral-400 py-2">Loading skills...</div>
+            <div className="text-xs text-zinc-500 py-2">Loading skills...</div>
           ) : !skills || skills.length === 0 ? (
             <div className="text-xs text-amber-400 py-2">No skills available.</div>
           ) : (
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 max-h-48 overflow-y-auto pr-1">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5 max-h-48 overflow-y-auto pr-1">
               {skills.map((skill) => {
                 const isSelected = skill.id === selectedSkillId;
                 return (
@@ -102,24 +103,23 @@ export const LogTimeSheet: React.FC<LogTimeSheetProps> = ({
                     type="button"
                     onClick={() => setSelectedSkillId(skill.id)}
                     className={`
-                      text-left p-2.5 border text-xs transition-colors cursor-pointer select-none
+                      text-left p-3 text-xs transition-colors cursor-pointer select-none border-b
                       ${
                         isSelected
-                          ? "bg-[#0e0e0e] border-[#b026ff] border-t-2 border-t-[#b026ff] text-white font-bold"
-                          : "bg-[#0a0a0a] border-[#222222] hover:border-neutral-500 text-neutral-300"
+                          ? "bg-zinc-900 border-b-2 border-b-[#b026ff] text-white font-medium"
+                          : "bg-zinc-950/50 border-zinc-800/80 hover:border-zinc-700 text-zinc-400"
                       }
                     `}
                   >
                     <div className="flex items-center justify-between">
-                      <span className="truncate font-semibold">{skill.name}</span>
+                      <span className="truncate font-medium text-white">{skill.name}</span>
                       <span
-                        className="text-[9px] px-1.5 py-0.2 border border-[#222222] uppercase font-semibold text-white"
-                        style={{ backgroundColor: `${skill.kingdom?.colorHex}30` || "#3b82f630" }}
+                        className="text-[9px] px-1.5 py-0.2 bg-zinc-900 border border-zinc-800 uppercase font-medium text-zinc-400"
                       >
                         {skill.kingdom?.name || "Skill"}
                       </span>
                     </div>
-                    <div className="text-[10px] text-neutral-400 mt-1 font-sans">
+                    <div className="text-xs text-zinc-500 mt-1 font-sans">
                       Rank: {skill.rank?.name || "Origin I"} • {skill.minutesLogged}m
                     </div>
                   </button>
@@ -132,7 +132,7 @@ export const LogTimeSheet: React.FC<LogTimeSheetProps> = ({
         {/* 2. Quick Presets & Custom Duration */}
         <div className="flex flex-col gap-2">
           <div className="flex justify-between items-center">
-            <label className="text-xs font-semibold text-neutral-300 uppercase tracking-wide">
+            <label className="text-xs font-medium text-zinc-400 uppercase tracking-wide">
               Time Spent:
             </label>
             <span className="font-pixel text-xs text-purple-400 font-bold tabular-nums">
@@ -148,11 +148,11 @@ export const LogTimeSheet: React.FC<LogTimeSheetProps> = ({
                 type="button"
                 onClick={() => setMinutes(preset)}
                 className={`
-                  py-2 text-xs border cursor-pointer select-none font-semibold transition-colors
+                  py-1.5 text-xs border cursor-pointer select-none font-medium transition-colors
                   ${
                     minutes === preset
-                      ? "bg-[#141414] border-white text-white font-bold"
-                      : "bg-[#0a0a0a] border-[#222222] text-neutral-400 hover:border-neutral-500"
+                      ? "bg-zinc-900 border-white text-white font-bold"
+                      : "bg-zinc-950 border-zinc-800 text-zinc-500 hover:border-zinc-700"
                   }
                 `}
               >
@@ -170,7 +170,7 @@ export const LogTimeSheet: React.FC<LogTimeSheetProps> = ({
               step="5"
               value={minutes}
               onChange={(e) => setMinutes(Number(e.target.value))}
-              className="w-full accent-[#b026ff] cursor-pointer h-2 bg-[#141414] rounded-none border border-[#222222]"
+              className="w-full accent-[#b026ff] cursor-pointer h-1.5 bg-zinc-900 rounded-none border-none"
             />
             <input
               type="number"
@@ -178,14 +178,14 @@ export const LogTimeSheet: React.FC<LogTimeSheetProps> = ({
               max="600"
               value={minutes}
               onChange={(e) => setMinutes(Math.max(1, Number(e.target.value)))}
-              className="w-16 p-1.5 bg-[#0a0a0a] border border-[#333333] text-center font-pixel text-xs text-white"
+              className="w-16 p-1.5 bg-zinc-950 border border-zinc-800 text-center font-pixel text-xs text-white"
             />
           </div>
         </div>
 
         {/* Optional Note */}
-        <div className="flex flex-col gap-1">
-          <label className="text-[11px] font-semibold text-neutral-400 uppercase tracking-wide">
+        <div className="flex flex-col gap-1.5">
+          <label className="text-xs font-medium text-zinc-500 uppercase tracking-wide">
             Quest / Activity Note (Optional):
           </label>
           <input
@@ -194,14 +194,14 @@ export const LogTimeSheet: React.FC<LogTimeSheetProps> = ({
             value={note}
             onChange={(e) => setNote(e.target.value)}
             maxLength={100}
-            className="w-full p-2 bg-[#0a0a0a] border border-[#333333] text-xs text-white placeholder-neutral-500 focus:outline-none focus:border-[#b026ff] font-sans"
+            className="w-full p-2 bg-[#0a0a0a] border border-zinc-800 text-xs text-white placeholder-zinc-600 focus:outline-none focus:border-[#b026ff] font-sans"
           />
         </div>
 
         {/* Reward Preview */}
         {selectedSkill && (
-          <div className="p-2.5 bg-[#0e0e0e] border border-[#222222] text-xs text-neutral-300 flex justify-between items-center">
-            <span className="font-semibold text-neutral-400 text-[10px] uppercase">EST. REWARD:</span>
+          <div className="pt-3 border-t border-zinc-800/80 text-xs text-zinc-400 flex justify-between items-center">
+            <span className="font-medium text-zinc-500 text-[10px] uppercase">EST. REWARD:</span>
             <div className="flex items-center gap-3 font-pixel text-xs">
               <span className="text-purple-400 font-bold">+{minutes * 10} XP</span>
               <span className="text-amber-400 font-bold">+{((minutes / 60) * 60).toFixed(0)} ATTR PTS</span>
@@ -214,14 +214,14 @@ export const LogTimeSheet: React.FC<LogTimeSheetProps> = ({
           <div
             className={`p-2.5 border text-xs font-sans text-center flex items-center justify-center gap-2 ${
               feedback.type === "success"
-                ? "bg-[#0a0a0a] border-[#00ff66]/70 text-[#00ff66]"
-                : "bg-[#0a0a0a] border-[#ff3344]/70 text-[#ff3344]"
+                ? "bg-zinc-950 border-emerald-500/50 text-emerald-400"
+                : "bg-zinc-950 border-rose-500/50 text-rose-400"
             }`}
           >
             {feedback.type === "success" ? (
-              <Check className="w-3.5 h-3.5 text-[#00ff66]" strokeWidth={2} />
+              <Check className="w-3.5 h-3.5 text-emerald-400" strokeWidth={2} />
             ) : (
-              <AlertTriangle className="w-3.5 h-3.5 text-[#ff3344]" strokeWidth={2} />
+              <AlertTriangle className="w-3.5 h-3.5 text-rose-400" strokeWidth={2} />
             )}
             <span>{feedback.text}</span>
           </div>
@@ -231,7 +231,7 @@ export const LogTimeSheet: React.FC<LogTimeSheetProps> = ({
         <PixelButton
           type="submit"
           variant="primary"
-          size="lg"
+          size="md"
           isLoading={logMutation.isPending}
           disabled={!selectedSkillId || minutes <= 0}
           className="w-full mt-1"

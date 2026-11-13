@@ -74,9 +74,9 @@ const titleBarColorMap: Record<PixelCardTitleBarColor, { text: string; dot: stri
 
 const paddingStyles = {
   none: "p-0",
-  sm: "p-2 sm:p-2.5",
-  md: "p-3 sm:p-4",
-  lg: "p-4 sm:p-5",
+  sm: "p-3 sm:p-4",
+  md: "p-5 sm:p-6",
+  lg: "p-6 sm:p-8",
 };
 
 export const PixelCard: React.FC<PixelCardProps> = ({
@@ -109,7 +109,7 @@ export const PixelCard: React.FC<PixelCardProps> = ({
     >
       {/* Sleek Noctra Terminal Title Bar */}
       {showTitleBar && (
-        <div className="px-3 py-1.5 flex items-center justify-between border-b border-[#222222] bg-[#0e0e0e] select-none">
+        <div className="px-4 py-2 sm:px-5 sm:py-2.5 flex items-center justify-between border-b border-[#222222] bg-[#0e0e0e] select-none">
           <div className="flex items-center gap-2 font-pixel text-xs font-bold uppercase tracking-wider truncate">
             <span className={`inline-block w-1.5 h-1.5 rounded-full ${colors.dot} shrink-0`} />
             <span className="text-neutral-200 truncate">{titleText}</span>
