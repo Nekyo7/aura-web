@@ -3,7 +3,6 @@
 import React, { useState } from "react";
 import { trpc } from "@/client/trpc";
 import { PixelCard } from "@/components/pixel/PixelCard";
-import { PixelBar } from "@/components/pixel/PixelBar";
 import { PixelButton } from "@/components/pixel/PixelButton";
 import {
   Activity,
@@ -86,19 +85,43 @@ export const VitalityHUD: React.FC<VitalityHUDProps> = ({
         </span>
       }
     >
-      {/* Main HP Bar */}
-      <div className="mb-5">
-        <PixelBar
-          label="Overall Vitality (HP)"
-          sublabel={tier.desc}
-          value={vitality.hp}
-          max={100}
-          variant="hp"
-          size="md"
-        />
+      {/* Main HP Bar - Retro 10-Block Segmented Indicator */}
+      <div className="mb-5 space-y-2">
+        <div className="flex items-center justify-between">
+          <span className="font-pixel text-xs font-bold text-white uppercase tracking-wider">
+            Overall Vitality (HP)
+          </span>
+          <span className="font-pixel text-xs sm:text-sm font-bold text-white tabular-nums">
+            {vitality.hp} / 100
+          </span>
+        </div>
+        <p className="font-sans text-xs text-zinc-500">{tier.desc}</p>
+
+        {/* 10 Discrete Segmented Blocks */}
+        <div className="grid grid-cols-10 gap-1.5 h-3.5 pt-1">
+          {Array.from({ length: 10 }).map((_, index) => {
+            const isFilled = index < Math.min(10, Math.max(0, Math.round(vitality.hp / 10)));
+            let blockStyle = "bg-[#141414] border border-zinc-800";
+            if (isFilled) {
+              if (vitality.tier === "THRIVING") {
+                blockStyle = "bg-[#00ff66] border border-[#00ff66] shadow-[0_0_8px_rgba(0,255,102,0.7)]";
+              } else if (vitality.tier === "NEUTRAL") {
+                blockStyle = "bg-[#ffc600] border border-[#ffc600] shadow-[0_0_8px_rgba(255,198,0,0.7)]";
+              } else {
+                blockStyle = "bg-[#ff3344] border border-[#ff3344] shadow-[0_0_8px_rgba(255,51,68,0.7)]";
+              }
+            }
+            return (
+              <div
+                key={index}
+                className={`h-full transition-all duration-300 ${blockStyle}`}
+              />
+            );
+          })}
+        </div>
       </div>
 
-      {/* 4 Rolling Sub-components - Clean Vertical List */}
+      {/* 4 Rolling Sub-components - Sleek Minimalist Neon Line Indicators */}
       <div className="space-y-4 pt-5 border-t border-zinc-800/80">
         {/* 1. Rhythm */}
         <div className="space-y-1.5">
@@ -113,14 +136,12 @@ export const VitalityHUD: React.FC<VitalityHUDProps> = ({
               </span>
             </div>
           </div>
-          <PixelBar
-            value={vitality.rhythm}
-            max={100}
-            size="sm"
-            variant="custom"
-            customColor="#00e5ff"
-            showValueText={false}
-          />
+          <div className="h-1 w-full bg-[#141414] overflow-hidden">
+            <div
+              className="h-full bg-[#00e5ff] transition-all duration-300 shadow-[0_0_6px_rgba(0,229,255,0.7)]"
+              style={{ width: `${Math.min(100, Math.max(0, vitality.rhythm))}%` }}
+            />
+          </div>
         </div>
 
         {/* 2. Body */}
@@ -136,14 +157,12 @@ export const VitalityHUD: React.FC<VitalityHUDProps> = ({
               </span>
             </div>
           </div>
-          <PixelBar
-            value={vitality.body}
-            max={100}
-            size="sm"
-            variant="custom"
-            customColor="#00ff66"
-            showValueText={false}
-          />
+          <div className="h-1 w-full bg-[#141414] overflow-hidden">
+            <div
+              className="h-full bg-[#00ff66] transition-all duration-300 shadow-[0_0_6px_rgba(0,255,102,0.7)]"
+              style={{ width: `${Math.min(100, Math.max(0, vitality.body))}%` }}
+            />
+          </div>
         </div>
 
         {/* 3. Balance */}
@@ -159,14 +178,12 @@ export const VitalityHUD: React.FC<VitalityHUDProps> = ({
               </span>
             </div>
           </div>
-          <PixelBar
-            value={vitality.balance}
-            max={100}
-            size="sm"
-            variant="custom"
-            customColor="#b026ff"
-            showValueText={false}
-          />
+          <div className="h-1 w-full bg-[#141414] overflow-hidden">
+            <div
+              className="h-full bg-[#b026ff] transition-all duration-300 shadow-[0_0_6px_rgba(176,38,255,0.7)]"
+              style={{ width: `${Math.min(100, Math.max(0, vitality.balance))}%` }}
+            />
+          </div>
         </div>
 
         {/* 4. Spirit */}
@@ -182,14 +199,12 @@ export const VitalityHUD: React.FC<VitalityHUDProps> = ({
               </span>
             </div>
           </div>
-          <PixelBar
-            value={vitality.spirit ?? 0}
-            max={100}
-            size="sm"
-            variant="custom"
-            customColor="#ffc600"
-            showValueText={false}
-          />
+          <div className="h-1 w-full bg-[#141414] overflow-hidden">
+            <div
+              className="h-full bg-[#ffc600] transition-all duration-300 shadow-[0_0_6px_rgba(255,198,0,0.7)]"
+              style={{ width: `${Math.min(100, Math.max(0, vitality.spirit ?? 0))}%` }}
+            />
+          </div>
         </div>
       </div>
 

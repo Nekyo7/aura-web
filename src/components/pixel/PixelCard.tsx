@@ -101,7 +101,7 @@ export const PixelCard: React.FC<PixelCardProps> = ({
   return (
     <div
       className={`
-        relative rounded-none shadow-none overflow-hidden
+        relative rounded-none shadow-none
         ${currentVariant.container}
         ${className}
       `}
@@ -109,13 +109,13 @@ export const PixelCard: React.FC<PixelCardProps> = ({
     >
       {/* Sleek Noctra Terminal Title Bar */}
       {showTitleBar && (
-        <div className="px-4 py-2 sm:px-5 sm:py-2.5 flex items-center justify-between border-b border-[#222222] bg-[#0e0e0e] select-none">
-          <div className="flex items-center gap-2 font-pixel text-xs font-bold uppercase tracking-wider truncate">
+        <div className="px-3.5 py-2 sm:px-5 sm:py-2.5 flex items-center justify-between gap-2 border-b border-[#222222] bg-[#0e0e0e] select-none flex-wrap">
+          <div className="flex items-center gap-2 font-pixel text-xs font-bold uppercase tracking-wider min-w-0 flex-1">
             <span className={`inline-block w-1.5 h-1.5 rounded-full ${colors.dot} shrink-0`} />
-            <span className="text-neutral-200 truncate">{titleText}</span>
+            <span className="text-neutral-200 whitespace-normal break-words">{titleText}</span>
           </div>
 
-          <div className="flex items-center gap-1 shrink-0 ml-2">
+          <div className="flex items-center gap-1 shrink-0">
             {headerRight ? (
               <div>{headerRight}</div>
             ) : (

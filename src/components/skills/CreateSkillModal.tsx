@@ -97,7 +97,7 @@ export const CreateSkillModal: React.FC<CreateSkillModalProps> = ({
       return;
     }
     if (!kingdomId) {
-      setErrorMsg("Please select a Kingdom.");
+      setErrorMsg("Please select a Realm.");
       return;
     }
     if (totalWeight <= 0) {
@@ -159,13 +159,13 @@ export const CreateSkillModal: React.FC<CreateSkillModalProps> = ({
               />
             </div>
 
-            {/* Kingdom Realm */}
+            {/* Realm Sphere */}
             <div>
               <label className="block text-xs font-semibold text-neutral-300 uppercase tracking-wider mb-1.5">
-                Kingdom Sphere
+                Realm Sphere
               </label>
               {loadingKingdoms ? (
-                <div className="text-xs text-neutral-400">Loading kingdoms...</div>
+                <div className="text-xs text-neutral-400">Loading realms...</div>
               ) : (
                 <select
                   value={kingdomId}

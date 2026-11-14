@@ -80,9 +80,6 @@ export default function QuestsPage() {
             <h2 className="font-pixel text-xs sm:text-sm font-bold text-blue-300">
               Adventurer Bounties
             </h2>
-            <p className="font-sans text-xs text-zinc-500 mt-0.5">
-              Daily & Weekly Cycles • Earn Mew Bucks & Chrono Chirals
-            </p>
           </div>
         </div>
       </PixelCard>
@@ -92,11 +89,6 @@ export default function QuestsPage() {
         variant="default"
         title={`Active Bounties (${quests?.length ?? 0})`}
         padding="md"
-        headerRight={
-          <span className="font-sans text-xs text-zinc-500 font-medium">
-            Resets Automatically
-          </span>
-        }
       >
         {isLoading ? (
           <div className="flex items-center justify-center py-8 font-sans text-xs text-zinc-500">
@@ -120,7 +112,7 @@ export default function QuestsPage() {
                   <div className="flex items-start justify-between gap-3 mb-2.5">
                     <div className="flex flex-col min-w-0">
                       <div className="flex items-center gap-2">
-                        <h4 className={`font-pixel text-xs sm:text-sm font-bold ${isCompleted ? "line-through text-zinc-500" : "text-white"}`}>
+                        <h4 className={`font-pixel text-xs sm:text-sm font-bold whitespace-normal break-words ${isCompleted ? "line-through text-zinc-500" : "text-white"}`}>
                           {quest.title}
                         </h4>
                       </div>

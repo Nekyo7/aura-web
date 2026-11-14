@@ -135,7 +135,7 @@ export function AchievementsBoard() {
                 </div>
 
                 {/* Name */}
-                <span className="font-pixel text-[10px] font-bold truncate block mb-1 text-white">
+                <span className="font-pixel text-[10px] font-bold whitespace-normal break-words block mb-1 text-white">
                   {isHidden ? "Hidden Feat" : ach.name}
                 </span>
 

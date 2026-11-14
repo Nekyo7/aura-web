@@ -149,9 +149,6 @@ export default function ShopPage() {
               <h2 className="font-pixel text-xs sm:text-sm font-bold text-amber-300">
                 Reward Sanctuary
               </h2>
-              <p className="font-sans text-xs text-zinc-500 mt-0.5">
-                Discipline Into Guilt-Free Fun
-              </p>
               {/* Exchange Rate Badge */}
               <div className="mt-1.5 inline-flex items-center gap-1.5 px-2 py-0.5 bg-zinc-900 border border-zinc-800 text-[10px] font-sans text-zinc-400">
                 <span>
@@ -248,10 +245,6 @@ export default function ShopPage() {
               </PixelButton>
             }
           >
-            <p className="text-xs text-zinc-400 font-sans leading-relaxed mb-4">
-              Earn Mew Bucks by completing quests, then cash them in for real-life pleasures completely guilt-free.
-            </p>
-
             {/* Quick Add Treat Form */}
             {showAddModal && (
               <form onSubmit={handleAddTreat} className="p-3.5 mb-5 bg-zinc-950 border border-zinc-800 flex flex-col gap-3.5 font-sans">
@@ -391,12 +384,12 @@ export default function ShopPage() {
                       key={reward.id}
                       className="py-3.5 border-b border-zinc-800/80 first:pt-0 last:border-b-0 last:pb-0 flex items-center justify-between gap-3"
                     >
-                      <div className="flex items-center gap-3 min-w-0">
+                      <div className="flex items-center gap-3 min-w-0 flex-1">
                         <div className="w-9 h-9 bg-zinc-900 border border-zinc-800 flex items-center justify-center shrink-0">
                           <Gift className="w-4 h-4 text-amber-400" strokeWidth={1.5} />
                         </div>
-                        <div className="flex flex-col min-w-0">
-                          <span className="font-sans text-xs sm:text-sm font-medium text-white truncate">
+                        <div className="flex flex-col min-w-0 flex-1">
+                          <span className="font-sans text-xs sm:text-sm font-medium text-white whitespace-normal break-words">
                             {reward.name}
                           </span>
                           <span className="font-pixel text-xs font-bold mt-0.5">
@@ -445,10 +438,6 @@ export default function ShopPage() {
       {activeTab === "CHRONO" && (
         <div className="flex flex-col gap-6">
           <PixelCard variant="default" title="Chrono Sanctuary" padding="md">
-            <p className="text-xs text-zinc-400 font-sans leading-relaxed mb-6">
-              Rare, recovery-oriented items for life interruptions. Chrono Chirals are earned at major milestone rank tier-ups (every III→I boundary).
-            </p>
-
             <div className="space-y-6">
               {/* Item 1: Second Wind */}
               <div className="pb-6 border-b border-zinc-800/80 flex flex-col gap-2.5">

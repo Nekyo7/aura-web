@@ -91,12 +91,12 @@ export default function CharacterPage() {
 
           {/* Name & Prestige */}
           <div className="flex flex-col flex-1 min-w-0">
-            <div className="flex items-center justify-between">
-              <h1 className="font-pixel text-sm sm:text-base font-bold text-white truncate">
+            <div className="flex items-start justify-between gap-2">
+              <h1 className="font-pixel text-xs sm:text-base font-bold text-white whitespace-normal break-words">
                 {character.name || "Adventurer"}
               </h1>
               {/* Aura Points Pill */}
-              <div className="flex items-center gap-1.5 px-2 py-0.5 bg-zinc-900 border border-zinc-800 font-sans text-xs text-purple-400">
+              <div className="flex items-center gap-1.5 px-2 py-0.5 bg-zinc-900 border border-zinc-800 font-sans text-xs text-purple-400 shrink-0">
                 <Sparkles className="w-3 h-3 text-[#b026ff]" strokeWidth={1.5} />
                 <span className="font-bold tabular-nums">{character.auraPoints ?? 0}</span>
                 <span className="text-[9px] text-zinc-500 font-medium">AP</span>

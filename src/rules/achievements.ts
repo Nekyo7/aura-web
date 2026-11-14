@@ -83,7 +83,7 @@ export const ACHIEVEMENTS_LIST: readonly AchievementDefinition[] = [
   {
     key: "REALM_EXPLORER",
     name: "Cosmic Harmony",
-    description: "Log effort across at least 3 distinct Kingdom realms within your 7-day window.",
+    description: "Log effort across at least 3 distinct Realms within your 7-day window.",
     emoji: "compass",
     criteria: { type: "MIN_ACTIVE_KINGDOMS", threshold: 3 },
     apReward: 75,

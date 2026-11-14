@@ -114,8 +114,8 @@ export function CompanionSprite() {
           {/* Details & Dialogue */}
           <div className="flex-1 min-w-0 flex flex-col gap-2">
             <div>
-              <div className="flex items-center justify-between">
-                <h4 className="font-pixel text-xs font-bold text-white truncate">
+              <div className="flex items-center justify-between gap-2">
+                <h4 className="font-pixel text-xs font-bold text-white whitespace-normal break-words">
                   {companion.stageTitle}
                 </h4>
                 <span className="font-sans text-xs text-zinc-500">

@@ -24,7 +24,7 @@ const NAV_ITEMS: NavItem[] = [
   { href: "/character", label: "HERO", icon: User },
   { href: "/skills", label: "SKILLS", icon: Zap },
   { href: "/quests", label: "QUESTS", icon: Scroll },
-  { href: "/kingdoms", label: "REALMS", icon: Globe },
+  { href: "/realms", label: "REALMS", icon: Globe },
   { href: "/shop", label: "SHOP", icon: ShoppingBag },
 ];
 

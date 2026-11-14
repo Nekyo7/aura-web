@@ -182,9 +182,9 @@ export default function ChroniclePage() {
 
       {/* Navigation Footer */}
       <div className="flex gap-2">
-        <Link href="/kingdoms" className="flex-1">
+        <Link href="/realms" className="flex-1">
           <PixelButton variant="primary" size="sm" className="w-full" icon={<Globe className="w-3.5 h-3.5 mr-1" strokeWidth={1.5} />}>
-            View Kingdoms
+            View Realms
           </PixelButton>
         </Link>
         <Link href="/character" className="flex-1">

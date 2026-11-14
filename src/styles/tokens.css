@@ -14,7 +14,14 @@
   --color-tier-neutral: #ffc600;
   --color-tier-weakened: #ff3344;
 
-  /* 7 Kingdoms */
+  /* 7 Realms */
+  --color-realm-academy: #00e5ff;
+  --color-realm-career: #ffc600;
+  --color-realm-alliance: #ff2a85;
+  --color-realm-camp: #00ff66;
+  --color-realm-creativity: #b026ff;
+  --color-realm-tavern: #ff3344;
+  --color-realm-treasury: #ffea00;
   --color-kingdom-academy: #00e5ff;
   --color-kingdom-career: #ffc600;
   --color-kingdom-alliance: #ff2a85;

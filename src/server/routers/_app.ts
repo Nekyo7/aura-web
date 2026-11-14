@@ -16,6 +16,7 @@ export const appRouter = router({
   quests: questsRouter,
   wallet: walletRouter,
   kingdoms: kingdomsRouter,
+  realms: kingdomsRouter,
   achievements: achievementsRouter,
   companion: companionRouter,
   chronicle: chronicleRouter,

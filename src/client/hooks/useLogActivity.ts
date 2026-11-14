@@ -34,7 +34,7 @@ export function useLogActivity() {
           celebrations.push({
             type: "RANK_UP",
             title: "Rank Up!",
-            description: `Skill advanced to Rank ${rnk.newRank}! Earned ${rnk.apGained} AP!`,
+            description: `Skill advanced to Rank ${rnk.newRank}! Earned +${rnk.apGained} AP bonus!`,
             data: {
               skillId: rnk.skillId,
               oldRank: rnk.oldRank,
@@ -66,6 +66,7 @@ export function useLogActivity() {
       await Promise.all([
         utils.character.get.invalidate(),
         utils.skills.invalidate(),
+        utils.wallet?.getBalances?.invalidate?.(),
         utils.kingdoms?.getProgression?.invalidate?.(),
         utils.achievements?.list?.invalidate?.(),
       ]);

@@ -5,7 +5,6 @@ import Link from "next/link";
 import { trpc } from "@/client/trpc";
 import { PixelCard } from "@/components/pixel/PixelCard";
 import { PixelButton } from "@/components/pixel/PixelButton";
-import { PixelBar } from "@/components/pixel/PixelBar";
 import { LogTimeSheet } from "@/components/skills/LogTimeSheet";
 import { CreateSkillModal } from "@/components/skills/CreateSkillModal";
 import { minutesToNextRank } from "@/rules/level";
@@ -58,9 +57,6 @@ export default function SkillsPage() {
             <h2 className="font-pixel text-xs sm:text-sm font-bold text-amber-300">
               Active Skill Crucible
             </h2>
-            <p className="font-sans text-xs text-zinc-500 mt-0.5">
-              19 Rank Tiers • 0 to 10,000 Hours to Kanye Rank
-            </p>
           </div>
         </div>
       </PixelCard>
@@ -89,11 +85,6 @@ export default function SkillsPage() {
         variant="default"
         title={`Trained Disciplines (${skills?.length ?? 0})`}
         padding="md"
-        headerRight={
-          <span className="font-sans text-xs text-zinc-500 font-medium">
-            Permanent Mastery
-          </span>
-        }
       >
         {isLoading ? (
           <div className="flex items-center justify-center py-8 font-sans text-xs text-zinc-500">
@@ -173,17 +164,22 @@ export default function SkillsPage() {
                     </div>
                   )}
 
-                  {/* Rank Progress Bar */}
-                  <div className="mb-3">
-                    <PixelBar
-                      value={rankProgress.progressInRankMinutes}
-                      max={rankProgress.spanMinutes}
-                      size="sm"
-                      variant="custom"
-                      customColor={rankInfo.colorHex}
-                      label={`Next: ${rankProgress.nextRankName}`}
-                      sublabel={`${Math.round(rankProgress.remainingMinutes / 60)}h remaining`}
-                    />
+                  {/* Rank Progress - Minimalist Glowing Neon Line */}
+                  <div className="mb-3 space-y-1.5">
+                    <div className="flex items-center justify-between font-sans text-xs">
+                      <span className="text-zinc-400">Next: {rankProgress.nextRankName}</span>
+                      <span className="text-zinc-500">{Math.round(rankProgress.remainingMinutes / 60)}h remaining</span>
+                    </div>
+                    <div className="h-1 w-full bg-[#141414] overflow-hidden">
+                      <div
+                        className="h-full transition-all duration-300"
+                        style={{
+                          width: `${Math.min(100, Math.max(0, (rankProgress.progressInRankMinutes / (rankProgress.spanMinutes || 1)) * 100))}%`,
+                          backgroundColor: rankInfo.colorHex || "#b026ff",
+                          boxShadow: `0 0 8px ${rankInfo.colorHex || "#b026ff"}99`,
+                        }}
+                      />
+                    </div>
                   </div>
 
                   {/* Attribute Split Tags */}
