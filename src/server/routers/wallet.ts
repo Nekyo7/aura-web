@@ -47,9 +47,9 @@ export const walletRouter = router({
     // Seed starter treats if user has none
     if (rewards.length === 0) {
       const starters = [
-        { name: "Watch 1 Episode of Anime / Show", emoji: "tv", costMb: 40 },
-        { name: "Guilt-Free Gaming (1 Hour)", emoji: "gamepad", costMb: 60 },
-        { name: "Cheat Meal / Favorite Coffee", emoji: "coffee", costMb: 100 },
+        { name: "Watch 1 Episode of Anime / Show", emoji: "tv", costMb: 400 },
+        { name: "Guilt-Free Gaming (1 Hour)", emoji: "gamepad", costMb: 600 },
+        { name: "Cheat Meal / Favorite Coffee", emoji: "coffee", costMb: 1500 },
       ];
 
       for (const s of starters) {

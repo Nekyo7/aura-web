@@ -21,11 +21,19 @@ import {
   Loader2,
 } from "lucide-react";
 
+function getInrString(costMb: number): string {
+  const inr = costMb / 10;
+  return Number.isInteger(inr)
+    ? inr.toString()
+    : inr.toFixed(2).replace(/\.?0+$/, "");
+}
+
 export default function ShopPage() {
   const [activeTab, setActiveTab] = useState<"MEW_BUCKS" | "CHRONO">("MEW_BUCKS");
   const [showAddModal, setShowAddModal] = useState(false);
   const [newTreatName, setNewTreatName] = useState("");
-  const [newTreatCost, setNewTreatCost] = useState(50);
+  const [currencyMode, setCurrencyMode] = useState<"INR" | "MB">("INR");
+  const [treatCostInput, setTreatCostInput] = useState<string>("150");
   const [feedbackMsg, setFeedbackMsg] = useState<{ type: "success" | "error"; text: string } | null>(null);
 
   const utils = trpc.useUtils();
@@ -39,7 +47,7 @@ export default function ShopPage() {
       await utils.wallet.listRewards.invalidate();
       setShowAddModal(false);
       setNewTreatName("");
-      setNewTreatCost(50);
+      setTreatCostInput(currencyMode === "INR" ? "150" : "1500");
       setFeedbackMsg({ type: "success", text: "New personal treat added to your Sanctuary!" });
       setTimeout(() => setFeedbackMsg(null), 4000);
     },
@@ -113,9 +121,18 @@ export default function ShopPage() {
   const handleAddTreat = (e: React.FormEvent) => {
     e.preventDefault();
     if (!newTreatName.trim()) return;
+    const rawCost = Number(treatCostInput);
+    if (isNaN(rawCost) || rawCost <= 0) return;
+
+    // Conversion Logic: If user selects ₹ INR and types 150, multiply by 10 to save 1500 MB.
+    // If they select MB, save the exact number typed.
+    const finalCostMb = currencyMode === "INR"
+      ? Math.round(rawCost * 10)
+      : Math.round(rawCost);
+
     createRewardMutation.mutate({
       name: newTreatName.trim(),
-      costMb: Number(newTreatCost),
+      costMb: Math.max(1, finalCostMb),
     });
   };
 
@@ -135,6 +152,12 @@ export default function ShopPage() {
               <p className="font-sans text-xs text-zinc-500 mt-0.5">
                 Discipline Into Guilt-Free Fun
               </p>
+              {/* Exchange Rate Badge */}
+              <div className="mt-1.5 inline-flex items-center gap-1.5 px-2 py-0.5 bg-zinc-900 border border-zinc-800 text-[10px] font-sans text-zinc-400">
+                <span>
+                  Exchange Rate: <span className="text-emerald-400 font-medium">₹1</span> = <span className="text-amber-400 font-medium">10 MB</span>
+                </span>
+              </div>
             </div>
           </div>
 
@@ -231,7 +254,7 @@ export default function ShopPage() {
 
             {/* Quick Add Treat Form */}
             {showAddModal && (
-              <form onSubmit={handleAddTreat} className="p-3.5 mb-5 bg-zinc-950 border border-zinc-800 flex flex-col gap-3 font-sans">
+              <form onSubmit={handleAddTreat} className="p-3.5 mb-5 bg-zinc-950 border border-zinc-800 flex flex-col gap-3.5 font-sans">
                 <span className="text-xs text-amber-300 font-bold block uppercase tracking-wide">
                   Define a Real-Life Reward
                 </span>
@@ -244,27 +267,110 @@ export default function ShopPage() {
                   className="w-full bg-[#0a0a0a] border border-zinc-800 p-2 text-xs text-white placeholder-zinc-500 focus:outline-none focus:border-[#ffc600]"
                 />
 
-                <div className="flex items-center gap-2">
-                  <span className="text-xs text-zinc-400">Cost:</span>
-                  <input
-                    type="number"
-                    min={1}
-                    max={1000}
-                    value={newTreatCost}
-                    onChange={(e) => setNewTreatCost(Number(e.target.value))}
-                    className="w-20 bg-[#0a0a0a] border border-zinc-800 p-1.5 text-xs text-amber-300 text-center font-bold"
-                  />
-                  <span className="text-xs text-zinc-400">Mew Bucks</span>
+                <div className="flex flex-col gap-2">
+                  <div className="flex items-center justify-between">
+                    <label className="text-xs text-zinc-400 font-medium">Cost / Price:</label>
 
-                  <PixelButton
-                    type="submit"
-                    variant="warning"
-                    size="sm"
-                    className="ml-auto"
-                    isLoading={createRewardMutation.isPending}
-                  >
-                    Save Treat
-                  </PixelButton>
+                    {/* Dynamic Currency Toggle */}
+                    <div className="flex items-center bg-[#0a0a0a] border border-zinc-800 p-0.5">
+                      <button
+                        type="button"
+                        onClick={() => {
+                          if (currencyMode !== "INR") {
+                            setCurrencyMode("INR");
+                            const num = Number(treatCostInput);
+                            if (!isNaN(num) && num > 0) {
+                              setTreatCostInput(String(num / 10));
+                            }
+                          }
+                        }}
+                        className={`px-2.5 py-0.5 text-[11px] font-sans font-medium transition-colors cursor-pointer ${
+                          currencyMode === "INR"
+                            ? "bg-emerald-400 text-black font-bold"
+                            : "text-zinc-400 hover:text-white"
+                        }`}
+                      >
+                        ₹ INR
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => {
+                          if (currencyMode !== "MB") {
+                            setCurrencyMode("MB");
+                            const num = Number(treatCostInput);
+                            if (!isNaN(num) && num > 0) {
+                              setTreatCostInput(String(Math.round(num * 10)));
+                            }
+                          }
+                        }}
+                        className={`px-2.5 py-0.5 text-[11px] font-sans font-medium transition-colors cursor-pointer ${
+                          currencyMode === "MB"
+                            ? "bg-amber-400 text-black font-bold"
+                            : "text-zinc-400 hover:text-white"
+                        }`}
+                      >
+                        MB
+                      </button>
+                    </div>
+                  </div>
+
+                  <div className="flex items-center gap-2">
+                    <div className="relative flex-1">
+                      <span className="absolute left-1.5 top-1/2 -translate-y-1/2 px-1.5 py-0.5 bg-zinc-900 border border-zinc-800 text-[11px] font-semibold text-zinc-400 select-none">
+                        {currencyMode === "INR" ? "₹" : "MB"}
+                      </span>
+                      <input
+                        type="number"
+                        min={1}
+                        max={currencyMode === "INR" ? 100000 : 1000000}
+                        step={currencyMode === "INR" ? "any" : "1"}
+                        value={treatCostInput}
+                        onChange={(e) => setTreatCostInput(e.target.value)}
+                        placeholder={currencyMode === "INR" ? "e.g. 150" : "e.g. 1500"}
+                        className={`w-full bg-[#0a0a0a] border border-zinc-800 ${
+                          currencyMode === "INR"
+                            ? "pl-7 text-emerald-400 focus:border-emerald-400"
+                            : "pl-11 text-amber-300 focus:border-amber-400"
+                        } pr-3 py-1.5 text-xs font-bold focus:outline-none`}
+                      />
+                    </div>
+
+                    <PixelButton
+                      type="submit"
+                      variant="warning"
+                      size="sm"
+                      isLoading={createRewardMutation.isPending}
+                    >
+                      Save Treat
+                    </PixelButton>
+                  </div>
+
+                  {/* Calculated Conversion Hint */}
+                  <div className="mt-2 text-[11px] font-sans text-zinc-500">
+                    {currencyMode === "INR" ? (
+                      <span>
+                        Rate: <span className="text-emerald-400">₹1</span> = <span className="text-amber-400">10 MB</span> &bull; Converts to:{" "}
+                        <strong className="text-amber-400 font-pixel">
+                          {isNaN(Number(treatCostInput)) || Number(treatCostInput) <= 0
+                            ? "0"
+                            : Math.round(Number(treatCostInput) * 10).toLocaleString()}{" "}
+                          MB
+                        </strong>
+                      </span>
+                    ) : (
+                      <span>
+                        Rate: <span className="text-amber-400">10 MB</span> = <span className="text-emerald-400">₹1</span> &bull; Real cost:{" "}
+                        <strong className="text-emerald-400 font-pixel">
+                          ₹
+                          {isNaN(Number(treatCostInput)) || Number(treatCostInput) <= 0
+                            ? "0"
+                            : (Number(treatCostInput) / 10).toLocaleString("en-IN", {
+                                maximumFractionDigits: 2,
+                              })}
+                        </strong>
+                      </span>
+                    )}
+                  </div>
                 </div>
               </form>
             )}
@@ -293,8 +399,9 @@ export default function ShopPage() {
                           <span className="font-sans text-xs sm:text-sm font-medium text-white truncate">
                             {reward.name}
                           </span>
-                          <span className="font-pixel text-xs text-amber-400 font-bold mt-0.5">
-                            {reward.costMb} Mew Bucks
+                          <span className="font-pixel text-xs font-bold mt-0.5">
+                            <span className="text-amber-400">{reward.costMb} MB</span>{" "}
+                            <span className="text-emerald-400">(₹{getInrString(reward.costMb)})</span>
                           </span>
                         </div>
                       </div>
