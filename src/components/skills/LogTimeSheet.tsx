@@ -63,7 +63,7 @@ export const LogTimeSheet: React.FC<LogTimeSheetProps> = ({
       setFeedback({
         type: "success",
         text: rankUp
-          ? `Rank Up! Reached Rank ${rankUp.newRank} (+${rankUp.apGained} AP bonus awarded!) Gained +${result.xpAwarded} XP`
+          ? `Rank Up! Reached Rank ${rankUp.newRank} (+${rankUp.apGained} AP, +${rankUp.mbGained ?? 150} MB, +${rankUp.ccGained ?? 1} CC bonus awarded!) Gained +${result.xpAwarded} XP`
           : `Logged ${minutes}m! Gained +${result.xpAwarded} XP`,
       });
       setNote("");

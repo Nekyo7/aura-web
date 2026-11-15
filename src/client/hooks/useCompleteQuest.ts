@@ -56,6 +56,7 @@ export function useCompleteQuest() {
         utils.character.get.invalidate(),
         utils.quests.list.invalidate(),
         utils.skills.list.invalidate(),
+        utils.wallet.getBalances.invalidate(),
       ]);
     },
   });

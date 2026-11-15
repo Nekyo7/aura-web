@@ -2,7 +2,8 @@ import { z } from "zod";
 import { router, protectedProcedure } from "@/server/trpc";
 import { TRPCError } from "@trpc/server";
 import { ensureUpToDate } from "@/server/services/health.service";
-import { activateRustWard } from "@/server/services/rust-ward.service";
+import { activateRustWard, getRustWardStatus } from "@/server/services/rust-ward.service";
+import { activateMidasSurge, getMidasSurgeStatus } from "@/server/services/midas-surge.service";
 
 export const walletRouter = router({
   /**
@@ -28,6 +29,18 @@ export const walletRouter = router({
     }
 
     return balances;
+  }),
+
+  /**
+   * Protected query returning active status for Rust Ward and Midas Surge buffs.
+   */
+  getActiveBuffs: protectedProcedure.query(async ({ ctx }) => {
+    const userId = ctx.session.user.id;
+    const [rustWard, midasSurge] = await Promise.all([
+      getRustWardStatus(userId, ctx.db),
+      getMidasSurgeStatus(userId, ctx.db),
+    ]);
+    return { rustWard, midasSurge };
   }),
 
   /**
@@ -191,15 +204,16 @@ export const walletRouter = router({
     }),
 
   /**
-   * Protected procedure to purchase Chrono Chirals recovery tools.
+   * Protected procedure to purchase Chrono Chirals recovery tools and buffs.
    * Second Wind (1 CC): Vitality treated as at least NEUTRAL for 24h.
    * Rust Ward (2 CC): Freezes rust decay for 7 days.
    * Rewind (1 CC): Allows 48h activity backfill.
+   * Midas Surge (1 CC): 2.0x multiplier to all Mew Bucks for 24h.
    */
   purchaseRecoveryItem: protectedProcedure
     .input(
       z.object({
-        itemKey: z.enum(["SECOND_WIND", "RUST_WARD", "REWIND"]),
+        itemKey: z.enum(["SECOND_WIND", "RUST_WARD", "REWIND", "MIDAS_SURGE"]),
       })
     )
     .mutation(async ({ ctx, input }) => {
@@ -209,6 +223,7 @@ export const walletRouter = router({
         SECOND_WIND: 1,
         RUST_WARD: 2,
         REWIND: 1,
+        MIDAS_SURGE: 1,
       };
 
       const cost = costs[input.itemKey] ?? 1;
@@ -274,6 +289,11 @@ export const walletRouter = router({
           // Apply Rust Ward effect immediately (freeze rust for 7 days)
           if (input.itemKey === "RUST_WARD") {
             await activateRustWard(userId, 7, tx);
+          }
+
+          // Apply Midas Surge effect immediately (2.0x MB multiplier for 24 hours)
+          if (input.itemKey === "MIDAS_SURGE") {
+            await activateMidasSurge(userId, 24, tx);
           }
 
           return {

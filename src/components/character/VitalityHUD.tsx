@@ -31,21 +31,21 @@ interface VitalityHUDProps {
 const TIER_CONFIG = {
   THRIVING: {
     label: "THRIVING",
-    badge: "1.00x XP",
+    badge: "+20% Rewards",
     color: "text-emerald-400 border-zinc-800 bg-zinc-900/90",
-    desc: "Peak vitality. Full reward gains.",
+    desc: "Peak vitality. +20% boost to AP & Mew Bucks rewards.",
   },
   NEUTRAL: {
     label: "NEUTRAL",
-    badge: "0.85x XP",
+    badge: "1.00x Base",
     color: "text-amber-400 border-zinc-800 bg-zinc-900/90",
-    desc: "Steady state. Gentle decay buffer.",
+    desc: "Steady state. Standard 1.0x reward gains.",
   },
   WEAKENED: {
     label: "WEAKENED",
-    badge: "0.50x XP",
+    badge: "0.80x Multiplier",
     color: "text-rose-400 border-zinc-800 bg-zinc-900/90",
-    desc: "Low vitality. Log Camp physical activity to recover.",
+    desc: "Low vitality. 0.8x penalty. Log Camp physical activity to recover.",
   },
 };
 

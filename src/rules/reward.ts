@@ -52,6 +52,7 @@ export interface RewardContext {
     graceUntil?: Date | string | null;
     healthShieldUntil?: Date | string | null;
   };
+  midasSurgeActive?: boolean;
   skill?: {
     id: string;
     name: string;
@@ -89,8 +90,11 @@ export interface RewardConfig {
   xpPerMinute: number;
   attributePointsPerHour: number;
   healthMultipliers: Record<HealthTier, number>;
+  healthCurrencyMultipliers: Record<HealthTier, number>;
   apPerLevelUp: number;
   apPerRankUp: number;
+  mbPerRankUp: number;
+  ccPerRankUp: number;
 }
 
 export interface AttributeDeltaSummary {
@@ -109,6 +113,8 @@ export interface RankUpSummary {
   oldRank: number;
   newRank: number;
   apGained: number;
+  mbGained?: number;
+  ccGained?: number;
 }
 
 export interface CompletedQuestSummary {
@@ -131,6 +137,8 @@ export interface RewardSummary {
   xpAwarded: number;
   healthTier: HealthTier;
   healthMultiplier: number;
+  currencyMultiplier?: number;
+  midasMultiplier?: number;
   comebackBonus: boolean;
   attributeDeltas: AttributeDeltaSummary[];
   levelUps: LevelUpSummary[];
@@ -144,7 +152,10 @@ export interface RewardSummary {
 }
 
 /**
- * Default placeholder configuration
+ * Default progression configuration
+ * Thriving (>= 80 HP): 1.2x currency multiplier
+ * Neutral (40-79 HP): 1.0x currency multiplier
+ * Weakened (< 40 HP): 0.8x currency multiplier
  */
 export const DEFAULT_REWARD_CONFIG: RewardConfig = {
   ruleVersion: 1,
@@ -155,8 +166,15 @@ export const DEFAULT_REWARD_CONFIG: RewardConfig = {
     NEUTRAL: 0.85,
     WEAKENED: 0.5,
   },
+  healthCurrencyMultipliers: {
+    THRIVING: 1.2,
+    NEUTRAL: 1.0,
+    WEAKENED: 0.8,
+  },
   apPerLevelUp: 10,
   apPerRankUp: 50,
+  mbPerRankUp: 150,
+  ccPerRankUp: 1,
 };
 
 /**
@@ -167,12 +185,12 @@ export const DEFAULT_REWARD_CONFIG: RewardConfig = {
  * 3. Resolve context: skill, kingdom, open quest instances
  * 4. Health gate: read tier, get multiplier (1.0 / 0.85 / 0.5), apply Comeback rule (>= 3 inactive days -> 1.0)
  * 5. Base XP: SKILL_LOG = minutes * xpPerMinute; QUEST_COMPLETE = quest.baseXp
- * 6. Apply multiplier to XP and attribute points (currency and minutes are never multiplied)
+ * 6. Apply multiplier to XP and attribute points
  * 7. Attribute deltas: skill minutes * weighted split + quest attribute rewards
  * 8. Write ledger plan (ActivityEvent + AttributeDelta)
  * 9. Update caches plan: skill minutes & rank check, character XP & level check, attributes, Kingdom XP
  * 10. Auto-advance quests: accumulate progress for SKILL_MINUTES/KINGDOM_MINUTES
- * 11. Currency: quest rewards + AP for level-ups/rank-ups
+ * 11. Currency: quest rewards + AP for level-ups/rank-ups + Vitality & Midas Multipliers
  * 12. Achievements (Stage 2 evaluation)
  * 13. Recompute today's HealthSnapshot (instant feedback)
  * 14. Return RewardSummary
@@ -187,6 +205,11 @@ export function computeReward(
   const currentTier = ctx.todayHealthSnapshot?.tier ?? ctx.character.healthTier;
   const rawMultiplier = config.healthMultipliers[currentTier] ?? 1.0;
   const effectiveMultiplier = isComeback ? 1.0 : rawMultiplier;
+
+  // Currency Multipliers: Vitality multiplier + Midas Surge (2.0x on MB)
+  const rawCurrencyMultiplier = config.healthCurrencyMultipliers[currentTier] ?? 1.0;
+  const effectiveCurrencyMultiplier = isComeback ? Math.max(1.0, rawCurrencyMultiplier) : rawCurrencyMultiplier;
+  const midasMultiplier = ctx.midasSurgeActive ? 2.0 : 1.0;
 
   // Step 5: Base XP calculation
   let baseXp = 0;
@@ -240,7 +263,8 @@ export function computeReward(
   const levelUps: LevelUpSummary[] = [];
   let totalApGained = 0;
   if (newLevel > currentLevel) {
-    const apGained = (newLevel - currentLevel) * config.apPerLevelUp;
+    const rawAp = (newLevel - currentLevel) * config.apPerLevelUp;
+    const apGained = Math.round(rawAp * effectiveCurrencyMultiplier);
     totalApGained += apGained;
     levelUps.push({
       oldLevel: currentLevel,
@@ -249,8 +273,10 @@ export function computeReward(
     });
   }
 
-  // Rank up check
+  // Rank up check (awards AP, +150 MB lump sum, and +1 CC per rank-up boundary)
   const rankUps: RankUpSummary[] = [];
+  let totalRankMbGained = 0;
+  let totalRankCcGained = 0;
   if (ctx.skill && input.minutes) {
     const currentMinutes = ctx.skill.minutesLogged;
     const newMinutes = currentMinutes + input.minutes;
@@ -258,32 +284,54 @@ export function computeReward(
     const newRank = rankFromMinutes(newMinutes);
 
     if (newRank > currentRank) {
-      const apGained = (newRank - currentRank) * config.apPerRankUp;
+      const rankSteps = newRank - currentRank;
+      const apGained = Math.round(rankSteps * config.apPerRankUp * effectiveCurrencyMultiplier);
+      const mbGained = Math.round(rankSteps * (config.mbPerRankUp ?? 150) * effectiveCurrencyMultiplier * midasMultiplier);
+      const ccGained = rankSteps * (config.ccPerRankUp ?? 1);
+
       totalApGained += apGained;
+      totalRankMbGained += mbGained;
+      totalRankCcGained += ccGained;
+
       rankUps.push({
         skillId: ctx.skill.id,
         oldRank: currentRank,
         newRank,
         apGained,
+        mbGained,
+        ccGained,
       });
     }
   }
 
+  // Quests completion rewards
   const completedQuests: CompletedQuestSummary[] = [];
+  let questApGained = 0;
+  let questMbGained = 0;
+  let questCcGained = 0;
+
   if (ctx.quest) {
+    questApGained = ctx.quest.apReward > 0
+      ? Math.max(1, Math.round(ctx.quest.apReward * effectiveCurrencyMultiplier))
+      : 0;
+    questMbGained = ctx.quest.mbReward > 0
+      ? Math.max(1, Math.round(ctx.quest.mbReward * effectiveCurrencyMultiplier * midasMultiplier))
+      : 0;
+    questCcGained = ctx.quest.ccReward ?? 0;
+
     completedQuests.push({
       questId: ctx.quest.id,
       title: ctx.quest.title,
-      apReward: ctx.quest.apReward,
-      mbReward: ctx.quest.mbReward,
-      ccReward: ctx.quest.ccReward,
+      apReward: questApGained,
+      mbReward: questMbGained,
+      ccReward: questCcGained,
     });
   }
 
   const currencyGains: CurrencyGains = {
-    ap: totalApGained + (ctx.quest?.apReward ?? 0),
-    mb: ctx.quest?.mbReward ?? 0,
-    cc: ctx.quest?.ccReward ?? 0,
+    ap: totalApGained + questApGained,
+    mb: totalRankMbGained + questMbGained,
+    cc: totalRankCcGained + questCcGained,
   };
 
   // Step 14: Return authoritative RewardSummary
@@ -293,6 +341,8 @@ export function computeReward(
     xpAwarded,
     healthTier: currentTier,
     healthMultiplier: effectiveMultiplier,
+    currencyMultiplier: effectiveCurrencyMultiplier,
+    midasMultiplier,
     comebackBonus: isComeback,
     attributeDeltas,
     levelUps,

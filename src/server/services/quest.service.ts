@@ -8,6 +8,7 @@ import {
   type AttributeKey,
   type HealthTier,
 } from "@/rules/reward";
+import { getMidasSurgeStatus } from "@/server/services/midas-surge.service";
 import { randomUUID } from "crypto";
 
 export interface CompleteManualQuestInput {
@@ -46,17 +47,17 @@ export function getQuestPeriodKey(repeat: "ONCE" | "DAILY" | "WEEKLY", date: Dat
 export function getTierDefaultRewards(tier: number) {
   switch (tier) {
     case 1:
-      return { baseXp: 50, mbReward: 10, ccReward: 0, apReward: 0 };
+      return { baseXp: 50, mbReward: 15, ccReward: 0, apReward: 0 };
     case 2:
-      return { baseXp: 100, mbReward: 25, ccReward: 0, apReward: 0 };
+      return { baseXp: 100, mbReward: 35, ccReward: 0, apReward: 0 };
     case 3:
-      return { baseXp: 200, mbReward: 50, ccReward: 0, apReward: 5 };
+      return { baseXp: 200, mbReward: 75, ccReward: 0, apReward: 5 };
     case 4:
-      return { baseXp: 400, mbReward: 100, ccReward: 1, apReward: 15 };
+      return { baseXp: 400, mbReward: 145, ccReward: 1, apReward: 15 };
     case 5:
-      return { baseXp: 800, mbReward: 200, ccReward: 2, apReward: 30 };
+      return { baseXp: 800, mbReward: 290, ccReward: 2, apReward: 30 };
     default:
-      return { baseXp: 50, mbReward: 10, ccReward: 0, apReward: 0 };
+      return { baseXp: 50, mbReward: 15, ccReward: 0, apReward: 0 };
   }
 }
 
@@ -197,6 +198,9 @@ export async function completeManualQuest(
         where: { userId, date: todayDate },
       });
 
+      // Check Midas Surge active status (2.0x MB Multiplier)
+      const midasSurge = await getMidasSurgeStatus(userId, tx);
+
       // 6. Execute Pure Reward Pipeline
       const rewardCtx: RewardContext = {
         character: {
@@ -209,6 +213,7 @@ export async function completeManualQuest(
           graceUntil: character.graceUntil,
           healthShieldUntil: character.healthShieldUntil,
         },
+        midasSurgeActive: midasSurge.isActive,
         quest: {
           id: quest.id,
           title: quest.title,

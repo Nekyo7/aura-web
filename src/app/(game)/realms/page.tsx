@@ -92,6 +92,7 @@ export default function RealmsPage() {
       {!isLoading && realms && (
         <div className="flex flex-col gap-6">
           {realms.map((k) => {
+            const isTreasury = k.slug === "treasury";
             const IconComponent = REALM_ICONS[k.slug] || Globe;
             const hasSkills = k.topSkills && k.topSkills.length > 0;
             const isSurge =
@@ -108,7 +109,7 @@ export default function RealmsPage() {
                 className={`bg-[#0a0a0a] border border-zinc-800 border-t-2 p-5 sm:p-6 text-white transition-colors relative rounded-none shadow-none ${
                   isSurge ? "border-t-[#ffc600]" : ""
                 }`}
-                style={{ borderTopColor: isSurge ? "#ffc600" : k.colorHex }}
+                style={{ borderTopColor: isSurge ? "#ffc600" : isTreasury ? "#eab308" : k.colorHex }}
               >
                 {/* Active Surge Glowing Top Ribbon */}
                 {isSurge && (
@@ -122,19 +123,19 @@ export default function RealmsPage() {
                   <div className="flex items-center gap-3">
                     <div
                       className="w-9 h-9 border border-zinc-800 flex items-center justify-center bg-zinc-950"
-                      style={{ color: k.colorHex }}
+                      style={{ color: isTreasury ? "#eab308" : k.colorHex }}
                     >
                       <IconComponent className="w-4 h-4" strokeWidth={1.5} />
                     </div>
                     <div>
                       <h2
                         className="font-pixel text-xs sm:text-sm font-bold uppercase tracking-wider"
-                        style={{ color: k.colorHex }}
+                        style={{ color: isTreasury ? "#eab308" : k.colorHex }}
                       >
-                        {k.name}
+                        {isTreasury ? "Bank of Mastery (Treasury)" : k.name}
                       </h2>
                       <p className="font-sans text-xs text-zinc-500 mt-0.5">
-                        {k.tagline || k.slug}
+                        {isTreasury ? "Automated Realm • Powered by Skill Rank Ups" : (k.tagline || k.slug)}
                       </p>
                     </div>
                   </div>
@@ -161,6 +162,13 @@ export default function RealmsPage() {
                       {remainingHours}h remaining
                     </span>
                   </div>
+                ) : isTreasury ? (
+                  <div className="mb-3 py-1.5 text-zinc-400 font-sans text-xs flex items-center justify-between border-b border-zinc-800/60">
+                    <span>Progression Engine:</span>
+                    <span className="text-amber-400 font-medium font-pixel text-[11px]">
+                      Automated Mastery Link
+                    </span>
+                  </div>
                 ) : (
                   <div className="mb-3 py-1.5 text-zinc-500 font-sans text-xs flex items-center justify-between border-b border-zinc-800/60">
                     <span>Weekly Baseline:</span>
@@ -174,16 +182,28 @@ export default function RealmsPage() {
                 <div className="mt-3 pt-3 border-t border-zinc-800/80">
                   <div className="flex items-center justify-between mb-2">
                     <span className="font-sans text-xs text-zinc-500 uppercase tracking-wide font-medium">
-                      Dominant Skills
+                      {isTreasury ? "Treasury Mastery Link" : "Dominant Skills"}
                     </span>
-                    {hasSkills && (
+                    {!isTreasury && hasSkills && (
                       <span className="font-sans text-xs text-zinc-600">
                         {k.topSkills.length} active
                       </span>
                     )}
                   </div>
 
-                  {hasSkills ? (
+                  {isTreasury ? (
+                    <div className="space-y-2 py-1">
+                      <div className="p-3 bg-zinc-950 border border-zinc-800/80 text-xs font-sans text-zinc-300 leading-relaxed">
+                        <div className="flex items-center gap-2 text-amber-400 font-medium mb-1 font-pixel text-xs">
+                          <Coins className="w-3.5 h-3.5" strokeWidth={1.5} />
+                          <span>Automated Rank Up Payout</span>
+                        </div>
+                        <p className="text-zinc-400 text-[11px]">
+                          This realm automatically absorbs mastery across all disciplines. When any skill ranks up, the Bank of Mastery gains <strong className="text-amber-300 font-medium">+50 Realm XP</strong>, awarding you <strong className="text-amber-400 font-medium">+150 MB</strong> and <strong className="text-cyan-400 font-medium">+1 CC</strong>.
+                        </p>
+                      </div>
+                    </div>
+                  ) : hasSkills ? (
                     <div className="space-y-2">
                       {k.topSkills.map((s) => (
                         <div

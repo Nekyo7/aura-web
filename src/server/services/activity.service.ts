@@ -10,6 +10,7 @@ import {
 } from "@/rules/reward";
 import { evaluateAchievements } from "@/server/services/achievement.service";
 import { getRustWardStatus } from "@/server/services/rust-ward.service";
+import { getMidasSurgeStatus } from "@/server/services/midas-surge.service";
 import { calculateKingdomMomentum } from "@/rules/momentum";
 
 export interface LogActivityInput {
@@ -136,6 +137,9 @@ export async function logActivity(
       },
     });
 
+    // Check Midas Surge status (2.0x MB Multiplier)
+    const midasSurge = await getMidasSurgeStatus(userId, tx);
+
     // 4. Pure Rules Engine execution
     const rewardCtx: RewardContext = {
       character: {
@@ -148,6 +152,7 @@ export async function logActivity(
         graceUntil: character.graceUntil,
         healthShieldUntil: character.healthShieldUntil,
       },
+      midasSurgeActive: midasSurge.isActive,
       skill: {
         id: skill.id,
         name: skill.name,
@@ -326,9 +331,9 @@ export async function logActivity(
       },
     });
 
-    // 6e. Currency & Wallets (Aura Points from Level Ups / Rank Ups)
+    // 6e. Currency & Wallets (AP from Level Ups & Rank Ups, MB and CC from Rank Ups)
     if (summary.currencyGains.ap > 0) {
-      const wallet = await tx.wallet.upsert({
+      const apWallet = await tx.wallet.upsert({
         where: {
           userId_currency: {
             userId,
@@ -352,7 +357,7 @@ export async function logActivity(
               userId,
               currency: "AP",
               amount: lvl.apGained,
-              balanceAfter: wallet.balance,
+              balanceAfter: apWallet.balance,
               reason: "LEVEL_UP",
               eventId: event.id,
             },
@@ -367,12 +372,110 @@ export async function logActivity(
               userId,
               currency: "AP",
               amount: rnk.apGained,
-              balanceAfter: wallet.balance,
+              balanceAfter: apWallet.balance,
               reason: "RANK_UP",
               eventId: event.id,
             },
           });
         }
+      }
+    }
+
+    // Mew Bucks (MB) payout from Rank Ups
+    if (summary.currencyGains.mb > 0) {
+      const mbWallet = await tx.wallet.upsert({
+        where: {
+          userId_currency: {
+            userId,
+            currency: "MB",
+          },
+        },
+        update: {
+          balance: { increment: summary.currencyGains.mb },
+        },
+        create: {
+          userId,
+          currency: "MB",
+          balance: summary.currencyGains.mb,
+        },
+      });
+
+      for (const rnk of summary.rankUps) {
+        if ((rnk.mbGained ?? 0) > 0) {
+          await tx.currencyTransaction.create({
+            data: {
+              userId,
+              currency: "MB",
+              amount: rnk.mbGained!,
+              balanceAfter: mbWallet.balance,
+              reason: "RANK_UP",
+              eventId: event.id,
+            },
+          });
+        }
+      }
+    }
+
+    // Chrono Chirals (CC) payout from Rank Ups
+    if (summary.currencyGains.cc > 0) {
+      const ccWallet = await tx.wallet.upsert({
+        where: {
+          userId_currency: {
+            userId,
+            currency: "CC",
+          },
+        },
+        update: {
+          balance: { increment: summary.currencyGains.cc },
+        },
+        create: {
+          userId,
+          currency: "CC",
+          balance: summary.currencyGains.cc,
+        },
+      });
+
+      for (const rnk of summary.rankUps) {
+        if ((rnk.ccGained ?? 0) > 0) {
+          await tx.currencyTransaction.create({
+            data: {
+              userId,
+              currency: "CC",
+              amount: rnk.ccGained!,
+              balanceAfter: ccWallet.balance,
+              reason: "RANK_UP",
+              eventId: event.id,
+            },
+          });
+        }
+      }
+    }
+
+    // 6f. Treasury Realm (Bank of Mastery) - Automated XP from Skill Rank Ups
+    if (summary.rankUps.length > 0) {
+      const treasuryKingdom = await tx.kingdom.findUnique({
+        where: { slug: "treasury" },
+      });
+
+      if (treasuryKingdom) {
+        const treasuryXpGained = 50 * summary.rankUps.length;
+        await tx.userKingdom.upsert({
+          where: {
+            userId_kingdomId: {
+              userId,
+              kingdomId: treasuryKingdom.id,
+            },
+          },
+          update: {
+            xp: { increment: treasuryXpGained },
+          },
+          create: {
+            userId,
+            kingdomId: treasuryKingdom.id,
+            xp: treasuryXpGained,
+            baselineMinutesPerWeek: 0,
+          },
+        });
       }
     }
 

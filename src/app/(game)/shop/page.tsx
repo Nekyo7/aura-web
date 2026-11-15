@@ -41,6 +41,12 @@ export default function ShopPage() {
 
   const { data: balances, isLoading: loadingBalances } = trpc.wallet.getBalances.useQuery();
   const { data: rewards, isLoading: loadingRewards } = trpc.wallet.listRewards.useQuery();
+  const { data: buffs } = trpc.wallet.getActiveBuffs.useQuery();
+  const { data: character } = trpc.character.get.useQuery();
+
+  const vitalityMul = character?.healthTier === "THRIVING" ? 1.2 : character?.healthTier === "WEAKENED" ? 0.8 : 1.0;
+  const midasMul = buffs?.midasSurge?.isActive ? 2.0 : 1.0;
+  const totalMultiplier = Number((vitalityMul * midasMul).toFixed(2));
 
   const createRewardMutation = trpc.wallet.createCustomReward.useMutation({
     onSuccess: async () => {
@@ -85,10 +91,12 @@ export default function ShopPage() {
     onSuccess: async (data) => {
       await Promise.all([
         utils.wallet.getBalances.invalidate(),
+        utils.wallet.getActiveBuffs.invalidate(),
         utils.character.get.invalidate(),
       ]);
 
       const itemLabels: Record<string, string> = {
+        MIDAS_SURGE: "Midas Surge (2.0x Mew Bucks for 24h)",
         SECOND_WIND: "Second Wind (Vitality Treated as Neutral)",
         RUST_WARD: "Rust Ward (7-Day Decay Freeze)",
         REWIND: "Chrono Rewind (48h Activity Backfill)",
@@ -149,11 +157,22 @@ export default function ShopPage() {
               <h2 className="font-pixel text-xs sm:text-sm font-bold text-amber-300">
                 Reward Sanctuary
               </h2>
-              {/* Exchange Rate Badge */}
-              <div className="mt-1.5 inline-flex items-center gap-1.5 px-2 py-0.5 bg-zinc-900 border border-zinc-800 text-[10px] font-sans text-zinc-400">
-                <span>
-                  Exchange Rate: <span className="text-emerald-400 font-medium">₹1</span> = <span className="text-amber-400 font-medium">10 MB</span>
-                </span>
+              {/* Exchange Rate & Multiplier Badges */}
+              <div className="mt-1.5 flex flex-wrap items-center gap-2">
+                <div className="inline-flex items-center gap-1.5 px-2 py-0.5 bg-zinc-900 border border-zinc-800 text-[10px] font-sans text-zinc-400">
+                  <span>
+                    Exchange Rate: <span className="text-emerald-400 font-medium">₹1</span> = <span className="text-amber-400 font-medium">10 MB</span>
+                  </span>
+                </div>
+                {totalMultiplier > 1.0 && (
+                  <div className="inline-flex items-center gap-1.5 px-2 py-0.5 bg-zinc-900 border border-amber-400/60 text-[10px] font-sans text-amber-300">
+                    <Sparkles className="w-3 h-3 text-amber-400" strokeWidth={1.5} />
+                    <span>
+                      Multiplier: <strong className="font-pixel text-amber-400">{totalMultiplier.toFixed(1)}x</strong>
+                      {buffs?.midasSurge?.isActive ? " (Midas Surge)" : " (+20% Vitality)"}
+                    </span>
+                  </div>
+                )}
               </div>
             </div>
           </div>
@@ -439,7 +458,45 @@ export default function ShopPage() {
         <div className="flex flex-col gap-6">
           <PixelCard variant="default" title="Chrono Sanctuary" padding="md">
             <div className="space-y-6">
-              {/* Item 1: Second Wind */}
+              {/* Item 1: Midas Surge */}
+              <div className="pb-6 border-b border-zinc-800/80 flex flex-col gap-2.5">
+                <div className="flex items-start justify-between gap-3">
+                  <div className="flex items-center gap-3">
+                    <div className="w-10 h-10 bg-zinc-900 border border-zinc-800 flex items-center justify-center shrink-0">
+                      <Sparkles className="w-5 h-5 text-[#ffc600]" strokeWidth={1.5} />
+                    </div>
+                    <div>
+                      <div className="flex items-center gap-2">
+                        <h4 className="font-pixel text-xs sm:text-sm font-bold text-amber-300">
+                          Midas Surge
+                        </h4>
+                        {buffs?.midasSurge?.isActive && (
+                          <span className="px-1.5 py-0.2 bg-amber-400 text-black font-sans text-[9px] font-bold">
+                            ACTIVE ({buffs.midasSurge.remainingHours}h)
+                          </span>
+                        )}
+                      </div>
+                      <span className="font-sans text-xs text-zinc-500">
+                        Cost: 1 Chrono Chiral
+                      </span>
+                    </div>
+                  </div>
+
+                  <PixelButton
+                    variant={buffs?.midasSurge?.isActive ? "warning" : "neutral"}
+                    size="sm"
+                    disabled={(balances?.cc ?? 0) < 1 || purchaseRecoveryMutation.isPending}
+                    onClick={() => purchaseRecoveryMutation.mutate({ itemKey: "MIDAS_SURGE" })}
+                  >
+                    {buffs?.midasSurge?.isActive ? "Extend" : "Activate"}
+                  </PixelButton>
+                </div>
+                <p className="text-xs text-zinc-400 font-sans leading-relaxed pl-13">
+                  Grants a <strong className="text-amber-400 font-medium">2.0x multiplier</strong> to all Mew Bucks earned for the next 24 hours. Stacks multiplicatively with the Vitality buff (up to 2.4x total in Thriving).
+                </p>
+              </div>
+
+              {/* Item 2: Second Wind */}
               <div className="pb-6 border-b border-zinc-800/80 flex flex-col gap-2.5">
                 <div className="flex items-start justify-between gap-3">
                   <div className="flex items-center gap-3">
@@ -447,9 +504,16 @@ export default function ShopPage() {
                       <Wind className="w-5 h-5 text-[#00e5ff]" strokeWidth={1.5} />
                     </div>
                     <div>
-                      <h4 className="font-pixel text-xs sm:text-sm font-bold text-cyan-300">
-                        Second Wind
-                      </h4>
+                      <div className="flex items-center gap-2">
+                        <h4 className="font-pixel text-xs sm:text-sm font-bold text-cyan-300">
+                          Second Wind
+                        </h4>
+                        {character?.healthShieldUntil && new Date(character.healthShieldUntil).getTime() > Date.now() && (
+                          <span className="px-1.5 py-0.2 bg-cyan-400 text-black font-sans text-[9px] font-bold">
+                            ACTIVE
+                          </span>
+                        )}
+                      </div>
                       <span className="font-sans text-xs text-zinc-500">
                         Cost: 1 Chrono Chiral
                       </span>
@@ -466,11 +530,11 @@ export default function ShopPage() {
                   </PixelButton>
                 </div>
                 <p className="text-xs text-zinc-400 font-sans leading-relaxed pl-13">
-                  Shields your character for 24 hours: Vitality is treated as at least <strong className="text-amber-400 font-medium">Neutral (0.85x)</strong> even if HP drops into Weakened tier.
+                  Shields your character for 24 hours: Vitality is treated as at least <strong className="text-amber-400 font-medium">Neutral (1.00x)</strong> even if HP drops into Weakened tier.
                 </p>
               </div>
 
-              {/* Item 2: Rust Ward */}
+              {/* Item 3: Rust Ward */}
               <div className="pb-6 border-b border-zinc-800/80 flex flex-col gap-2.5">
                 <div className="flex items-start justify-between gap-3">
                   <div className="flex items-center gap-3">
@@ -478,9 +542,16 @@ export default function ShopPage() {
                       <Shield className="w-5 h-5 text-[#00e5ff]" strokeWidth={1.5} />
                     </div>
                     <div>
-                      <h4 className="font-pixel text-xs sm:text-sm font-bold text-cyan-300">
-                        Rust Ward
-                      </h4>
+                      <div className="flex items-center gap-2">
+                        <h4 className="font-pixel text-xs sm:text-sm font-bold text-cyan-300">
+                          Rust Ward
+                        </h4>
+                        {buffs?.rustWard?.isActive && (
+                          <span className="px-1.5 py-0.2 bg-cyan-400 text-black font-sans text-[9px] font-bold">
+                            ACTIVE ({buffs.rustWard.remainingDays}d)
+                          </span>
+                        )}
+                      </div>
                       <span className="font-sans text-xs text-zinc-500">
                         Cost: 2 Chrono Chirals
                       </span>
@@ -493,7 +564,7 @@ export default function ShopPage() {
                     disabled={(balances?.cc ?? 0) < 2 || purchaseRecoveryMutation.isPending}
                     onClick={() => purchaseRecoveryMutation.mutate({ itemKey: "RUST_WARD" })}
                   >
-                    Activate
+                    {buffs?.rustWard?.isActive ? "Extend" : "Activate"}
                   </PixelButton>
                 </div>
                 <p className="text-xs text-zinc-400 font-sans leading-relaxed pl-13">
@@ -501,7 +572,7 @@ export default function ShopPage() {
                 </p>
               </div>
 
-              {/* Item 3: Chrono Rewind */}
+              {/* Item 4: Chrono Rewind */}
               <div className="flex flex-col gap-2.5">
                 <div className="flex items-start justify-between gap-3">
                   <div className="flex items-center gap-3">

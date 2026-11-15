@@ -34,12 +34,14 @@ export function useLogActivity() {
           celebrations.push({
             type: "RANK_UP",
             title: "Rank Up!",
-            description: `Skill advanced to Rank ${rnk.newRank}! Earned +${rnk.apGained} AP bonus!`,
+            description: `Skill advanced to Rank ${rnk.newRank}! Earned +${rnk.apGained} AP, +${rnk.mbGained ?? 150} MB, and +${rnk.ccGained ?? 1} CC bonus!`,
             data: {
               skillId: rnk.skillId,
               oldRank: rnk.oldRank,
               newRank: rnk.newRank,
               apGained: rnk.apGained,
+              mbGained: rnk.mbGained ?? 150,
+              ccGained: rnk.ccGained ?? 1,
             },
           });
         }

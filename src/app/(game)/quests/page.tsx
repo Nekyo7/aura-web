@@ -17,6 +17,7 @@ import {
   Plus,
   Loader2,
   ArrowLeft,
+  Sparkles,
 } from "lucide-react";
 
 const TIER_COLORS: Record<number, { border: string; bg: string; text: string; label: string }> = {
@@ -33,6 +34,12 @@ export default function QuestsPage() {
 
   const utils = trpc.useUtils();
   const { data: quests, isLoading } = trpc.quests.list.useQuery();
+  const { data: buffs } = trpc.wallet.getActiveBuffs.useQuery();
+  const { data: character } = trpc.character.get.useQuery();
+
+  const vitalityMul = character?.healthTier === "THRIVING" ? 1.2 : character?.healthTier === "WEAKENED" ? 0.8 : 1.0;
+  const midasMul = buffs?.midasSurge?.isActive ? 2.0 : 1.0;
+  const totalMultiplier = Number((vitalityMul * midasMul).toFixed(2));
 
   const completeQuestMutation = useCompleteQuest();
 
@@ -80,6 +87,15 @@ export default function QuestsPage() {
             <h2 className="font-pixel text-xs sm:text-sm font-bold text-blue-300">
               Adventurer Bounties
             </h2>
+            {totalMultiplier > 1.0 && (
+              <div className="mt-1.5 inline-flex items-center gap-1.5 px-2 py-0.5 bg-zinc-900 border border-amber-400/60 text-[10px] font-sans text-amber-300">
+                <Sparkles className="w-3 h-3 text-amber-400" strokeWidth={1.5} />
+                <span>
+                  Active Multiplier: <strong className="font-pixel text-amber-400">{totalMultiplier.toFixed(1)}x</strong>
+                  {buffs?.midasSurge?.isActive ? " (Midas Surge)" : " (+20% Vitality)"}
+                </span>
+              </div>
+            )}
           </div>
         </div>
       </PixelCard>
@@ -181,9 +197,18 @@ export default function QuestsPage() {
                     <div className="flex items-center gap-2.5 text-xs">
                       <span className="text-zinc-500 uppercase tracking-wide text-[10px]">Bounty:</span>
                       <span className="text-blue-400/90 font-medium">+{quest.baseXp} XP</span>
-                      <span className="text-amber-400/90 font-medium">+{quest.mbReward} MB</span>
+                      {totalMultiplier > 1.0 ? (
+                        <span className="text-amber-400 font-medium flex items-center gap-1">
+                          +{Math.round(quest.mbReward * totalMultiplier)} MB
+                          <span className="text-[10px] text-amber-300/70 font-sans">({totalMultiplier.toFixed(1)}x)</span>
+                        </span>
+                      ) : (
+                        <span className="text-amber-400/90 font-medium">+{quest.mbReward} MB</span>
+                      )}
                       {quest.apReward > 0 && (
-                        <span className="text-purple-400/90 font-medium">+{quest.apReward} AP</span>
+                        <span className="text-purple-400/90 font-medium">
+                          +{vitalityMul !== 1.0 ? Math.round(quest.apReward * vitalityMul) : quest.apReward} AP
+                        </span>
                       )}
                       {quest.ccReward > 0 && (
                         <span className="text-cyan-400/90 font-medium">+{quest.ccReward} CC</span>

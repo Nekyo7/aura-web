@@ -48,13 +48,35 @@ export const CelebrationModal: React.FC = () => {
             </p>
           )}
 
-          {/* AP Reward Callout if any */}
-          {typeof current.data?.apGained === "number" && (
-            <div className="mb-5 p-2 bg-[#0e0e0e] border border-[#b026ff]/60 flex items-center justify-center gap-2">
-              <Sparkles className="w-4 h-4 text-[#b026ff]" strokeWidth={1.5} />
-              <span className="font-sans text-xs text-[#b026ff] font-semibold">
-                +{current.data.apGained} Aura Points
-              </span>
+          {/* Reward Callouts if any */}
+          {(typeof current.data?.apGained === "number" ||
+            typeof current.data?.mbGained === "number" ||
+            typeof current.data?.ccGained === "number") && (
+            <div className="mb-5 p-2 bg-[#0e0e0e] border border-zinc-800 flex flex-wrap items-center justify-center gap-3">
+              {typeof current.data?.apGained === "number" && current.data.apGained > 0 && (
+                <div className="flex items-center gap-1.5">
+                  <Sparkles className="w-3.5 h-3.5 text-[#b026ff]" strokeWidth={1.5} />
+                  <span className="font-sans text-xs text-[#b026ff] font-semibold">
+                    +{current.data.apGained} AP
+                  </span>
+                </div>
+              )}
+              {typeof current.data?.mbGained === "number" && current.data.mbGained > 0 && (
+                <div className="flex items-center gap-1.5">
+                  <span className="text-[#ffc600] font-pixel text-[10px] font-bold">MB</span>
+                  <span className="font-sans text-xs text-[#ffc600] font-semibold">
+                    +{current.data.mbGained} MB
+                  </span>
+                </div>
+              )}
+              {typeof current.data?.ccGained === "number" && current.data.ccGained > 0 && (
+                <div className="flex items-center gap-1.5">
+                  <span className="text-[#00e5ff] font-pixel text-[10px] font-bold">CC</span>
+                  <span className="font-sans text-xs text-[#00e5ff] font-semibold">
+                    +{current.data.ccGained} CC
+                  </span>
+                </div>
+              )}
             </div>
           )}
 
